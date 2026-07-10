@@ -60,7 +60,7 @@ function NdcComponent() {
   const [employeeName, setEmployeeName] = useState('')
   const [designation, setDesignation] = useState('IV Grade')
   const [office, setOffice] = useState('District Hospital, Champhai District, Champhai, Mizoram')
-  const [reasonVal, setReasonVal] = useState('is due to <b>retire</b> on')
+  const [reasonVal, setReasonVal] = useState('who is due to <b>retire</b> on')
   const [pensionDate, setPensionDate] = useState(() => new Date().toISOString().split('T')[0])
   const [copy1Val, setCopy1Val] = useState('Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl')
   const [ddoName, setDdoName] = useState('Director, Accounts & Treasuries, Mizoram, Aizawl')
@@ -139,12 +139,12 @@ function NdcComponent() {
 
   const getReasonText = (val: string) => {
     const selectOptions: Record<string, string> = {
-      'is due to <b>retire</b> on': 'Retire (Superannuation)',
-      '<b>retired</b> on': 'Retired (Chawl tawh)',
-      '<b>died</b> on': 'Died (Mitthi)',
-      'is due to <b>retire</b> (<b>Voluntary</b>) on': 'Retire (Voluntary)',
-      '<b>retired</b> (<b>Voluntary</b>) on': 'Retired (Voluntary)',
-      '<b>resigned</b> on': 'Resigned (Bâng)'
+      'who is due to <b>retire</b> on': 'Retire (Superannuation)',
+      'who <b>retired</b> on': 'Retired (Chawl tawh)',
+      'who <b>died</b> on': 'Died (Mitthi)',
+      'who is due to <b>retire</b> (<b>Voluntary</b>) on': 'Retire (Voluntary)',
+      'who <b>retired</b> (<b>Voluntary</b>) on': 'Retired (Voluntary)',
+      'who <b>resigned</b> on': 'Resigned (Bâng)'
     }
     return selectOptions[val] || 'Retire'
   }
@@ -226,7 +226,7 @@ function NdcComponent() {
     setEmployeeName(r.name)
     setDesignation(r.desig)
     setOffice(r.office)
-    setReasonVal(r.reasonVal || 'is due to <b>retire</b> on')
+    setReasonVal(r.reasonVal || 'who is due to <b>retire</b> on')
     setPensionDate(r.rawRetireDate || r.retireDate || '')
     setIssueDate(r.rawIssueDate || r.issueDate || '')
     setCopy1Val(r.copy1Val)
@@ -263,7 +263,7 @@ function NdcComponent() {
     setEmployeeName('')
     setDesignation('IV Grade')
     setOffice('District Hospital, Champhai District, Champhai, Mizoram')
-    setReasonVal('is due to <b>retire</b> on')
+    setReasonVal('who is due to <b>retire</b> on')
     const today = new Date().toISOString().split('T')[0]
     setIssueDate(today)
     setPensionDate(today)
@@ -290,12 +290,12 @@ function NdcComponent() {
     const shortDate = `${dd}.${mm}.${yyyy}`
 
     let reasonPhrase = 'who is due to retire on'
-    if (reasonVal === 'is due to <b>retire</b> on') reasonPhrase = 'who is due to retire on'
-    else if (reasonVal === '<b>retired</b> on') reasonPhrase = 'who retired on'
-    else if (reasonVal === '<b>died</b> on') reasonPhrase = 'who died on'
-    else if (reasonVal === 'is due to <b>retire</b> (<b>Voluntary</b>) on') reasonPhrase = 'who is due to retire (Voluntary) on'
-    else if (reasonVal === '<b>retired</b> (<b>Voluntary</b>) on') reasonPhrase = 'who retired (Voluntary) on'
-    else if (reasonVal === '<b>resigned</b> on') reasonPhrase = 'who resigned on'
+    if (reasonVal === 'who is due to <b>retire</b> on') reasonPhrase = 'who is due to retire on'
+    else if (reasonVal === 'who <b>retired</b> on') reasonPhrase = 'who retired on'
+    else if (reasonVal === 'who <b>died</b> on') reasonPhrase = 'who died on'
+    else if (reasonVal === 'who is due to <b>retire</b> (<b>Voluntary</b>) on') reasonPhrase = 'who is due to retire (Voluntary) on'
+    else if (reasonVal === 'who <b>retired</b> (<b>Voluntary</b>) on') reasonPhrase = 'who retired (Voluntary) on'
+    else if (reasonVal === 'who <b>resigned</b> on') reasonPhrase = 'who resigned on'
 
     const template = `Received an application for the issue of a No Demand Certificate for ${employeeName.trim()}, ${designation}, ${reasonPhrase} ${shortDate}, from the ${ddoName}. The government servant has not availed any long-term loans. Therefore, a No Demand Certificate may be issued.`
 
@@ -586,12 +586,12 @@ function NdcComponent() {
                 <div className="input-box">
                   <label>9. Reason for NDC</label>
                   <select value={reasonVal} onChange={(e) => setReasonVal(e.target.value)}>
-                    <option value="is due to <b>retire</b> on">Retire (Superannuation)</option>
-                    <option value="<b>retired</b> on">Retired (Chawl tawh)</option>
-                    <option value="<b>died</b> on">Died (Mitthi)</option>
-                    <option value="is due to <b>retire</b> (<b>Voluntary</b>) on">Retire (Voluntary)</option>
-                    <option value="<b>retired</b> (<b>Voluntary</b>) on">Retired (Voluntary)</option>
-                    <option value="<b>resigned</b> on">Resigned (Bâng)</option>
+                    <option value="who is due to <b>retire</b> on">Retire (Superannuation)</option>
+                    <option value="who <b>retired</b> on">Retired (Chawl tawh)</option>
+                    <option value="who <b>died</b> on">Died (Mitthi)</option>
+                    <option value="who is due to <b>retire</b> (<b>Voluntary</b>) on">Retire (Voluntary)</option>
+                    <option value="who <b>retired</b> (<b>Voluntary</b>) on">Retired (Voluntary)</option>
+                    <option value="who <b>resigned</b> on">Resigned (Bâng)</option>
                   </select>
                 </div>
 
