@@ -373,6 +373,15 @@ h1, h2, h3, .display-font {
     page-break-after: always;
   }
 
+  #legal-page {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border: none !important;
+    width: 816px !important;
+    height: 1344px !important;
+    page-break-after: always;
+  }
+
   .cert-page {
     box-shadow: none !important;
     margin: 0 !important;
@@ -889,6 +898,65 @@ td div[contenteditable="true"]:hover, td[contenteditable="true"]:hover {
 }
 .note-entry-wrapper:hover .note-actions {
   display: flex;
+}
+/* NDC Notesheet styles matching legacy exactly */
+#legal-page {
+  width: 816px !important;
+  height: 1344px !important; /* STRICT PIXEL LOCK */
+  background: white !important;
+  box-sizing: border-box !important;
+  box-shadow: var(--shadow-md) !important;
+  color: black !important;
+  position: relative !important;
+  display: inline-block !important; /* to center it on screen */
+  text-align: left;
+  vertical-align: top;
+  margin: 10px auto !important;
+}
+
+#legal-page .note-hline {
+  position: absolute;
+  top: 96px;
+  left: 0;
+  right: 0;
+  border-top: 1px solid black !important;
+  height: 0 !important;
+  background-color: transparent !important;
+  z-index: 10;
+}
+
+#legal-page .note-vline {
+  position: absolute;
+  left: 96px;
+  top: 96px;
+  bottom: 0;
+  border-left: 1px solid black !important;
+  z-index: 10;
+}
+
+#legal-page.back-side .note-vline {
+  left: auto !important;
+  right: 48px !important;
+  border-left: none !important;
+  border-right: 1px solid black !important;
+}
+
+#legal-page .note-content-area {
+  position: absolute;
+  top: 96px;
+  left: 144px;
+  right: 40px;
+  bottom: 40px;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: justify;
+  overflow: hidden;
+  z-index: 20;
+}
+
+#legal-page.back-side .note-content-area {
+  left: 40px !important;
+  right: 96px !important;
 }
 
 @media (max-width: 1250px) {

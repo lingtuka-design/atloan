@@ -853,19 +853,19 @@ function NdcComponent() {
                   </tbody>
                 </table>
 
-                <div style={{ fontSize: '16px', marginBottom: '5px', fontStyle: 'italic' }}>Copy to:</div>
+                <div style={{ fontSize: '15px', marginBottom: '3px', fontStyle: 'italic' }}>Copy to:</div>
                 
-                <table style={{ width: 'calc(100% - 40px)', marginLeft: '40px', fontSize: '16px', lineHeight: 1.3, border: 'none', borderCollapse: 'collapse' }}>
+                <table style={{ width: 'calc(100% - 40px)', marginLeft: '40px', fontSize: '15px', lineHeight: 1.25, border: 'none', borderCollapse: 'collapse' }}>
                   <tbody>
                     <tr>
-                      <td style={{ width: '30px', verticalAlign: 'top', padding: 0, paddingBottom: '4px', border: 'none' }}>1.</td>
-                      <td style={{ verticalAlign: 'top', padding: 0, paddingBottom: '4px', border: 'none' }}>
+                      <td style={{ width: '30px', verticalAlign: 'top', padding: 0, paddingBottom: '2px', border: 'none' }}>1.</td>
+                      <td style={{ verticalAlign: 'top', padding: 0, paddingBottom: '2px', border: 'none' }}>
                         The <span className="bold">{copy1Val}</span> for information.
                       </td>
                     </tr>
                     <tr>
-                      <td style={{ verticalAlign: 'top', padding: 0, paddingBottom: '4px', border: 'none' }}>2.</td>
-                      <td style={{ verticalAlign: 'top', padding: 0, paddingBottom: '4px', border: 'none' }}>
+                      <td style={{ verticalAlign: 'top', padding: 0, paddingBottom: '2px', border: 'none' }}>2.</td>
+                      <td style={{ verticalAlign: 'top', padding: 0, paddingBottom: '2px', border: 'none' }}>
                         The <span className="bold">{ddoName}</span>, for information and necessary action.
                       </td>
                     </tr>
@@ -897,7 +897,7 @@ function NdcComponent() {
               className={`note-sheet document-font ${notesheetSide === 'back' ? 'back-side' : ''}`}
               style={{ display: previewTab === 'notesheet' ? 'block' : 'none' }}
             >
-              <div className="note-horizontal-line"></div>
+              <div className="note-hline"></div>
               <div className="note-vline"></div>
               <div className="note-content-area" id="notesheet-content" style={{
                 position: 'absolute', top: '96px', left: notesheetSide === 'front' ? '144px' : '40px',
