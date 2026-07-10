@@ -343,7 +343,13 @@ function NdcComponent() {
       }
       document.head.appendChild(style)
       window.print()
-      document.head.removeChild(style)
+      window.addEventListener('afterprint', () => {
+        try {
+          document.head.removeChild(style)
+        } catch (e) {
+          console.error(e)
+        }
+      }, { once: true })
     }, 100)
   }
 
