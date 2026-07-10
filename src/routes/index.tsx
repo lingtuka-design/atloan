@@ -26,10 +26,10 @@ function HomeComponent() {
         <p className="sub" style={{
           color: 'var(--ink-soft)',
           fontSize: '16px',
-          maxWidth: '560px',
+          maxWidth: '800px',
           margin: '0 0 44px 0',
           lineHeight: '1.6'
-        }}>Select a document to prepare. Records are stored securely in the Cloudflare D1 Cloud Database, allowing you to access drafts, issue logs, and configurations from anywhere.</p>
+        }}>Loan &amp; Monitoring Section, Office of the Chief Controller of Accounts, Accounts &amp; Treasuries, Mizoram, Aizawl</p>
 
         <div className="cards" style={{
           display: 'grid',
