@@ -811,14 +811,14 @@ function NdcComponent() {
                   ACCOUNTS &amp; TREASURIES; MIZORAM: AIZAWL
                 </div>
 
-                <div style={{ textAlign: 'right', marginBottom: '45px' }}>
+                <div style={{ textAlign: 'right', marginBottom: '20px' }}>
                   <div style={{ display: 'inline-block', textAlign: 'left', fontSize: '16px', lineHeight: 1.3 }}>
                     No. <span>{refNo}</span><br />
                     Dated Aizawl, the <span dangerouslySetInnerHTML={formatOfficialDate(issueDate)}></span>.
                   </div>
                 </div>
 
-                <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '21px', textDecoration: 'underline', marginBottom: '25px' }}>
+                <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '21px', textDecoration: 'underline', marginBottom: '20px' }}>
                   NO DEMAND CERTIFICATE
                 </div>
 
@@ -828,7 +828,7 @@ function NdcComponent() {
                   <span className="bold" dangerouslySetInnerHTML={formatOfficialDate(pensionDate)}></span> has no liabilities on <span className="bold">HBA, Computer Advance, Motor Car Advance, Scooter Advance and Special Car Loan</span> as per records maintained by this office.
                 </div>
                 
-                <div style={{ textAlign: 'justify', textIndent: '40px', fontSize: '17px', lineHeight: 1.6, marginBottom: '65px' }}>
+                <div style={{ textAlign: 'justify', textIndent: '40px', fontSize: '17px', lineHeight: 1.6, marginBottom: '35px' }}>
                   Hence, No Demand Certificate in respect of <span className="bold">HBA, Computer Advance, Motor Car Advance, Scooter Advance and Special Car Loan</span> is hereby issued.
                 </div>
                 
@@ -876,9 +876,9 @@ function NdcComponent() {
                   </tbody>
                 </table>
 
-                <div style={{ textAlign: 'right', marginTop: '25px' }}>
+                <div style={{ textAlign: 'right', marginTop: '15px' }}>
                   <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontWeight: 'bold', fontSize: '16px' }}>
-                    <div style={{ height: '55px' }}></div> <span>{sigDesig.toUpperCase()}</span>
+                    <div style={{ height: '40px' }}></div> <span>{sigDesig.toUpperCase()}</span>
                   </div>
                 </div>
 
