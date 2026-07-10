@@ -92,7 +92,7 @@ h1, h2, h3, .display-font {
 
 /* Notesheet layout with vertical lines */
 .a4-page, .legal-sheet, .note-sheet, .cert-page {
-  display: inline-block !important;
+  display: inline-block;
   text-align: left;
   vertical-align: top;
   margin: 10px auto !important;
@@ -356,6 +356,14 @@ h1, h2, h3, .display-font {
   
   /* Hide UI elements */
   .no-print {
+    display: none !important;
+  }
+  
+  /* Hiding pages depending on the active tab class */
+  .print-ndc-only #legal-page {
+    display: none !important;
+  }
+  .print-notesheet-only #a4-page {
     display: none !important;
   }
   
@@ -908,7 +916,6 @@ td div[contenteditable="true"]:hover, td[contenteditable="true"]:hover {
   box-shadow: var(--shadow-md) !important;
   color: black !important;
   position: relative !important;
-  display: inline-block !important; /* to center it on screen */
   text-align: left;
   vertical-align: top;
   margin: 10px auto !important;
