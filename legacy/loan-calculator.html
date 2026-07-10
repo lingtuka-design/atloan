@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Calculation & Demand Certificate</title>
+    <style>
+        /* =========================================
+           GLOBAL & UI LAYOUT STYLES
+           ========================================= */
+        body { font-family: 'Times New Roman', Times, serif; background-color: #f4f4f4; padding: 20px; margin: 0; }
+        
+        .tab-menu { max-width: 1400px; margin: 0 auto 15px auto; display: flex; gap: 10px; }
+        .tab-btn { padding: 10px 20px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; background: #ddd; color: #333; transition: 0.2s; }
+        .tab-btn:hover { background: #ccc; }
+        .tab-btn.active { background: #d32f2f; color: white; }
+
+        .generator-layout { display: flex; gap: 20px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+        
+        /* Edit Panel */
+        .edit-panel { background: white; padding: 20px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex: 0 0 470px; position: sticky; top: 20px; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+        
+        .section-title { margin-top: 15px; margin-bottom: 10px; font-size: 16px; color: #1976d2; border-bottom: 2px solid #e3f2fd; padding-bottom: 5px; }
+        
+        /* =========================================
+           LOAN TAB STYLES 
+           ========================================= */
+        .loan-tabs-wrapper { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; margin-top: 15px; }
+        .loan-tab { padding: 8px 12px; font-size: 14px; font-weight: bold; border: 1px solid #1976d2; background: white; color: #1976d2; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .loan-tab:hover { background: #e3f2fd; }
+        .loan-tab.active { background: #1976d2; color: white; }
+        
+        .loan-container { display: none; border: 2px solid #bbdefb; padding: 15px; border-radius: 6px; margin-bottom: 15px; background: #f8fbff; }
+        .loan-container.active { display: block; }
+
+        .input-box { display: flex; flex-direction: column; margin-bottom: 12px; }
+        label { font-size: 13px; font-weight: bold; margin-bottom: 4px; color: #555; }
+        input, select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; width: 100%; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; margin: 0; }
+        input:focus, select:focus { outline: none; border-color: #1976d2; box-shadow: 0 0 3px rgba(25,118,210,0.3); }
+
+        .btn-container { margin-top: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn { border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; flex: 1; color: white; transition: 0.2s; font-size: 14px; }
+        .btn:hover { opacity: 0.9; }
+        .btn-calc { background: #1976d2; flex-basis: 100%; margin-bottom: 10px; font-size: 16px; padding: 12px; }
+        .btn-add-loan { background: #ff9800; flex-basis: 100%; margin-bottom: 15px; font-size: 15px; padding: 10px; color: black; border: 2px dashed #f57c00; }
+        .btn-save { background: #4caf50; flex-basis: 100%; margin-bottom: 10px; font-size: 16px; padding: 12px; border: 2px solid #388e3c; }
+        .btn-export { background: #217346; flex-basis: 100%; margin-bottom: 10px; font-size: 15px; padding: 10px; color: white; border: 2px solid #1e6b3e; } 
+        .btn-clear { background: #757575; flex-basis: 100%; margin-bottom: 10px; font-size: 14px; padding: 10px; }
+        .btn-print-calc { background: #2e7d32; }
+        .btn-print-cert { background: #d84315; }
+        .btn-print-note { background: #0288d1; }
+
+        /* Record List Section */
+        .record-section { background: white; padding: 20px; max-width: 1400px; margin: 0 auto 20px auto; border-radius: 8px; border: 1px solid #ccc; display: none; min-height: 500px;}
+        .record-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 15px; } 
+        .record-table th, .record-table td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: middle; }
+        .record-table th { background-color: #f8f9fa; font-weight: bold; color: #333; }
+        .record-table tr:hover { background-color: #f1f8ff; }
+        .action-btns { display: flex; gap: 5px; }
+        .btn-edit-rec { background: #1976d2; color: white; border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .btn-delete-rec { background: #d32f2f; color: white; border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: bold; }
+
+        /* Preview Section */
+        .preview-section { flex: 1; display: flex; flex-direction: column; align-items: center; overflow-x: auto; padding-bottom: 20px; }
+        .preview-tabs { display: flex; gap: 10px; margin-bottom: 15px; justify-content: center; width: 100%; align-items: center; }
+        .prev-tab-btn { padding: 10px 20px; font-size: 15px; font-weight: bold; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; background: #eee; color: #333; transition: 0.2s; }
+        .prev-tab-btn.active { background: #1976d2; color: white; border-color: #1976d2; }
+        
+        .note-page-toggle { border: none; padding: 0 12px; cursor: pointer; font-weight: bold; font-size: 14px; background: #eee; color: #555; transition: 0.2s; height: 100%; display: flex; align-items: center; }
+        .note-page-toggle:hover { background: #ddd; }
+        .note-page-toggle.active { background: #0288d1; color: white; }
+
+        /* Document Pages */
+        #legal-pages-container { display: block; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .legal-sheet { width: 816px; min-height: 1344px; background: white; padding: 40px 50px; box-sizing: border-box; box-shadow: 0 4px 8px rgba(0,0,0,0.1); color: black; margin-bottom: 30px; page-break-after: always; position: relative; }
+        
+        .cert-page { width: 816px; background: white; box-sizing: border-box; box-shadow: 0 4px 8px rgba(0,0,0,0.1); color: black; margin-bottom: 20px; position: relative; display: none; }
+        #legal-cert-page { min-height: 1344px; padding: 60px 70px; }
+        #ndc-cert-page { min-height: 1123px; padding: 60px 70px; }
+
+        /* Notesheet Styles (Updated for edge-to-edge line & precise 2cm borders & 1.5cm text gap) */
+        #note-pages-container { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .note-sheet { width: 816px; min-height: 1344px; background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); color: black; margin-bottom: 30px; page-break-after: always; position: relative; box-sizing: border-box; padding: 0; }
+        
+        .note-horizontal-line { position: absolute; top: 2cm; left: 0; right: 0; height: 1.5px; background-color: #777; z-index: 1; }
+        
+        .note-content-wrapper { position: relative; margin-top: 2cm; padding-top: 1.5cm; padding-bottom: 2cm; min-height: calc(1344px - 2cm); box-sizing: border-box; z-index: 2; outline: none; }
+        
+        .note-left-line { margin-left: 2cm; margin-right: 2cm; border-left: 1.5px solid #60a5fa; border-right: none; padding-left: 30px; padding-right: 10px; }
+        .note-right-line { margin-left: 2cm; margin-right: 2cm; border-right: 1.5px solid #60a5fa; border-left: none; padding-right: 30px; padding-left: 10px; }
+        
+        .note-content-wrapper[contenteditable="true"]:focus { background-color: #fafafa; }
+        
+        .note-p { text-indent: 40px; text-align: justify; margin-bottom: 30px; font-size: 16px; line-height: 1.6; }
+        .note-calc-header { font-weight: bold; font-size: 16px; margin-bottom: 25px; }
+        .note-loan-block { margin-bottom: 20px; page-break-inside: avoid; }
+        .note-loan-title { font-weight: bold; text-decoration: underline; margin-bottom: 15px; font-size: 16px;}
+        .note-table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.5; }
+        .note-table td { padding: 2px 0; vertical-align: top; border: none; }
+        .note-table .col-label { width: 280px; }
+        .note-table .col-colon { width: 20px; text-align: center; }
+        .note-table .col-val { font-weight: normal; }
+
+        /* Document Content Styles */
+        .bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .mb-1 { margin-bottom: 5px; }
+        
+        .header-box-table { width: 100%; border: 2px solid black; border-collapse: collapse; margin-bottom: 20px; font-size: 15px; }
+        .header-box-table td { padding: 6px 10px; vertical-align: top; }
+        .header-box-title { text-align: center; font-weight: bold; font-size: 17px; border-bottom: 2px solid black; padding: 10px !important; line-height: 1.4; border-left: none; border-right: none; border-top: none; text-transform: uppercase; }
+        .header-left-col { width: 55%; border-right: 2px solid black; }
+        .header-right-col { width: 45%; }
+        
+        .inner-info-table { width: 100%; border-collapse: collapse; }
+        .inner-info-table td { padding: 2px 0; border: none; }
+        .inner-info-table .label { width: 155px; }
+        .inner-info-table .colon { width: 15px; text-align: center; }
+        
+        .calc-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; }
+        .calc-table th, .calc-table td { border: 1px solid black; padding: 6px; text-align: center; }
+        .calc-table th { background-color: #f8f9fa; font-weight: bold; }
+        
+        .editable-cell { background-color: #e3f2fd; font-weight: bold; cursor: text; transition: 0.2s; }
+        .editable-cell:hover { background-color: #bbdefb; }
+        .editable-cell:focus { outline: 2px dashed #1976d2; background-color: #ffffff; }
+
+        /* =========================================
+           RESPONSIVE CERTIFICATE STYLES 
+           ========================================= */
+        .cert-layout-default .cert-body-text { font-size: 16px; line-height: 1.6; } 
+        .cert-layout-default .liab-item { margin-bottom: 15px; line-height: 1.8; }
+        .cert-layout-default .liab-table { font-size: 15px; margin-top: 2px; }
+        .cert-layout-default .liab-words { line-height: 1.2; margin-top: 2px; }
+        .cert-layout-default .cert-section-gap { margin-top: 25px; margin-bottom: 15px; } 
+        .cert-layout-default .cert-head-title { margin-top: 15px; margin-bottom: 5px; font-size: 15px; }
+        .cert-layout-default .cert-head-table { font-size: 15px; margin-bottom: 10px; line-height: 1.2; } 
+        .cert-layout-default .cert-head-table td { padding-bottom: 2px; } 
+        .cert-layout-default .cert-closing-note { margin-bottom: 20px; margin-top: 10px; line-height: 1.2; } 
+        .cert-layout-default .cert-no-liab { margin-bottom: 5px; line-height: 1.3; } 
+        .cert-layout-default .cert-memo-date { font-size: 15px; margin-bottom: 10px; }
+        .cert-layout-default .cert-copy-to { font-size: 15px; line-height: 1.4; } 
+        .cert-layout-default .cert-footer-gap { margin-top: 30px; margin-bottom: 15px; } 
+        .cert-layout-default .sig-space { height: 45px; } 
+
+        .cert-layout-compact .cert-body-text { font-size: 15px; line-height: 1.5; } 
+        .cert-layout-compact .liab-item { margin-bottom: 8px; line-height: 1.5; }
+        .cert-layout-compact .liab-table { font-size: 14px; margin-top: 1px; }
+        .cert-layout-compact .liab-words { line-height: 1.1; margin-top: 1px; }
+        .cert-layout-compact .cert-section-gap { margin-top: 15px; margin-bottom: 10px; }
+        .cert-layout-compact .cert-head-title { margin-top: 10px; margin-bottom: 5px; font-size: 14px; }
+        .cert-layout-compact .cert-head-table { font-size: 14px; margin-bottom: 8px; line-height: 1.1; }
+        .cert-layout-compact .cert-head-table td { padding-bottom: 1px; }
+        .cert-layout-compact .cert-closing-note { margin-bottom: 10px; margin-top: 5px; line-height: 1.15; }
+        .cert-layout-compact .cert-no-liab { margin-bottom: 3px; line-height: 1.2; }
+        .cert-layout-compact .cert-memo-date { font-size: 14px; margin-bottom: 5px; }
+        .cert-layout-compact .cert-copy-to { font-size: 14px; line-height: 1.3; } 
+        .cert-layout-compact .cert-footer-gap { margin-top: 15px; margin-bottom: 10px; }
+        .cert-layout-compact .sig-space { height: 30px; }
+
+        .cert-layout-ultra .cert-body-text { font-size: 14px; line-height: 1.3; } 
+        .cert-layout-ultra .liab-item { margin-bottom: 4px; line-height: 1.3; }
+        .cert-layout-ultra .liab-table { font-size: 13px; margin-top: 0; }
+        .cert-layout-ultra .liab-words { line-height: 1.1; margin-top: 0; }
+        .cert-layout-ultra .cert-section-gap { margin-top: 10px; margin-bottom: 5px; }
+        .cert-layout-ultra .cert-head-title { margin-top: 5px; margin-bottom: 2px; font-size: 13px; }
+        .cert-layout-ultra .cert-head-table { font-size: 13px; margin-bottom: 5px; line-height: 1.0; }
+        .cert-layout-ultra .cert-head-table td { padding-bottom: 0px; }
+        .cert-layout-ultra .cert-closing-note { margin-bottom: 8px; margin-top: 5px; line-height: 1.1; }
+        .cert-layout-ultra .cert-no-liab { margin-bottom: 2px; line-height: 1.1; }
+        .cert-layout-ultra .cert-memo-date { font-size: 13px; margin-bottom: 5px; }
+        .cert-layout-ultra .cert-copy-to { font-size: 13px; line-height: 1.2; } 
+        .cert-layout-ultra .cert-footer-gap { margin-top: 10px; margin-bottom: 5px; }
+        .cert-layout-ultra .sig-space { height: 20px; }
+
+        @media print { 
+            /* General print resets */
+            body { background: none; padding: 0; margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; } 
+            .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; } 
+            .generator-layout, .preview-section { display: block; margin: 0; padding: 0; width: 100%; overflow: visible !important; }
+            
+            .legal-sheet { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; padding: 0 0 10mm 0 !important; box-sizing: border-box !important; }
+            .cert-page { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; min-height: auto !important; padding: 0 !important; }
+            
+            /* Notesheet Edge-to-Edge Print adjustments */
+            .note-sheet { padding: 0 !important; box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; min-height: auto !important; page-break-after: always; position: relative !important; }
+            .note-horizontal-line { position: absolute !important; top: 2cm !important; left: 0 !important; right: 0 !important; height: 1.5px !important; background-color: #777 !important; display: block !important; }
+            .note-content-wrapper { margin-top: 2cm !important; padding-top: 1.5cm !important; padding-bottom: 2cm !important; min-height: calc(100vh - 2cm) !important; box-sizing: border-box !important; border-top: none !important; outline: none !important; }
+            .note-left-line { margin-left: 2cm !important; margin-right: 2cm !important; border-left: 1.5px solid #60a5fa !important; border-right: none !important; padding-left: 10mm !important; padding-right: 5mm !important; }
+            .note-right-line { margin-right: 2cm !important; margin-left: 2cm !important; border-right: 1.5px solid #60a5fa !important; border-left: none !important; padding-right: 10mm !important; padding-left: 5mm !important; }
+            
+            .editable-cell { background-color: transparent !important; }
+            thead { display: table-header-group; } 
+            tr { page-break-inside: avoid; } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="tab-menu">
+    <button class="tab-btn active" id="tab-main-gen" onclick="switchMainTab('generator')">Loan Generator</button>
+    <button class="tab-btn" id="tab-main-list" onclick="switchMainTab('list')">Saved Records</button>
+</div>
+
+<div id="view-list" class="record-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2 style="margin-top:0; margin-bottom: 0; color:#333;">Saved Loan Calculations</h2>
+        <button class="btn btn-export" style="width: auto; margin-bottom: 0; font-size: 14px;" onclick="exportRecordsToExcel()">📥 EXPORT RECORDS (EXCEL)</button>
+    </div>
+    
+    <div style="background: #e3f2fd; padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #bbdefb; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <div style="flex: 1.5; min-width: 200px;">
+            <input type="text" id="searchName" placeholder="🔍 Search by Name..." oninput="renderRecordList()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+        </div>
+        <div style="flex: 1; min-width: 120px;">
+            <select id="filterDept" onchange="renderRecordList()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+                <option value="">All Departments</option>
+            </select>
+        </div>
+        <div style="flex: 1; min-width: 100px;">
+            <select id="filterYear" onchange="renderRecordList()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+                <option value="">All Years</option>
+            </select>
+        </div>
+        <div style="flex: 1; min-width: 120px;">
+            <select id="filterMonth" onchange="renderRecordList()" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+                <option value="">All Months</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 10px; font-weight: bold; color: #1565c0; font-size: 15px;">
+        Total Cases: <span id="totalCasesCount" style="background: #1976d2; color: white; padding: 2px 8px; border-radius: 12px;">0</span>
+    </div>
+
+    <table class="record-table" id="recordTable">
+        <thead>
+            <tr>
+                <th width="5%">Sl.</th>
+                <th width="8%">Dept</th>
+                <th width="18%">Name</th>
+                <th width="22%">Office</th>
+                <th width="12%">Loans</th>
+                <th width="10%">Put up</th>
+                <th width="12%">Issue</th>
+                <th width="13%">Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="noRecordsMsg" style="text-align: center; padding: 30px; color: #777; font-style: italic; display: none;">
+        Saved record a la awm lo.
+    </div>
+</div>
+
+<div id="view-generator">
+    <div class="generator-layout">
+        
+        <div class="edit-panel">
+            <h2 style="margin-top:0; margin-bottom: 5px; color:#1976d2; text-align: center;">Govt. Loan Tool</h2>
+            <div style="text-align: center; font-style: italic; color: #555; margin-bottom: 15px; font-size: 12px; font-weight: bold;">Created by Lalmalsawmtluanga</div>
+            
+            <h3 class="section-title">Personal Details (Shared)</h3>
+            <div class="input-box"><label>Name</label><input type="text" id="inName" placeholder="e.g. Pi R. Lalparlawmi" oninput="updateLiveText()"></div>
+            <div class="input-box"><label>Designation</label><input type="text" id="inDesig" placeholder="e.g. Senior Nursing Officer" oninput="updateLiveText()"></div>
+            <div class="input-box"><label>Office / Department</label><input type="text" id="inOffice" placeholder="e.g. Civil Hospital, Aizawl" oninput="updateLiveText()"></div>
+            
+            <div class="input-box">
+                <label>Event Type & Date</label>
+                <div style="display: flex; gap: 5px;">
+                    <select id="inRetireLabel" onchange="updateLiveText()" style="flex: 1.2;">
+                        <option value="Date of Retirement">Date of Retirement</option>
+                        <option value="Date of Expiry">Date of Expiry</option>
+                        <option value="Date of Resignation">Date of Resignation</option>
+                        <option value="Date of Retirement (Vol)">Date of Retirement (Vol)</option>
+                    </select>
+                    <input type="date" id="inRetireDate" oninput="updateLiveText()" style="flex: 1;">
+                </div>
+            </div>
+
+            <div id="loan-tabs-container" class="loan-tabs-wrapper"></div>
+            <div id="loans-wrapper"></div>
+            
+            <button class="btn btn-add-loan" onclick="addLoanForm()">➕ ADD ANOTHER LOAN</button>
+
+            <h3 class="section-title">Certificate & Signatory Details</h3>
+            <div class="input-box">
+                <label>Thawnna tur Address</label>
+                <select id="inThawnnaTur" onchange="updateLiveText()">
+                    <option value="Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl">1. Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl</option>
+                    <option value="Joint Director, A&T Southern Zone, Mizoram, Lunglei">2. Joint Director, A&T Southern Zone, Mizoram, Lunglei</option>
+                    <option value="Joint Director (NPS), Office of the Chief Controller of Accounts, Accounts & Treasuries, Mizoram, Aizawl">3. Joint Director (NPS), Office of the Chief Controller of Accounts, Accounts & Treasuries, Mizoram, Aizawl</option>
+                </select>
+            </div>
+            <div class="input-box">
+                <label>DDO Office (Certificate-a lan dan tur)</label>
+                <input type="text" id="inDDOOffice" placeholder="e.g. Senior Medical Superintendent, Civil Hospital, Aizawl" oninput="updateLiveText()">
+            </div>
+            <div class="input-box">
+                <label>DDO Address (Copy to No. 2)</label>
+                <input type="text" id="inDDOAddress" placeholder="e.g. Senior Medical Superintendent, Civil Hospital, Aizawl" oninput="updateLiveText()">
+            </div>
+            
+            <div style="background: #e3f2fd; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #90caf9;">
+                <label style="color: #1565c0; font-size: 14px; margin-bottom: 8px; display: block; font-weight: bold;">Memo No. Auto-Generator</label>
+                <div style="display: flex; gap: 8px;">
+                    <div class="input-box" style="flex:1.5; margin-bottom:0;">
+                        <label style="font-size:11px;">Department</label>
+                        <select id="inMemoDept" onchange="updateLiveText()" style="padding: 6px;"></select>
+                    </div>
+                    <div class="input-box" style="flex:1; margin-bottom:0;">
+                        <label style="font-size:11px;">Year</label>
+                        <input type="number" id="inMemoYear" value="2025" oninput="updateLiveText()" style="padding: 6px;">
+                    </div>
+                    <div class="input-box" style="flex:0.8; margin-bottom:0;">
+                        <label style="font-size:11px;">Vol</label>
+                        <input type="text" id="inMemoVol" placeholder="(Optional)" oninput="updateLiveText()" style="padding: 6px;">
+                    </div>
+                    <div class="input-box" style="flex:1; margin-bottom:0;">
+                        <label style="font-size:11px;">Page No.</label>
+                        <input type="text" id="inMemoPage" placeholder="e.g. 32" oninput="updateLiveText()" style="padding: 6px;">
+                    </div>
+                </div>
+                <div style="margin-top: 10px; font-size: 13px; font-weight: bold; color: #333; text-align: center;">
+                    Preview: <span class="out-live-memo" style="color: #d32f2f;"></span>
+                </div>
+            </div>
+
+            <div class="input-box"><label>Issue Date</label><input type="date" id="inIssueDate" oninput="updateLiveText()"></div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>Signatory Name</label><input type="text" id="inSigName" value="THARA LUNGṬAU" oninput="updateLiveText()"></div>
+                <div class="input-box" style="flex:1"><label>Signatory Designation</label><input type="text" id="inSigDesig" value="Joint Director (L&M)" oninput="updateLiveText()"></div>
+            </div>
+
+            <div class="input-box" style="flex-direction: row; align-items: center; gap: 8px; margin-bottom: 15px; background: #e8f5e9; padding: 10px; border-radius: 4px; border: 1px solid #c8e6c9;">
+                <input type="checkbox" id="inShowSd" onchange="updateLiveText()">
+                <label for="inShowSd" style="margin: 0; cursor: pointer; color: #2e7d32;">Certificate-ah <strong>"Sd/-"</strong> tarlangin, hminga bracket () paih rawh</label>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-calc" onclick="generateAllCalculations()">⚙️ GENERATE CALCULATION</button>
+                <div style="width: 100%; text-align: center; font-size: 12px; color: #d32f2f; margin-bottom: 10px; font-weight: bold;">
+                    Note: Table ami 'Recovery' zat hi i click in i edit thei a, a dang zawng a in-adjust vek ang.
+                </div>
+                
+                <button class="btn btn-save" id="btnSaveRecord" onclick="saveRecord()">💾 SAVE RECORD</button>
+                <button class="btn btn-export" onclick="exportToExcel()">📥 EXPORT CALC TO EXCEL</button>
+                
+                <button class="btn btn-print-calc" onclick="printPage('legal')">🖨️ Print Calc Sheets</button>
+                <button class="btn btn-print-cert" onclick="printPage('a4')">🖨️ Print Certificate</button>
+                <button class="btn btn-print-note" onclick="printPage('note')">🖨️ Print Notesheet</button>
+                <button class="btn btn-clear" onclick="clearFormAndReset()">✨ NEW / CLEAR ALL</button>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <div class="preview-tabs">
+                <button class="prev-tab-btn active" id="tab-calc" onclick="switchPreview('legal')">Calculation Sheets (Legal)</button>
+                <button class="prev-tab-btn" id="tab-cert" onclick="switchPreview('cert')">Demand Certificate (Legal)</button>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <button class="prev-tab-btn" id="tab-note" onclick="switchPreview('note')">Notesheet (Legal)</button>
+                    <div style="display: flex; background: #eee; border: 1px solid #ccc; border-radius: 4px; overflow: hidden; height: 100%;">
+                        <button class="note-page-toggle active" id="btn-note-left" onclick="toggleNotePage('left')" title="Front Page" style="border-right: 1px solid #ccc;">L</button>
+                        <button class="note-page-toggle" id="btn-note-right" onclick="toggleNotePage('right')" title="Back Page">R</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="legal-pages-container">
+                <div class="legal-sheet" style="display: flex; justify-content: center; align-items: center; color: #777;">
+                    <h3>Loan Details thun la, "Generate Calculation" hmet rawh le.</h3>
+                </div>
+            </div>
+            
+            <div id="note-pages-container">
+                <div class="note-sheet">
+                    <div class="note-horizontal-line"></div>
+                    <div class="note-content-wrapper note-left-line" contenteditable="true" id="editable-note-wrapper">
+                        <div class="note-p" id="note-intro-paragraph">
+                            Received an application from the <span class="out-live-copy2-address">...</span>, for the issue of an NDC/DC for <span class="out-live-name">...</span>, <span class="out-live-action-text">who is due to retire on</span> <span class="out-live-retire-date">...</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">...</span>). Therefore, a <span id="out-note-cert-type">Demand Certificate</span> may be issued.
+                        </div>
+                        <div class="note-calc-header">Calculation :</div>
+                        
+                        <div id="note-calc-container">
+                            <div style="text-align:center; color:#999; font-weight:normal; margin-bottom: 20px;">
+                                Loan Details thun la, "Generate Calculation" hmet rawh le.
+                            </div>
+                        </div>
+
+                        <div id="note-closing-text" style="margin-top: 30px; font-size: 16px; page-break-inside: avoid; page-break-before: avoid;">Put up for your approval, please.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="legal-cert-page" class="cert-page cert-layout-default" contenteditable="true">
+                <!-- BANA KAIH LOGO BELHNA -->
+                <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style="position: absolute; top: 50px; left: 50px; height: 60px; z-index: 10;">
+                
+                <div class="text-center cert-header" style="font-size: 15px; margin-bottom: 15px; font-family: 'Times New Roman', serif; font-weight: bold;">
+                    GOVERNMENT OF MIZORAM<br>
+                    OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br>
+                    ACCOUNTS & TREASURIES; MIZORAM : AIZAWL
+                </div>
+
+                <div style="text-align: right; margin-bottom: 25px; font-size: 15px; line-height: 1.4;">
+                    <span class="out-live-memo">...</span><br>
+                    Dated Aizawl, the <span class="outCertDate">...</span>.
+                </div>
+
+                <div class="text-center cert-title" style="font-size: 17px; font-weight: bold; text-decoration: underline; margin-bottom: 25px;">DEMAND CERTIFICATE</div>
+
+                <div class="cert-body cert-body-text" style="text-align: justify;">
+                    <span style="margin-left: 40px;">This</span> is to certify that <span class="bold out-live-name">...</span> under the Office of the <span class="bold out-live-ddo-office">...</span> <span class="out-live-action-text">who is due to retire on</span> <span style="margin-left: 10px; margin-right: 10px;" class="bold out-live-retire-date">...</span> has an outstanding liabilities as shown below:
+                    
+                    <div class="liabilities-list" id="certLiabilitiesContainer" style="margin-top: 20px; margin-bottom: 5px;">
+                        </div>
+                    
+                    <div id="certHeadsSection" style="display: none;">
+                        <div class="cert-head-title">The outstanding amount is to be credited under the <span class="bold">Head/Heads</span> of Account :</div>
+                        <table class="cert-head-table" style="width: 85%; margin-left: auto; margin-right: auto; text-align: left; font-weight: bold;">
+                            <tr>
+                                <td style="text-align: center; text-decoration: underline; width: 50%;">PRINCIPAL</td>
+                                <td style="text-align: center; text-decoration: underline; width: 50%;">INTEREST</td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top; padding-right: 25px;">
+                                    <table id="certHeadsPrinTable" style="width: 100%; border-collapse: collapse;">
+                                        </table>
+                                </td>
+                                <td style="vertical-align: top; padding-left: 25px;">
+                                    <table id="certHeadsIntTable" style="width: 100%; border-collapse: collapse;">
+                                        </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="outCertNoLiabilitiesStr" class="cert-no-liab" style="text-indent: 40px; text-align: justify;">
+                        </div>
+
+                    <div class="cert-closing-note" style="font-weight: bold; font-style: italic; text-indent: 40px; text-align: justify;">
+                        Original final recovery challan may be submitted to the undersigned after drawal of Pension & DCRG for closing the account.
+                    </div>
+                </div>
+
+                <div class="text-right cert-section-gap">
+                    <div style="display: inline-block; text-align: center; min-width: 250px; font-size: inherit;">
+                        <div class="sig-space"></div>
+                        <span class="cert-sd-mark" style="display: none;">Sd/-<br></span>
+                        <span class="bold cert-sig-name-disp">...</span><br>
+                        <span class="out-live-sig-desig">Joint Director (L&M)</span><br>
+                        Accounts & Treasuries
+                    </div>
+                </div>
+                
+                <div class="cert-memo-date" style="display: flex; justify-content: space-between;">
+                    <div>Memo <span class="out-live-memo">...</span></div>
+                    <div>Aizawl, the <span class="outCertDate">...</span>.</div>
+                </div>
+                
+                <div class="cert-copy-to">
+                    <div style="font-style: italic; margin-bottom: 5px;">Copy to :</div>
+                    <ol style="margin: 0; padding-left: 65px; text-align: justify;">
+                        <li class="mb-1">The <span class="bold out-live-thawnna">Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl</span> for making adjustment of the Outstanding amount of <span class="bold">Rs. <span id="outCertTotalVal2">0</span>/-</span> shown above from the DCRG of the <span class="out-live-status">retiring</span> Govt. Servant.</li>
+                        <li class="mb-1">The <span class="bold out-live-copy2-address">...</span> <span id="outCertCopy2Action">for information.</span></li>
+                        <li>Person concerned for information.</li>
+                    </ol>
+                </div>
+                
+                 <div class="text-right cert-footer-gap">
+                    <div style="display: inline-block; text-align: center; min-width: 250px; font-weight: bold; text-transform: uppercase; font-size: inherit;">
+                        <div class="sig-space"></div>
+                        <span class="out-live-sig-desig-upper">JOINT DIRECTOR (L&M)</span><br>
+                        Accounts & Treasuries
+                    </div>
+                </div>
+
+                <div style="margin-top: 50px; border-top: 1px dashed #999; padding-top: 5px; text-align: center; font-size: 9px; color: #555; line-height: 1.2;">
+                    <span style="font-family: Arial, sans-serif;">☎</span> 0389-2343381/2347781(CCA) Fax-2342588/2343383(Director)/2345591(ELFA)/2345187[JD(A)]<br>
+                    2345270 [JD(P)]/2345820 [DD(A)]/2340055[DD(E)]/ 2306221[DD(P)]/2345235[DD(F)]/2345825[AD(P)]/ 2356162 [Supdt.]
+                </div>
+            </div>
+
+            <div id="ndc-cert-page" class="cert-page" contenteditable="true">
+                <!-- BANA KAIH LOGO BELHNA -->
+                <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style="position: absolute; top: 50px; left: 50px; height: 60px; z-index: 10;">
+                
+                <div class="text-center cert-header" style="font-size: 15px; margin-bottom: 10px; font-family: 'Times New Roman', serif; font-weight: bold;">
+                    GOVERNMENT OF MIZORAM<br>
+                    OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br>
+                    ACCOUNTS & TREASURIES; MIZORAM : AIZAWL
+                </div>
+
+                <div style="text-align: right; margin-bottom: 15px; font-size: 15px; line-height: 1.4;">
+                    <span class="out-live-memo">...</span><br>
+                    Dated Aizawl, the <span class="outCertDate">...</span>.
+                </div>
+
+                <div class="text-center cert-title" style="font-size: 17px; font-weight: bold; text-decoration: underline; margin-bottom: 15px;">NO DEMAND CERTIFICATE</div>
+
+                <div class="cert-body" style="text-align: justify; font-size: 15px; line-height: 1.5;">
+                    <p style="text-indent: 40px; margin-bottom: 8px; margin-top:0;">This is to certify that <span class="bold out-live-name">...</span> under the Department/Office of the <span class="bold out-live-ddo-office">...</span> <span class="out-live-action-text">who is due to retire on</span> <span class="bold out-live-retire-date">...</span> was granted <span id="ndcLoanListStr">...</span></p>
+
+                    <p style="text-indent: 40px; margin-bottom: 8px; margin-top:0;">The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no any outstanding balances in respect of <span class="bold out-live-name-only">...</span> and <span id="ndcGenderPronoun">he/she</span> had not drawn any other long term loan.</p>
+
+                    <p style="text-indent: 40px; margin-bottom: 15px; margin-top:0;">Hence, No Demand Certificate of <span class="bold">HBA, Scooter Advance, Computer Advance, Motor Car Advance and Special Car Loan</span> is hereby issued.</p>
+
+                    <div style="margin-bottom: 20px; font-weight: bold; line-height: 1.3;">
+                        <span style="text-decoration: underline;"><span id="ndcHisHer">Her/His</span> Code No. :</span><br>
+                        <div id="ndcCodeList"></div>
+                    </div>
+                </div>
+
+                <div class="text-right" style="margin-top: 20px; margin-bottom: 20px;">
+                    <div style="display: inline-block; text-align: center; min-width: 250px; font-size: 15px;">
+                        <div style="height: 35px;"></div>
+                        <span class="cert-sd-mark" style="display: none;">Sd/-<br></span>
+                        <span class="bold cert-sig-name-disp">...</span><br>
+                        <span class="out-live-sig-desig">Joint Director (L&M)</span><br>
+                        Accounts & Treasuries
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px;">
+                    <div>Memo <span class="out-live-memo">...</span></div>
+                    <div>Dated Aizawl, the <span class="outCertDate">...</span>.</div>
+                </div>
+                
+                <div style="font-size: 14px;">
+                    <div style="font-style: italic; margin-bottom: 5px;">Copy to :</div>
+                    <ol style="margin: 0; padding-left: 65px; text-align: justify; line-height: 1.4;">
+                        <li class="mb-1">The <span class="bold">Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl</span> for information.</li>
+                        <li class="mb-1">The <span class="bold out-live-copy2-address">...</span> <span id="ndcExcessClaimStr">for information and necessary action.</span></li>
+                        <li>Person concerned for information.</li>
+                    </ol>
+                </div>
+
+                <div class="text-right" style="margin-top: 30px; margin-bottom: 10px;">
+                    <div style="display: inline-block; text-align: center; min-width: 250px; font-weight: bold; font-size: 15px;">
+                        <div style="height: 35px;"></div>
+                        <span class="out-live-sig-desig-upper">JOINT DIRECTOR (L&M)</span><br>
+                        ACCOUNTS & TREASURIES
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // CONFIGURATION & GLOBAL STATE
+    // ==========================================
+    const LOAN_TYPES = {
+        "HBA": "HOUSE BUILDING ADVANCE",
+        "SA": "SCOOTER ADVANCE",
+        "MCA": "MOTOR CAR ADVANCE",
+        "COM": "COMPUTER ADVANCE",
+        "SCL": "SPECIAL CAR LOAN"
+    };
+    
+    const DEPT_CODES = {
+        "COOP": 13, "DC": 15, "DAT": 17, "DMR": 19, "DIET": 21, "ECS": 23, "EXE": 25, "EDN": 27, "ELCN": 29, "FOR": 31, "FCA": 33, "FISH": 35, "GHC": 37, "GAD": 39, "G&M": 41, "GOV": 43, "HTE": 45, "HSD": 47, "HME": 49, "IND": 51, "HOR": 53, "I&PR": 55, "ICT": 57, "IFSL": 59, "IRI": 61, "LRS": 63, "LAD": 65, "LAE": 67, "LGM": 69, "L&J": 71, "MLAS": 73, "MPSC": 75, "MRHG": 77, "MIC": 79, "POL": 81, "P&E": 83, "P&S": 85, "PWD": 87, "PHE": 89, "PRI": 91, "RD": 93, "SWD": 95, "SOIL": 97, "S&T": 99, "SAD": 101, "SYS": 103, "SERI": 105, "SPB": 107, "SIPMIU": 109, "SIN": 111, "TAX": 113, "TRP": 115, "TRM": 117, "T&C": 119, "UD&PA": 121, "VETY": 123, "ZSB": 125
+    };
+
+    const HEADS_OF_ACCOUNT = {
+        "PRINCIPAL": {
+            "HBA": "761000201000000",
+            "MCA": "761000202000000",
+            "Other conveyance": "761000203000000",
+            "COM": "761000204000000"
+        },
+        "INTEREST": {
+            "HBA": "004904800010100",
+            "MCA": "004904800010200",
+            "Other conveyance": "004904800010300",
+            "COM": "004904800010400"
+        }
+    };
+
+    let isGlobalNDC = false; 
+
+    function getHeadCategory(loanType) {
+        if (loanType === "SA" || loanType === "SCL") return "Other conveyance";
+        return loanType; 
+    }
+
+    // ==========================================
+    // UTILITIES & FORMATTING
+    // ==========================================
+    function fmtAmt(num) { return Number(num).toLocaleString('en-IN'); }
+    function parseAmt(str) { return parseFloat(str.replace(/,/g, '')) || 0; }
+
+    function formatFullDate(dateStr) {
+        if(!dateStr) return "...";
+        let d = new Date(dateStr);
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let day = d.getDate();
+        let suffix = "th";
+        if (day % 10 === 1 && day !== 11) suffix = "st"; else if (day % 10 === 2 && day !== 12) suffix = "nd"; else if (day % 10 === 3 && day !== 13) suffix = "rd";
+        return `${day}<sup>${suffix}</sup> ${months[d.getMonth()]}, ${d.getFullYear()}`;
+    }
+    
+    function formatDotDate(dateStr) {
+        if(!dateStr) return "...";
+        let d = new Date(dateStr);
+        let month = (d.getMonth() + 1).toString().padStart(2, '0');
+        let day = d.getDate().toString().padStart(2, '0');
+        return `${day}.${month}.${d.getFullYear()}`;
+    }
+
+    function formatMonthYear(d) {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return months[d.getMonth()] + "-" + d.getFullYear().toString().slice(-2);
+    }
+    
+    function formatDrawalMonthStr(dateStr) {
+        if(!dateStr) return "";
+        let d = new Date(dateStr);
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return months[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    function numToWordsStrict(num) {
+        if (num === 0) return 'Zero';
+        let absNum = Math.abs(num);
+        const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+        const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        function inWords(n) {
+            if ((n = n.toString()).length > 9) return 'overflow';
+            let regexMatch = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!regexMatch) return ''; let str = '';
+            str += (regexMatch[1] != 0) ? (a[Number(regexMatch[1])] || b[regexMatch[1][0]] + ' ' + a[regexMatch[1][1]]) + ' lakh ' : ''; 
+            if(regexMatch[1] != 0){
+                str = (a[Number(regexMatch[1])] || b[regexMatch[1][0]] + ' ' + a[regexMatch[1][1]]) + ' crore ';
+            }
+            str += (regexMatch[2] != 0) ? (a[Number(regexMatch[2])] || b[regexMatch[2][0]] + ' ' + a[regexMatch[2][1]]) + ' lakh ' : '';
+            str += (regexMatch[3] != 0) ? (a[Number(regexMatch[3])] || b[regexMatch[3][0]] + ' ' + a[regexMatch[3][1]]) + ' thousand ' : '';
+            str += (regexMatch[4] != 0) ? (a[Number(regexMatch[4])] || b[regexMatch[4][0]] + ' ' + a[regexMatch[4][1]]) + ' hundred ' : '';
+            str += (regexMatch[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(regexMatch[5])] || b[regexMatch[5][0]] + ' ' + a[regexMatch[5][1]]) : '';
+            return str.trim();
+        }
+        let words = inWords(absNum);
+        return words.charAt(0).toUpperCase() + words.slice(1);
+    }
+
+    function amountToWords(amount) {
+        if (amount === 0) return "Rupees Zero only";
+        let isNegative = amount < 0;
+        let absAmount = Math.abs(amount);
+        let words = numToWordsStrict(absAmount);
+        return (isNegative ? "Excess Rupees " : "Rupees ") + words.charAt(0).toLowerCase() + words.slice(1) + " only";
+    }
+
+    // ==========================================
+    // UI NAVIGATION & EXPORT
+    // ==========================================
+    function switchMainTab(tab) {
+        document.getElementById('view-generator').style.display = tab === 'generator' ? 'block' : 'none';
+        document.getElementById('view-list').style.display = tab === 'list' ? 'block' : 'none';
+        document.getElementById('tab-main-gen').classList.toggle('active', tab === 'generator');
+        document.getElementById('tab-main-list').classList.toggle('active', tab === 'list');
+        if (tab === 'list') {
+            populateFilterOptions();
+            renderRecordList();
+        }
+    }
+
+    function switchPreview(type) {
+        document.getElementById('legal-pages-container').style.display = type === 'legal' ? 'block' : 'none';
+        document.getElementById('note-pages-container').style.display = type === 'note' ? 'flex' : 'none';
+        
+        let legalCert = document.getElementById('legal-cert-page');
+        let ndcCert = document.getElementById('ndc-cert-page');
+
+        if (type === 'cert') {
+            if (isGlobalNDC) {
+                legalCert.style.display = 'none';
+                ndcCert.style.display = 'block';
+            } else {
+                legalCert.style.display = 'block';
+                ndcCert.style.display = 'none';
+            }
+        } else {
+            legalCert.style.display = 'none';
+            ndcCert.style.display = 'none';
+        }
+        
+        document.getElementById('tab-calc').classList.toggle('active', type === 'legal');
+        document.getElementById('tab-cert').classList.toggle('active', type === 'cert');
+        document.getElementById('tab-note').classList.toggle('active', type === 'note');
+    }
+    
+    function toggleNotePage(side) {
+        let wrapper = document.getElementById('editable-note-wrapper');
+        let btnL = document.getElementById('btn-note-left');
+        let btnR = document.getElementById('btn-note-right');
+        
+        if (side === 'left') {
+            wrapper.classList.remove('note-right-line');
+            wrapper.classList.add('note-left-line');
+            btnL.classList.add('active');
+            btnR.classList.remove('active');
+        } else {
+            wrapper.classList.remove('note-left-line');
+            wrapper.classList.add('note-right-line');
+            btnR.classList.add('active');
+            btnL.classList.remove('active');
+        }
+        
+        if (!document.getElementById('tab-note').classList.contains('active')) {
+            switchPreview('note');
+        }
+    }
+
+    function printPage(pageType) {
+        const style = document.createElement('style');
+        if (pageType === 'a4') {
+            switchPreview('cert');
+            let pageSize = isGlobalNDC ? 'A4 portrait' : 'legal portrait';
+            style.innerHTML = `@media print { 
+                @page { size: ${pageSize}; margin: 20mm; } 
+                body { margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; } 
+                .preview-section { overflow: visible !important; }
+                #legal-pages-container, #note-pages-container { display: none !important; } 
+                .cert-page { display: block !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; } 
+                ${isGlobalNDC ? '#legal-cert-page { display: none !important; }' : '#ndc-cert-page { display: none !important; }'}
+            }`;
+        } else if (pageType === 'note') {
+            switchPreview('note');
+            style.innerHTML = `@media print { 
+                @page { size: legal portrait; margin: 0; } 
+                body { margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; } 
+                .preview-section { overflow: visible !important; }
+                .cert-page, #legal-pages-container { display: none !important; } 
+                #note-pages-container { display: flex !important; width: 100% !important; } 
+                .note-sheet { padding: 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; width: 100% !important; position: relative !important; } 
+                .note-horizontal-line { position: absolute !important; top: 2cm !important; left: 0 !important; right: 0 !important; height: 1.5px !important; background-color: #777 !important; display: block !important; }
+                .note-content-wrapper { padding-top: 1.5cm !important; margin-top: 2cm !important; min-height: calc(100vh - 2cm) !important; box-sizing: border-box !important; border-top: none !important; outline: none !important; }
+                .note-left-line { margin-left: 2cm !important; margin-right: 2cm !important; border-left: 1.5px solid #60a5fa !important; border-right: none !important; padding-left: 10mm !important; padding-right: 5mm !important; }
+                .note-right-line { margin-right: 2cm !important; margin-left: 2cm !important; border-right: 1.5px solid #60a5fa !important; border-left: none !important; padding-right: 10mm !important; padding-left: 5mm !important; }
+            }`;
+        } else {
+            switchPreview('legal');
+            style.innerHTML = `@media print { 
+                @page { size: legal portrait; margin: 10mm 15mm; } 
+                body { margin: 0; -webkit-print-color-adjust: exact; color-adjust: exact; } 
+                .preview-section { overflow: visible !important; }
+                .cert-page, #note-pages-container { display: none !important; } 
+                #legal-pages-container { display: block !important; } 
+                .legal-sheet { padding: 0 0 10mm 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; } 
+            }`;
+        }
+        document.head.appendChild(style);
+        setTimeout(() => { window.print(); document.head.removeChild(style); }, 100);
+    }
+    
+    function exportToExcel() {
+        let container = document.getElementById('legal-pages-container');
+        if (!container || container.innerText.includes('Loan Details thun la')) {
+            alert("Export turin calculation a la awm lo. 'GENERATE CALCULATION' hmet hmasa rawh le.");
+            return;
+        }
+        
+        let htmlContent = container.innerHTML;
+        let userName = document.getElementById('inName').value || 'User';
+        let excelFile = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: 'Times New Roman', Times, serif; }
+                    table { border-collapse: collapse; }
+                    td, th { padding: 5px; }
+                    .calc-table th, .calc-table td { border: 1px solid black; text-align: center; }
+                    .header-box-table { border: 2px solid black; margin-bottom: 20px; }
+                    .header-box-title { font-weight: bold; font-size: 16px; border-bottom: 2px solid black; text-align: center; }
+                    .bold { font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                ${htmlContent}
+            </body>
+            </html>
+        `;
+
+        let blob = new Blob([excelFile], { type: 'application/vnd.ms-excel' });
+        let url = URL.createObjectURL(blob);
+        let downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `Loan_Calculation_${userName.replace(/\s+/g, '_')}_${new Date().getTime()}.xls`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+
+    // Export Saved Records Table to Excel (MS Word Copy-Paste Friendly)
+    function exportRecordsToExcel() {
+        let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+        if (db.length === 0) {
+            alert("Export tur record a awm lo.");
+            return;
+        }
+
+        let tableHTML = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    table { border-collapse: collapse; width: 100%; font-family: 'Times New Roman', serif; font-size: 11pt; }
+                    th, td { border: 1px solid black; padding: 6px; text-align: left; vertical-align: top; }
+                    th { background-color: #e3f2fd; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <h3 style="font-family: 'Times New Roman', serif;">Saved Loan Calculations</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sl. No.</th>
+                            <th>Dept</th>
+                            <th>Name</th>
+                            <th>Office</th>
+                            <th>Memo No.</th>
+                            <th>Loan Types</th>
+                            <th>Put up Date</th>
+                            <th>Issue Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        db.forEach((rec, index) => {
+            let rDept = (rec.sharedInputs && rec.sharedInputs.inMemoDept) ? rec.sharedInputs.inMemoDept : "N/A";
+            let mYear = (rec.sharedInputs && rec.sharedInputs.inMemoYear) ? rec.sharedInputs.inMemoYear : "2025";
+            let mDept = (rec.sharedInputs && rec.sharedInputs.inMemoDept) ? rec.sharedInputs.inMemoDept : "HSD";
+            let mVol = (rec.sharedInputs && rec.sharedInputs.inMemoVol) ? rec.sharedInputs.inMemoVol.trim() : "";
+            let mPage = (rec.sharedInputs && rec.sharedInputs.inMemoPage) ? rec.sharedInputs.inMemoPage : "...";
+            let mCode = DEPT_CODES[mDept] || "00";
+            let mVolStr = mVol ? `-${mVol}` : "";
+            let fullMemo = `No.G. 26041/${mCode}/${mYear}-CCA(L&M)/${mDept}${mVolStr}/${mPage}`;
+            let displayDate = (rec.dateSaved || "").split(',')[0];
+
+            tableHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${rDept}</td>
+                    <td>${rec.name}</td>
+                    <td>${rec.dept}</td>
+                    <td>${fullMemo}</td>
+                    <td>${rec.type}</td>
+                    <td>${displayDate}</td>
+                    <td>${rec.issueDate || ''}</td>
+                </tr>
+            `;
+        });
+
+        tableHTML += `</tbody></table></body></html>`;
+
+        let blob = new Blob([tableHTML], { type: 'application/vnd.ms-excel' });
+        let url = URL.createObjectURL(blob);
+        let downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `Saved_Records_List_${new Date().toISOString().split('T')[0]}.xls`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+
+    // ==========================================
+    // MULTIPLE LOAN LOGIC (TABS ENABLED)
+    // ==========================================
+    let loanIndex = 0;
+    let activeLoans = []; 
+    let allCalculatedData = []; 
+    let currentRecordId = null;
+
+    function addLoanForm() {
+        const idx = loanIndex++;
+        activeLoans.push(idx);
+
+        const tabHtml = `
+        <div class="loan-tab" id="loanTabBtn_${idx}" onclick="switchLoanTab(${idx})">
+            <span id="loanTabLabel_${idx}">Loan</span>
+        </div>`;
+        document.getElementById('loan-tabs-container').insertAdjacentHTML('beforeend', tabHtml);
+
+        const html = `
+        <div class="loan-container" id="loanBox_${idx}">
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1">
+                    <label>Loan Type</label>
+                    <select id="inLoanType_${idx}" onchange="updateLoanTabLabels(); updateLiveText();">
+                        <option value="HBA">HBA (House Building)</option>
+                        <option value="SA">SA (Scooter Advance)</option>
+                        <option value="MCA">MCA (Motor Car)</option>
+                        <option value="COM">COM (Computer)</option>
+                        <option value="SCL">SCL (Special Car)</option>
+                    </select>
+                </div>
+                <div class="input-box" style="flex:2"><label>Code No.</label><input type="text" id="inCode_${idx}" placeholder="e.g. HBA/HME/127" oninput="updateLiveText()"></div>
+            </div>
+            
+            <div class="input-box"><label>Sanction Order No. & Date</label><input type="text" id="inSanction_${idx}" placeholder="e.g. G.26028/1/2010-DHME 16.9.2010"></div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>Sanctioned Amount (₹)</label><input type="number" id="inAmount_${idx}" placeholder="150000" oninput="calculateAutoEMI(${idx})"></div>
+                <div class="input-box" style="flex:1"><label>Rate of Interest (%)</label><input type="number" step="0.1" id="inInterestRate_${idx}" placeholder="6.5"></div>
+            </div>
+
+            <h4 style="margin-bottom:5px; font-size:14px; color:#555;">Drawal Details (Instalments)</h4>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>1st Drawal Month</label><input type="month" id="inDrawalDate1_${idx}"></div>
+                <div class="input-box" style="flex:1"><label>1st Amount (₹)</label><input type="number" id="inDrawnAmount1_${idx}"></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>2nd Drawal Month</label><input type="month" id="inDrawalDate2_${idx}"></div>
+                <div class="input-box" style="flex:1"><label>2nd Amount (₹)</label><input type="number" id="inDrawnAmount2_${idx}" value="0"></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>3rd Drawal Month</label><input type="month" id="inDrawalDate3_${idx}"></div>
+                <div class="input-box" style="flex:1"><label>3rd Amount (₹)</label><input type="number" id="inDrawnAmount3_${idx}" value="0"></div>
+            </div>
+
+            <h4 style="margin-bottom:5px; font-size:14px; color:#555;">Recovery Details</h4>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>Principal Instl. (Max)</label><input type="number" id="inNoOfInstalment_${idx}" value="120" oninput="calculateAutoEMI(${idx})"></div>
+                <div class="input-box" style="flex:1"><label>Principal Monthly (₹)</label><input type="number" id="inInstalment_${idx}" placeholder="1250"></div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>Recovery Start Month</label><input type="month" id="inStartMonth_${idx}"></div>
+                <div class="input-box" style="flex:1"><label>Int. Already Paid (₹)</label><input type="number" id="inRecoveredInterest_${idx}" value="0"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex:1"><label>Interest Instl.</label><input type="number" id="inIntNoOfInstalment_${idx}" value="60"></div>
+                <div class="input-box" style="flex:1"><label>Int. Monthly (₹)</label><input type="number" id="inIntInstalment_${idx}" placeholder="Auto"></div>
+                <div class="input-box" style="flex:1"><label>Int. Last (₹)</label><input type="number" id="inIntLastInstalment_${idx}" placeholder="Auto"></div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <button onclick="removeLoanForm(event, ${idx})" style="width: 100%; background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 4px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s;">
+                    🗑️ REMOVE THIS LOAN
+                </button>
+            </div>
+            
+        </div>`;
+        
+        document.getElementById('loans-wrapper').insertAdjacentHTML('beforeend', html);
+        
+        updateLoanTabLabels(); 
+        switchLoanTab(idx); 
+        updateLiveText(); 
+    }
+
+    function removeLoanForm(event, idx) {
+        event.stopPropagation(); 
+        if (activeLoans.length <= 1) {
+            alert("Loan pakhat tal chu thun a ngai.");
+            return;
+        }
+
+        document.getElementById(`loanBox_${idx}`).remove();
+        document.getElementById(`loanTabBtn_${idx}`).remove();
+        activeLoans = activeLoans.filter(id => id !== idx);
+        
+        updateLoanTabLabels();
+        updateLiveText();
+
+        if (activeLoans.length > 0) {
+            switchLoanTab(activeLoans[0]);
+        }
+    }
+
+    function switchLoanTab(idx) {
+        document.querySelectorAll('.loan-tab').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.loan-container').forEach(el => el.classList.remove('active'));
+        
+        let tabBtn = document.getElementById(`loanTabBtn_${idx}`);
+        let loanBox = document.getElementById(`loanBox_${idx}`);
+        
+        if(tabBtn) tabBtn.classList.add('active');
+        if(loanBox) loanBox.classList.add('active');
+    }
+
+    function updateLoanTabLabels() {
+        activeLoans.forEach((id, index) => {
+            let el = document.getElementById(`inLoanType_${id}`);
+            if (el) {
+                document.getElementById(`loanTabLabel_${id}`).innerText = el.value + ' (' + (index + 1) + ')';
+            }
+        });
+    }
+
+    function calculateAutoEMI(idx) {
+        let amt = parseFloat(document.getElementById(`inAmount_${idx}`).value) || 0;
+        let inst = parseInt(document.getElementById(`inNoOfInstalment_${idx}`).value) || 0;
+        if (amt > 0 && inst > 0) {
+            document.getElementById(`inInstalment_${idx}`).value = Math.ceil(amt / inst);
+        }
+    }
+
+    // --- LIVE TEXT UPDATE ---
+    function updateLiveText() {
+        let name = document.getElementById('inName').value || "...";
+        let desig = document.getElementById('inDesig').value || "...";
+        let office = document.getElementById('inOffice').value.trim() || "...";
+        let ddoOffice = document.getElementById('inDDOOffice').value.trim() || "...";
+        let retireLabel = document.getElementById('inRetireLabel').value;
+        let retireDateRaw = document.getElementById('inRetireDate').value;
+        
+        let issueDateRaw = document.getElementById('inIssueDate').value;
+        let sigName = document.getElementById('inSigName').value || "THARA LUNGṬAU";
+        let sigDesig = document.getElementById('inSigDesig').value || "Joint Director (L&M)";
+
+        let thawnna = document.getElementById('inThawnnaTur').value;
+        let ddo = document.getElementById('inDDOAddress').value.trim() || "...";
+        
+        let showSd = document.getElementById('inShowSd').checked;
+
+        // Memo No. Assembly (Vol telin)
+        let mYear = document.getElementById('inMemoYear').value || "2025";
+        let mDept = document.getElementById('inMemoDept').value || "HSD";
+        let mVol = document.getElementById('inMemoVol').value.trim();
+        let mPage = document.getElementById('inMemoPage').value || "...";
+        let mCode = DEPT_CODES[mDept] || "00";
+        
+        let mVolStr = mVol ? `-${mVol}` : "";
+        let fullMemo = `No.G. 26041/${mCode}/${mYear}-CCA(L&M)/${mDept}${mVolStr}/${mPage}`;
+
+        // Address consolidation (Copy 2)
+        let copy2Address = ddo !== "..." ? ddo : "...";
+
+        // Populate common details
+        document.querySelectorAll('.out-live-name').forEach(el => el.innerText = name + (desig !== "..." ? ", " + desig : ""));
+        document.querySelectorAll('.out-live-office').forEach(el => el.innerText = office);
+        document.querySelectorAll('.out-live-ddo-office').forEach(el => el.innerText = ddoOffice);
+        document.querySelectorAll('.out-live-copy2-address').forEach(el => el.innerText = copy2Address);
+        
+        // Populate NDC specific name
+        let cleanName = name.split(',')[0];
+        document.querySelectorAll('.out-live-name-only').forEach(el => el.innerText = cleanName || "...");
+
+        // Gender Pronouns for NDC
+        let nLower = cleanName.toLowerCase();
+        let pronoun = "he/she";
+        let posPronoun = "His/Her";
+        if (nLower.startsWith("pi ")) { pronoun = "she"; posPronoun = "Her"; }
+        else if (nLower.startsWith("pu ")) { pronoun = "he"; posPronoun = "His"; }
+        
+        let ndcGenderPronoun = document.getElementById('ndcGenderPronoun');
+        if(ndcGenderPronoun) ndcGenderPronoun.innerText = pronoun;
+        let ndcHisHer = document.getElementById('ndcHisHer');
+        if(ndcHisHer) ndcHisHer.innerText = posPronoun;
+
+        document.querySelectorAll('.out-live-retire-label').forEach(el => el.innerText = retireLabel);
+        document.querySelectorAll('.out-live-retire-date').forEach(el => el.innerText = formatDotDate(retireDateRaw));
+
+        // Signatory Name Logic 
+        document.querySelectorAll('.out-calc-sig-name').forEach(el => el.innerText = "(" + sigName.toUpperCase() + ")");
+        
+        // Handle Sd/- mark for both DC and NDC
+        document.querySelectorAll('.cert-sig-name-disp').forEach(el => {
+            el.innerText = showSd ? sigName.toUpperCase() : "(" + sigName.toUpperCase() + ")";
+        });
+        document.querySelectorAll('.cert-sd-mark').forEach(el => {
+            el.style.display = showSd ? 'inline' : 'none';
+        });
+
+        document.querySelectorAll('.out-live-sig-desig').forEach(el => el.innerText = sigDesig);
+        document.querySelectorAll('.out-live-sig-desig-upper').forEach(el => el.innerText = sigDesig.toUpperCase());
+
+        document.querySelectorAll('.out-live-memo').forEach(el => el.innerText = fullMemo);
+        document.querySelectorAll('.out-live-thawnna').forEach(el => el.innerText = thawnna);
+        document.querySelectorAll('.out-live-ddo').forEach(el => el.innerText = ddo);
+        
+        let dateHTML = formatFullDate(issueDateRaw);
+        document.querySelectorAll('.outCertDate').forEach(el => el.innerHTML = dateHTML);
+
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let retDate = retireDateRaw ? new Date(retireDateRaw) : null;
+        let isPast = retDate && retDate < today; 
+        
+        let actionText = "who is due to retire on";
+        let statusWord = "retiring";
+
+        if (retireLabel === "Date of Expiry") {
+            actionText = "who died on"; statusWord = "deceased";
+        } else if (retireLabel === "Date of Resignation") {
+            actionText = "who resigned on"; statusWord = "resigned";
+        } else if (retireLabel === "Date of Retirement (Vol)") {
+            if (isPast) { actionText = "who retired (voluntarily) on"; statusWord = "retired"; } 
+            else { actionText = "who is due to retire (voluntarily) on"; statusWord = "retiring"; }
+        } else { 
+            if (isPast) { actionText = "who retired on"; statusWord = "retired"; } 
+            else { actionText = "who is due to retire on"; statusWord = "retiring"; }
+        }
+
+        document.querySelectorAll('.out-live-action-text').forEach(el => el.innerText = actionText);
+        document.querySelectorAll('.out-live-status').forEach(el => el.innerText = statusWord);
+
+        localStorage.setItem('hba_sig_name', sigName);
+        localStorage.setItem('hba_sig_desig', sigDesig);
+        localStorage.setItem('memo_year', mYear);
+        localStorage.setItem('memo_dept', mDept);
+    }
+
+
+    // ==========================================
+    // THE ENGINE
+    // ==========================================
+    function generateAllCalculations() {
+        allCalculatedData = [];
+        let retireStr = document.getElementById('inRetireDate').value;
+        let retireDateLimit = retireStr ? new Date(retireStr) : null;
+        let hasError = false;
+
+        activeLoans.forEach(idx => {
+            let loanTypeRaw = document.getElementById(`inLoanType_${idx}`).value;
+            let code = document.getElementById(`inCode_${idx}`).value;
+            let standardEmi = parseFloat(document.getElementById(`inInstalment_${idx}`).value) || 0;
+            let targetInstalments = parseInt(document.getElementById(`inNoOfInstalment_${idx}`).value) || 120; 
+            let startMonth = document.getElementById(`inStartMonth_${idx}`).value;
+            let intRate = parseFloat(document.getElementById(`inInterestRate_${idx}`).value) || 0;
+            let recoveredInt = parseFloat(document.getElementById(`inRecoveredInterest_${idx}`).value) || 0;
+
+            let drawalsArray = [];
+            for(let i=1; i<=3; i++) {
+                let dStr = document.getElementById(`inDrawalDate${i}_${idx}`).value;
+                let aStr = parseFloat(document.getElementById(`inDrawnAmount${i}_${idx}`).value) || 0;
+                if (dStr && aStr > 0) drawalsArray.push({date: new Date(dStr), amount: aStr});
+            }
+
+            if(drawalsArray.length === 0 || !startMonth) {
+                alert(`Loan (Index ${idx + 1}): Drawal Month leh Recovery Start Month thun kim rawh.`);
+                hasError = true;
+                return;
+            }
+
+            drawalsArray.sort((a,b) => a.date - b.date);
+            
+            function getDrawal(dateObj) {
+                let total = 0;
+                for(let d of drawalsArray) {
+                    if(d.date.getMonth() === dateObj.getMonth() && d.date.getFullYear() === dateObj.getFullYear()) total += d.amount;
+                }
+                return total;
+            }
+
+            let currD = new Date(drawalsArray[0].date);
+            let recovDate = new Date(startMonth);
+            
+            let calcData = [];
+            let currPrincipal = 0;
+            
+            while(currD < recovDate) {
+                let drawnThisMonth = getDrawal(currD);
+                currPrincipal += drawnThisMonth;
+                calcData.push({ month: new Date(currD), paidAmt: drawnThisMonth, recoveryAmt: 0, principalAtEnd: currPrincipal, instlNo: null });
+                currD.setMonth(currD.getMonth() + 1);
+            }
+
+            for (let instCount = 1; instCount <= targetInstalments; instCount++) {
+                let drawnThisMonth = getDrawal(currD);
+                currPrincipal += drawnThisMonth;
+                let rec = 0;
+                if (instCount === targetInstalments) {
+                    rec = currPrincipal > 0 ? currPrincipal : 0; 
+                } else {
+                    rec = currPrincipal > 0 ? Math.min(currPrincipal, standardEmi) : 0;
+                }
+                currPrincipal -= rec;
+                calcData.push({ month: new Date(currD), paidAmt: drawnThisMonth, recoveryAmt: rec, principalAtEnd: currPrincipal, instlNo: instCount });
+                currD.setMonth(currD.getMonth() + 1);
+            }
+
+            allCalculatedData.push({
+                idx: idx,
+                loanType: loanTypeRaw,
+                loanNameFull: LOAN_TYPES[loanTypeRaw],
+                code: code,
+                standardEmi: standardEmi,
+                targetInstalments: targetInstalments,
+                intRate: intRate,
+                recoveredInt: recoveredInt,
+                calcData: calcData
+            });
+        });
+
+        if(!hasError) renderAllSheets();
+    }
+
+    function handleCellEdit(loanIdx, rowIndex, elem) {
+        let newRecAmt = parseAmt(elem.innerText);
+        if(isNaN(newRecAmt) || newRecAmt < 0) newRecAmt = 0;
+        
+        let loanObj = allCalculatedData.find(l => l.idx === loanIdx);
+        if(!loanObj) return;
+
+        loanObj.calcData[rowIndex].recoveryAmt = newRecAmt;
+        
+        let prevPrincipal = rowIndex === 0 ? 0 : loanObj.calcData[rowIndex - 1].principalAtEnd;
+        let currPrincipal = prevPrincipal;
+
+        for (let i = rowIndex; i < loanObj.calcData.length; i++) {
+            let row = loanObj.calcData[i];
+            currPrincipal += row.paidAmt;
+            if (row.instlNo !== null) { 
+                currPrincipal -= row.recoveryAmt;
+                row.principalAtEnd = currPrincipal;
+            } else {
+                row.principalAtEnd = currPrincipal; 
+            }
+        }
+        renderAllSheets();
+    }
+
+
+    // ==========================================
+    // RENDER LEGAL SHEETS AND CERT COMBINED
+    // ==========================================
+    function renderAllSheets() {
+        const container = document.getElementById('legal-pages-container');
+        container.innerHTML = "";
+
+        let grandTotalOutstandingPrincipal = 0;
+        let grandTotalOutstandingInterest = 0;
+        let grandTotalRefundable = 0; 
+        
+        let grandTotalOutstandingPositive = 0; 
+        let excessDetails = []; 
+        
+        let liabilitiesHTML = "";
+        let takenTypes = new Set();
+        let loansWithLiability = new Set(); 
+        let hasAnyPositiveOutstanding = false; 
+
+        let prinHeadsToShow = new Set();
+        let intHeadsToShow = new Set();
+
+        let ndcLoanStrings = [];
+        let ndcCodeStrings = [];
+        
+        let noteCalcHTML = "";
+
+        allCalculatedData.forEach((loan, loopIndex) => {
+            let i = loan.idx;
+            takenTypes.add(loan.loanType);
+            
+            // Get Info
+            let sanction = document.getElementById(`inSanction_${i}`).value || "...";
+            let sancAmt = document.getElementById(`inAmount_${i}`).value || "0";
+            let d1A = document.getElementById(`inDrawnAmount1_${i}`).value; let d1D = document.getElementById(`inDrawalDate1_${i}`).value;
+            let d2A = document.getElementById(`inDrawnAmount2_${i}`).value; let d2D = document.getElementById(`inDrawalDate2_${i}`).value;
+            let d3A = document.getElementById(`inDrawnAmount3_${i}`).value; let d3D = document.getElementById(`inDrawalDate3_${i}`).value;
+
+            // NDC String Prep
+            let sancAmtStr = fmtAmt(sancAmt);
+            let rawWords = numToWordsStrict(parseAmt(sancAmt));
+            ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- Rupees (${rawWords}) only. Vide No ${sanction}`);
+            ndcCodeStrings.push(loan.code);
+
+            // Compute Table totals
+            let totalIBB = 0, totalRecovery = 0, totalPaid = 0;
+            let tbodyHTML = "";
+
+            loan.calcData.forEach((row, rIndex) => {
+                totalIBB += Math.max(0, row.principalAtEnd); 
+                totalRecovery += row.recoveryAmt;
+                totalPaid += row.paidAmt;
+
+                let recCell = (row.instlNo !== null) 
+                    ? `<td class="editable-cell" contenteditable="true" onblur="handleCellEdit(${i}, ${rIndex}, this)">${row.recoveryAmt > 0 ? fmtAmt(row.recoveryAmt) : ''}</td>`
+                    : `<td></td>`;
+
+                tbodyHTML += `<tr>
+                    <td>${row.instlNo || ''}</td>
+                    <td>${formatMonthYear(new Date(row.month))}</td>
+                    <td style="color:#d32f2f; font-weight:bold;">${row.paidAmt > 0 ? 'Rs. ' + fmtAmt(row.paidAmt) : ''}</td>
+                    ${recCell}
+                    <td>${fmtAmt(row.principalAtEnd)}</td>
+                    <td></td>
+                </tr>`;
+            });
+            tbodyHTML += `<tr>
+                <td colspan="2" class="text-right bold" style="font-size: 15px;">Total :</td>
+                <td class="bold">${fmtAmt(totalPaid)}</td>
+                <td class="bold">${fmtAmt(totalRecovery)}</td>
+                <td class="bold">${fmtAmt(totalIBB)}</td>
+                <td></td>
+            </tr>`;
+
+            // Interest Math
+            const calculatedInterest = (totalIBB * loan.intRate) / 1200;
+            const roundedInterest = Math.round(calculatedInterest);
+            let trueOutstandingInterest = roundedInterest - loan.recoveredInt;
+
+            let outstandingPrincipal = loan.calcData.length > 0 ? loan.calcData[loan.calcData.length-1].principalAtEnd : 0;
+            let totalOutstanding = outstandingPrincipal + trueOutstandingInterest;
+
+            if (totalOutstanding > 0) {
+                hasAnyPositiveOutstanding = true;
+            }
+
+            if (totalOutstanding > 0) {
+                grandTotalOutstandingPositive += totalOutstanding;
+            } else if (totalOutstanding < 0) {
+                let absExcess = Math.abs(totalOutstanding);
+                if (outstandingPrincipal < 0 && trueOutstandingInterest < 0) {
+                    excessDetails.push(`excess recovery of ${loan.loanType} principal & interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}</span>`);
+                } else if (outstandingPrincipal < 0) {
+                    excessDetails.push(`excess recovery of ${loan.loanType} principal amounting <span class="bold">Rs. ${fmtAmt(absExcess)}</span>`);
+                } else if (trueOutstandingInterest < 0) {
+                    excessDetails.push(`excess recovery of ${loan.loanType} interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}</span>`);
+                }
+            }
+
+            if (totalOutstanding > 0) loansWithLiability.add(loan.loanType);
+
+            let headCategory = getHeadCategory(loan.loanType);
+            if (outstandingPrincipal > 0) prinHeadsToShow.add(headCategory);
+            if (trueOutstandingInterest > 0) intHeadsToShow.add(headCategory);
+
+            grandTotalOutstandingPrincipal += outstandingPrincipal;
+            grandTotalOutstandingInterest += trueOutstandingInterest;
+            grandTotalRefundable += totalOutstanding;
+
+            let intNoOfInstStr = document.getElementById(`inIntNoOfInstalment_${i}`).value;
+            let intNoOfInst = intNoOfInstStr === "" ? NaN : parseInt(intNoOfInstStr);
+            let intEmiInputStr = document.getElementById(`inIntInstalment_${i}`).value;
+            let intLastEmiInputStr = document.getElementById(`inIntLastInstalment_${i}`).value;
+            
+            let intEmi = "....", equalInstCount = "....", lastIntEmi = "....";
+
+            if (roundedInterest > 0 && !isNaN(intNoOfInst) && intNoOfInst > 0) {
+                if (intNoOfInst === 1) {
+                    let parsedLast = (intLastEmiInputStr !== "") ? parseFloat(intLastEmiInputStr) : roundedInterest;
+                    document.getElementById(`inIntLastInstalment_${i}`).value = parsedLast;
+                    document.getElementById(`inIntInstalment_${i}`).value = ""; 
+                    intEmi = "....";
+                    equalInstCount = "....";
+                    lastIntEmi = fmtAmt(parsedLast);
+                } else {
+                    let calcEqualInstCount = intNoOfInst - 1;
+                    let parsedIntEmi = 0;
+                    if (intEmiInputStr !== "") {
+                        parsedIntEmi = parseFloat(intEmiInputStr);
+                    } else {
+                        parsedIntEmi = Math.round(roundedInterest / intNoOfInst);
+                        if ((roundedInterest - (parsedIntEmi * calcEqualInstCount)) <= 0) parsedIntEmi = Math.floor(roundedInterest / intNoOfInst);
+                        document.getElementById(`inIntInstalment_${i}`).value = parsedIntEmi;
+                    }
+                    
+                    let parsedLastIntEmi = 0;
+                    if (intLastEmiInputStr !== "") {
+                        parsedLastIntEmi = parseFloat(intLastEmiInputStr);
+                    } else {
+                        parsedLastIntEmi = roundedInterest - (parsedIntEmi * calcEqualInstCount);
+                        document.getElementById(`inIntLastInstalment_${i}`).value = parsedLastIntEmi;
+                    }
+                    
+                    intEmi = fmtAmt(parsedIntEmi);
+                    equalInstCount = calcEqualInstCount;
+                    lastIntEmi = fmtAmt(parsedLastIntEmi);
+                }
+            } else if (intNoOfInst === 0 || isNaN(intNoOfInst)) {
+                // Keep as blank "...."
+                document.getElementById(`inIntInstalment_${i}`).value = "";
+                document.getElementById(`inIntLastInstalment_${i}`).value = "";
+            }
+
+            let pEmi = "....", pNum = "....", pLastEmi = "....";
+            let recRows = loan.calcData.filter(r => r.instlNo !== null);
+            if (recRows.length > 0) {
+                pNum = loan.targetInstalments - 1 > 0 ? loan.targetInstalments - 1 : "....";
+                pEmi = fmtAmt(loan.standardEmi);
+                pLastEmi = fmtAmt(recRows[recRows.length - 1].recoveryAmt);
+            }
+
+            let d1HTML = (d1A && d1D) ? `Rs. ${fmtAmt(d1A)}</td><td style="font-style: italic;">${formatDrawalMonthStr(d1D)}` : `....</td><td>....`;
+            let d2Row = (d2A && d2D && parseFloat(d2A)>0) ? `<tr><td style="text-align: left;">(B) 2nd Instalment</td><td style="font-style: italic;">Rs. ${fmtAmt(d2A)}</td><td style="font-style: italic;">${formatDrawalMonthStr(d2D)}</td></tr>` : '';
+            let d3Row = (d3A && d3D && parseFloat(d3A)>0) ? `<tr><td style="text-align: left;">(C) 3rd Instalment</td><td style="font-style: italic;">Rs. ${fmtAmt(d3A)}</td><td style="font-style: italic;">${formatDrawalMonthStr(d3D)}</td></tr>` : '';
+
+            let prinLabel = outstandingPrincipal < 0 ? "Principal Excess Recovery" : "Principal Outstanding Balance";
+            let prinVal = fmtAmt(Math.abs(outstandingPrincipal));
+            let extIntHTML = trueOutstandingInterest < 0 
+                ? `<tr style="color: #1976d2;"><td style="text-align: right; padding-right: 15px;">Excess Recovery of Interest</td><td style="text-align: center;">:</td><td style="text-align: center;">₹</td><td style="text-align: left; padding-left: 8px;">${fmtAmt(Math.abs(trueOutstandingInterest))}</td></tr>`
+                : `<tr><td style="text-align: right; padding-right: 15px;">Outstanding Balance</td><td style="text-align: center;">:</td><td style="text-align: center;">₹</td><td style="text-align: left; padding-left: 8px;">${fmtAmt(trueOutstandingInterest)}</td></tr>`;
+            let totalLabel = totalOutstanding < 0 ? "Total Excess (Refundable)" : "Total Outstanding Balance";
+
+            let sheetHTML = `
+            <div class="legal-sheet">
+                <table class="header-box-table">
+                    <tr><td colspan="2" class="header-box-title">LONG-TERM LOAN CALCULATION<br>${loan.loanNameFull}</td></tr>
+                    <tr>
+                        <td class="header-left-col">
+                            <table class="inner-info-table">
+                                <tr><td class="label">Name &amp; Designation</td><td class="colon">:</td><td class="bold"><span class="out-live-name"></span></td></tr>
+                                <tr><td class="label">Name of Office:</td><td class="colon"></td><td class="bold"><span class="out-live-office"></span></td></tr>
+                                <tr><td class="label">Name of Loan</td><td class="colon">:</td><td class="bold">${loan.loanType}</td></tr>
+                                <tr><td class="label">Code No.</td><td class="colon">:</td><td class="bold">${loan.code}</td></tr>
+                                <tr><td class="label">Amount Sanctioned</td><td class="colon">:</td><td class="bold">Rs. ${fmtAmt(sancAmt)}</td></tr>
+                                <tr><td class="label">Sanction No. &amp; Date</td><td class="colon">:</td><td class="bold">${sanction}</td></tr>
+                            </table>
+                            <div style="margin-top: 15px; font-weight: normal;">Date &amp; amount of drawal of Loan/Adv.</div>
+                            <table style="width: 100%; text-align: center; margin-top: 5px; border-collapse: collapse;">
+                                <tr><td style="text-align: left; width: 40%;"></td><td style="font-weight: bold; text-decoration: underline;">Amount</td><td style="font-weight: bold; text-decoration: underline;">Date</td></tr>
+                                <tr><td style="text-align: left;">(A) 1st Instalment</td><td style="font-style: italic;">${d1HTML}</td></tr>
+                                ${d2Row} ${d3Row}
+                                <tr><td style="text-align: left;">Additional</td><td></td><td></td></tr>
+                            </table>
+                        </td>
+                        <td class="header-right-col">
+                            <table class="inner-info-table">
+                                <tr><td class="label" style="width: 170px;"><span class="out-live-retire-label"></span></td><td class="colon">:</td><td class="val bold" style="text-align: right;"><span class="out-live-retire-date"></span></td></tr>
+                                <tr><td class="label" style="width: 170px;">Rate of Interest</td><td class="colon">:</td><td class="val bold" style="text-align: right;">${loan.intRate}%</td></tr>
+                                <tr><td class="label" style="width: 170px;">Total amount of Interest</td><td class="colon">:</td><td class="val bold" style="text-align: right;">${fmtAmt(roundedInterest)}</td></tr>
+                            </table>
+                            <div style="margin-top: 15px;">Rate of Recovery with No. of Instalments :</div>
+                            <div style="margin-top: 5px; line-height: 1.5;">
+                                (a) Principal @ ₹ <span class="bold">${pEmi}</span> in <span class="bold">${pNum}</span> instalments and<br>
+                                <span style="display: inline-block; width: 85px;"></span>@ ₹ <span class="bold">${pLastEmi}</span> in the last instalment.<br>
+                                (b) Interest &nbsp;&nbsp;@ ₹ <span class="bold">${intEmi}</span> in <span class="bold">${equalInstCount}</span> instalments and<br>
+                                <span style="display: inline-block; width: 85px;"></span>@ ₹ <span class="bold">${lastIntEmi}</span> in the last instalment.
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="calc-table">
+                    <thead><tr><th width="10%">No. of<br>Instl.</th><th width="20%">Month & Year</th><th width="20%">Paid (Drawal)</th><th width="15%">Recovery</th><th width="20%">IBB</th><th width="15%">Remarks</th></tr></thead>
+                    <tbody>${tbodyHTML}</tbody>
+                </table>
+                
+                <div style="page-break-inside: avoid;">
+                    <div style="font-style: italic; font-weight: bold; margin-top: 15px; font-size: 15px;">Rate of Interest : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${loan.intRate}%</div>
+                    <div style="display: flex; align-items: flex-start; margin-top: 15px; font-weight: bold; font-size: 15px;">
+                        <div style="font-style: italic; margin-right: 15px; margin-top: 5px;">Interest = </div>
+                        <div style="text-align: center; margin-right: 20px;"><div style="border-bottom: 1px solid black; padding: 0 15px 2px 15px;">Prog. Total &nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp; Rate of Interest</div><div style="padding-top: 2px;">12</div></div>
+                        <div style="margin-right: 20px; margin-top: 5px;"> i.e </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <div style="text-align: center; width: 100%;"><div style="border-bottom: 1px solid black; padding: 0 25px 2px 25px;">${fmtAmt(totalIBB)} &nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;&nbsp;&nbsp;&nbsp; ${loan.intRate}%</div><div style="padding-top: 2px;">1200</div></div>
+                            <div style="margin-top: 10px; margin-right: 15px;">= Rs. ${fmtAmt(calculatedInterest.toFixed(2))}</div>
+                            <div style="margin-top: 5px; margin-right: 15px;">Say : Rs. ${fmtAmt(roundedInterest)}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: flex-end; margin-top: 15px;">
+                        <table style="text-align: left; font-weight: bold; font-size: 15px; line-height: 1.6; border: none; border-collapse: collapse;">
+                            <tr><td style="text-align: right; padding-right: 15px;">${prinLabel}</td><td style="width: 15px; text-align: center;">:</td><td style="width: 25px; text-align: center;">₹</td><td style="text-align: left; padding-left: 8px; min-width: 70px;">${prinVal}</td></tr>
+                            <tr><td style="text-align: right; padding-right: 15px;">Interest Accrued</td><td style="text-align: center;">:</td><td style="text-align: center;">₹</td><td style="text-align: left; padding-left: 8px;">${fmtAmt(roundedInterest)}</td></tr>
+                            <tr><td style="text-align: right; padding-right: 15px;">Interest already recovered</td><td style="text-align: center;">:</td><td style="text-align: center;">₹</td><td style="text-align: left; padding-left: 8px;">${fmtAmt(loan.recoveredInt)}</td></tr>
+                            ${extIntHTML}
+                            <tr><td style="text-align: right; padding-right: 15px;">${totalLabel}</td><td style="text-align: center;">:</td><td style="text-align: center;">₹</td><td style="text-align: left; padding-left: 8px;">${fmtAmt(Math.abs(totalOutstanding))}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="text-right" style="margin-top: 30px;">
+                        <div style="display: inline-block; text-align: center; font-weight: bold; font-size: 15px; min-width: 200px;">
+                            <div style="height: 45px;"></div>
+                            <span class="out-calc-sig-name"></span><br>
+                            <span class="out-live-sig-desig"></span><br>
+                            Accounts & Treasuries
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            container.insertAdjacentHTML('beforeend', sheetHTML);
+
+            let cPVal = outstandingPrincipal > 0 ? "₹ " + fmtAmt(outstandingPrincipal) : (outstandingPrincipal < 0 ? "Excess ₹ " + fmtAmt(Math.abs(outstandingPrincipal)) : "₹ NIL");
+            let cIVal = trueOutstandingInterest < 0 ? "Excess ₹ " + fmtAmt(Math.abs(trueOutstandingInterest)) : "₹ " + fmtAmt(trueOutstandingInterest) + "/-";
+            let cTVal = totalOutstanding < 0 ? "Excess ₹ " + fmtAmt(Math.abs(totalOutstanding)) : "₹ " + fmtAmt(totalOutstanding) + "/-";
+            
+            let individualWords = amountToWords(totalOutstanding);
+
+            liabilitiesHTML += `
+                <div class="liab-item">
+                    <div class="bold" style="display: flex; gap: 30px;">
+                        <span>${loopIndex + 1}. &nbsp;&nbsp;&nbsp;&nbsp;${loan.loanNameFull} (${loan.loanType})</span>
+                        <span>CODE No. : - ${loan.code}</span>
+                    </div>
+                    <table class="liab-table" style="width: 100%; margin-left: 35px; border: none; border-collapse: collapse;">
+                        <tr>
+                            <td width="35%" style="padding: 0; border: none;">(a) Principal <span class="bold">${cPVal}</span></td>
+                            <td width="35%" style="padding: 0; border: none;">Interest <span class="bold">${cIVal}</span></td>
+                            <td width="30%" class="bold" style="padding: 0; border: none;">TOTAL : ${cTVal}</td>
+                        </tr>
+                    </table>
+                    <div class="liab-words" style="font-style: italic; font-weight: bold; margin-left: 35px;">
+                        (${individualWords}).
+                    </div>
+                </div>
+            `;
+            
+            // BUILD NOTESHEET CALC BLOCKS
+            let nPLabel = outstandingPrincipal < 0 ? "Principal Excess Recovery" : "Principal Outstanding Balance";
+            let nPVal = Math.abs(outstandingPrincipal);
+            let nIAccrued = roundedInterest;
+            let nIRecovered = loan.recoveredInt;
+            let nOLabel = trueOutstandingInterest < 0 ? "Excess Recovery of Interest" : "Outstanding Balance";
+            let nOVal = Math.abs(trueOutstandingInterest);
+            let nTLabel = totalOutstanding < 0 ? "Total Excess (Refundable)" : "Total Outstanding Balance";
+            let nTVal = Math.abs(totalOutstanding);
+
+            noteCalcHTML += `
+                <div class="note-loan-block">
+                    <div class="note-loan-title">Code : ${loan.code} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sanction Amount : ₹${fmtAmt(sancAmt)}</div>
+                    <table class="note-table">
+                        <tr><td class="col-label">${nPLabel}</td><td class="col-colon">:</td><td class="col-val">₹${fmtAmt(nPVal)}</td></tr>
+                        <tr><td class="col-label">Interest Accrued</td><td class="col-colon">:</td><td class="col-val">₹${fmtAmt(nIAccrued)}</td></tr>
+                        <tr><td class="col-label">Interest already recovered</td><td class="col-colon">:</td><td class="col-val">₹${fmtAmt(nIRecovered)}</td></tr>
+                        <tr><td class="col-label">${nOLabel}</td><td class="col-colon">:</td><td class="col-val">₹${fmtAmt(nOVal)}</td></tr>
+                        <tr><td class="col-label">${nTLabel}</td><td class="col-colon">:</td><td class="col-val">₹${fmtAmt(nTVal)}</td></tr>
+                    </table>
+                </div>
+            `;
+        }); // End of loop
+
+        isGlobalNDC = (allCalculatedData.length > 0) ? !hasAnyPositiveOutstanding : false;
+
+        let elNdcLoanList = document.getElementById('ndcLoanListStr');
+        if(elNdcLoanList) elNdcLoanList.innerText = ndcLoanStrings.join(" and ");
+        let elNdcCodeList = document.getElementById('ndcCodeList');
+        if(elNdcCodeList) elNdcCodeList.innerHTML = ndcCodeStrings.join("<br>");
+
+        let ndcExcessSpan = document.getElementById('ndcExcessClaimStr');
+        if (ndcExcessSpan) {
+            if (excessDetails.length > 0) {
+                // Excess a awm chiahin "and necessary action" a bo ang
+                ndcExcessSpan.innerHTML = `for information and for making reimbursement of ${excessDetails.join(" and ")}.`;
+            } else {
+                ndcExcessSpan.innerHTML = `for information and necessary action.`;
+            }
+        }
+
+        document.getElementById('certLiabilitiesContainer').innerHTML = liabilitiesHTML;
+        let t2Val = grandTotalOutstandingPositive > 0 ? fmtAmt(grandTotalOutstandingPositive) : "NIL";
+        document.getElementById('outCertTotalVal2').innerText = t2Val;
+
+        let copy2ActionSpan = document.getElementById('outCertCopy2Action');
+        if (copy2ActionSpan) {
+            if (excessDetails.length > 0) {
+                copy2ActionSpan.innerHTML = `for information and for making reimbursement of ${excessDetails.join(" and ")}.`;
+            } else {
+                copy2ActionSpan.innerHTML = `for information.`;
+            }
+        }
+
+        let prinHeadsArr = Array.from(prinHeadsToShow);
+        let intHeadsArr = Array.from(intHeadsToShow);
+        let certHeadsSection = document.getElementById('certHeadsSection');
+
+        if (prinHeadsArr.length > 0 || intHeadsArr.length > 0) {
+            certHeadsSection.style.display = 'block';
+            let prinHtml = "";
+            prinHeadsArr.forEach(cat => {
+                prinHtml += `<tr><td style="text-align: right; width: 45%; white-space: nowrap;">${cat}</td><td style="text-align: center; width: 10%;">&ndash;</td><td style="text-align: left; width: 45%; white-space: nowrap;">${HEADS_OF_ACCOUNT.PRINCIPAL[cat]}</td></tr>`;
+            });
+            document.getElementById('certHeadsPrinTable').innerHTML = prinHtml;
+
+            let intHtml = "";
+            intHeadsArr.forEach(cat => {
+                intHtml += `<tr><td style="text-align: right; width: 45%; white-space: nowrap;">${cat}</td><td style="text-align: center; width: 10%;">&ndash;</td><td style="text-align: left; width: 45%; white-space: nowrap;">${HEADS_OF_ACCOUNT.INTEREST[cat]}</td></tr>`;
+            });
+            document.getElementById('certHeadsIntTable').innerHTML = intHtml;
+        } else {
+            certHeadsSection.style.display = 'none';
+        }
+
+        const LOAN_NAMES_TITLE_CASE = { "HBA": "House Building Advance", "SA": "Scooter Advance", "MCA": "Motor Car Advance", "COM": "Computer Advance", "SCL": "Special Car Loan" };
+        let allTypes = ["HBA", "SA", "MCA", "COM", "SCL"];
+        let noLiabilityTypes = allTypes.filter(t => !loansWithLiability.has(t));
+        if(noLiabilityTypes.length > 0) {
+            let names = noLiabilityTypes.map(t => LOAN_NAMES_TITLE_CASE[t]);
+            let joined = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0];
+            document.getElementById('outCertNoLiabilitiesStr').innerHTML = `It is further certified that the <span class="out-live-status">retiring</span> Government servant had no liabilities against ${joined}.`;
+        } else {
+            document.getElementById('outCertNoLiabilitiesStr').innerHTML = ""; 
+        }
+        
+        let certPage = document.getElementById('legal-cert-page');
+        certPage.classList.remove('cert-layout-default', 'cert-layout-compact', 'cert-layout-ultra');
+        
+        if (allCalculatedData.length >= 5) certPage.classList.add('cert-layout-ultra');
+        else if (allCalculatedData.length >= 3) certPage.classList.add('cert-layout-compact');
+        else certPage.classList.add('cert-layout-default');
+
+        let tabCertBtn = document.getElementById('tab-cert');
+        if (isGlobalNDC) {
+            tabCertBtn.innerText = "No Demand Certificate (A4)";
+        } else {
+            tabCertBtn.innerText = "Demand Certificate (Legal)";
+        }
+        
+        // POPULATE NOTESHEET Dynamic Lists
+        let loanTypesStr = Array.from(takenTypes).join(" and ");
+        let elNoteLoanList = document.getElementById('out-note-loan-list');
+        if(elNoteLoanList) elNoteLoanList.innerText = loanTypesStr;
+        
+        let elNoteCertType = document.getElementById('out-note-cert-type');
+        if(elNoteCertType) elNoteCertType.innerText = isGlobalNDC ? "No Demand Certificate" : "Demand Certificate";
+
+        let elNoteCalcContainer = document.getElementById('note-calc-container');
+        if(elNoteCalcContainer) elNoteCalcContainer.innerHTML = noteCalcHTML;
+
+        updateLiveText(); 
+        
+        if(document.getElementById('tab-cert').classList.contains('active')){
+            switchPreview('cert');
+        } else if(document.getElementById('tab-note').classList.contains('active')){
+            switchPreview('note');
+        }
+    }
+
+    // ==========================================
+    // DATABASE & SAVE/LOAD LOGIC
+    // ==========================================
+    function saveRecord() {
+        let name = document.getElementById('inName').value.trim();
+        let dept = document.getElementById('inOffice').value.trim();
+        if (!name) { alert("Khawngaihin a hming (Name) tal hi thun lut phawt rawh."); return; }
+        if (allCalculatedData.length === 0) { alert("Record save hmain 'GENERATE CALCULATION' hi hmet phawt rawh le."); return; }
+
+        let sharedInputs = {
+            inName: document.getElementById('inName').value,
+            inDesig: document.getElementById('inDesig').value,
+            inOffice: document.getElementById('inOffice').value,
+            inDDOOffice: document.getElementById('inDDOOffice').value,
+            inRetireLabel: document.getElementById('inRetireLabel').value,
+            inRetireDate: document.getElementById('inRetireDate').value,
+            inThawnnaTur: document.getElementById('inThawnnaTur').value,
+            inDDOAddress: document.getElementById('inDDOAddress').value,
+            inMemoYear: document.getElementById('inMemoYear').value,
+            inMemoDept: document.getElementById('inMemoDept').value,
+            inMemoVol: document.getElementById('inMemoVol').value,
+            inMemoPage: document.getElementById('inMemoPage').value,
+            inIssueDate: document.getElementById('inIssueDate').value,
+            inSigName: document.getElementById('inSigName').value,
+            inSigDesig: document.getElementById('inSigDesig').value,
+            inShowSd: document.getElementById('inShowSd').checked
+        };
+
+        let loanInputsArray = [];
+        activeLoans.forEach(idx => {
+            loanInputsArray.push({
+                inLoanType: document.getElementById(`inLoanType_${idx}`).value,
+                inSanction: document.getElementById(`inSanction_${idx}`).value,
+                inCode: document.getElementById(`inCode_${idx}`).value,
+                inAmount: document.getElementById(`inAmount_${idx}`).value,
+                inInterestRate: document.getElementById(`inInterestRate_${idx}`).value,
+                inDrawalDate1: document.getElementById(`inDrawalDate1_${idx}`).value,
+                inDrawnAmount1: document.getElementById(`inDrawnAmount1_${idx}`).value,
+                inDrawalDate2: document.getElementById(`inDrawalDate2_${idx}`).value,
+                inDrawnAmount2: document.getElementById(`inDrawnAmount2_${idx}`).value,
+                inDrawalDate3: document.getElementById(`inDrawalDate3_${idx}`).value,
+                inDrawnAmount3: document.getElementById(`inDrawnAmount3_${idx}`).value,
+                inNoOfInstalment: document.getElementById(`inNoOfInstalment_${idx}`).value,
+                inInstalment: document.getElementById(`inInstalment_${idx}`).value,
+                inIntNoOfInstalment: document.getElementById(`inIntNoOfInstalment_${idx}`).value,
+                inIntInstalment: document.getElementById(`inIntInstalment_${idx}`).value,
+                inIntLastInstalment: document.getElementById(`inIntLastInstalment_${idx}`).value,
+                inStartMonth: document.getElementById(`inStartMonth_${idx}`).value,
+                inRecoveredInterest: document.getElementById(`inRecoveredInterest_${idx}`).value
+            });
+        });
+
+        let typesSumm = Array.from(new Set(allCalculatedData.map(l => l.loanType))).join(", ");
+        
+        let customNoteHTML = document.getElementById('editable-note-wrapper').innerHTML;
+        let legalCertHTMLSaved = document.getElementById('legal-cert-page').innerHTML;
+        let ndcCertHTMLSaved = document.getElementById('ndc-cert-page').innerHTML;
+        
+        let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+        let existingIssueDate = '';
+        if (currentRecordId) {
+            let existingRec = db.find(r => r.id === currentRecordId);
+            if (existingRec && existingRec.issueDate) {
+                existingIssueDate = existingRec.issueDate;
+            }
+        }
+
+        let recordObj = {
+            id: currentRecordId || Date.now(),
+            name: name,
+            dept: dept,
+            type: typesSumm + ' (' + loanInputsArray.length + ')',
+            dateSaved: new Date().toLocaleDateString('en-IN'), // Darzat tel lova Date chiah awmna
+            issueDate: existingIssueDate, // Issue Date neih sa vawn thatna
+            sharedInputs: sharedInputs,
+            loanInputsArray: loanInputsArray,
+            allCalculatedData: allCalculatedData,
+            noteHTMLSaved: customNoteHTML,
+            legalCertHTMLSaved: legalCertHTMLSaved,
+            ndcCertHTMLSaved: ndcCertHTMLSaved
+        };
+
+        if (currentRecordId) {
+            let index = db.findIndex(r => r.id === currentRecordId);
+            if (index !== -1) db[index] = recordObj; else db.unshift(recordObj);
+        } else {
+            db.unshift(recordObj);
+        }
+
+        localStorage.setItem('hba_records_multi', JSON.stringify(db));
+        currentRecordId = recordObj.id; 
+        document.getElementById('btnSaveRecord').innerHTML = "🔄 UPDATE RECORD";
+        alert("I calculation data leh Notesheet hi save a ni ta e.");
+        if(document.getElementById('tab-main-list').classList.contains('active')){
+            populateFilterOptions();
+            renderRecordList();
+        }
+    }
+
+    // Update Issue Date
+    function updateIssueDate(id, value) {
+        let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+        let index = db.findIndex(r => r.id === id);
+        if (index !== -1) {
+            db[index].issueDate = value;
+            localStorage.setItem('hba_records_multi', JSON.stringify(db));
+        }
+    }
+
+    function populateFilterOptions() {
+        let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+        
+        let fDept = document.getElementById('filterDept');
+        fDept.innerHTML = '<option value="">All Departments</option>';
+        for (let key in DEPT_CODES) {
+            fDept.insertAdjacentHTML('beforeend', `<option value="${key}">${key}</option>`);
+        }
+
+        let years = new Set();
+        db.forEach(rec => {
+            let d = new Date(rec.id);
+            if (!isNaN(d.getFullYear())) {
+                years.add(d.getFullYear());
+            }
+        });
+        
+        let ySelect = document.getElementById('filterYear');
+        let currentYear = ySelect.value;
+        ySelect.innerHTML = '<option value="">All Years</option>';
+        Array.from(years).sort((a,b)=>b-a).forEach(y => {
+            let selected = (y.toString() === currentYear) ? "selected" : "";
+            ySelect.insertAdjacentHTML('beforeend', `<option value="${y}" ${selected}>${y}</option>`);
+        });
+    }
+
+    function renderRecordList() {
+        let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+        
+        let sName = document.getElementById('searchName').value.toLowerCase();
+        let sDept = document.getElementById('filterDept').value;
+        let sYear = document.getElementById('filterYear').value;
+        let sMonth = document.getElementById('filterMonth').value;
+
+        let filteredDb = db.filter(rec => {
+            let recDate = new Date(rec.id);
+            let rName = rec.name ? rec.name.toLowerCase() : "";
+            let rDept = (rec.sharedInputs && rec.sharedInputs.inMemoDept) ? rec.sharedInputs.inMemoDept : "";
+            let rYear = !isNaN(recDate.getFullYear()) ? recDate.getFullYear().toString() : "";
+            let rMonth = !isNaN(recDate.getMonth()) ? recDate.getMonth().toString() : "";
+
+            let matchName = sName === "" || rName.includes(sName);
+            let matchDept = sDept === "" || rDept === sDept;
+            let matchYear = sYear === "" || rYear === sYear;
+            let matchMonth = sMonth === "" || rMonth === sMonth;
+
+            return matchName && matchDept && matchYear && matchMonth;
+        });
+
+        document.getElementById('totalCasesCount').innerText = filteredDb.length;
+
+        let tbody = document.querySelector('#recordTable tbody');
+        let msg = document.getElementById('noRecordsMsg');
+        tbody.innerHTML = "";
+
+        if (filteredDb.length === 0) {
+            msg.style.display = "block"; document.getElementById('recordTable').style.display = "none"; return;
+        } else {
+            msg.style.display = "none"; document.getElementById('recordTable').style.display = "table";
+        }
+
+        filteredDb.forEach((rec, index) => {
+            let rDept = (rec.sharedInputs && rec.sharedInputs.inMemoDept) ? rec.sharedInputs.inMemoDept : "N/A";
+            
+            // Heta tang hian Memo Number generate chhuahna kan dah lut
+            let mYear = (rec.sharedInputs && rec.sharedInputs.inMemoYear) ? rec.sharedInputs.inMemoYear : "2025";
+            let mDept = (rec.sharedInputs && rec.sharedInputs.inMemoDept) ? rec.sharedInputs.inMemoDept : "HSD";
+            let mVol = (rec.sharedInputs && rec.sharedInputs.inMemoVol) ? rec.sharedInputs.inMemoVol.trim() : "";
+            let mPage = (rec.sharedInputs && rec.sharedInputs.inMemoPage) ? rec.sharedInputs.inMemoPage : "...";
+            let mCode = DEPT_CODES[mDept] || "00";
+            
+            let mVolStr = mVol ? `-${mVol}` : "";
+            let fullMemo = `No.G. 26041/${mCode}/${mYear}-CCA(L&M)/${mDept}${mVolStr}/${mPage}`;
+            
+            let displayDate = (rec.dateSaved || "").split(',')[0]; // Record hlui time la bet tan time kan paih
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td style="font-weight: bold; color: #d32f2f;">${rDept}</td>
+                <td style="font-weight: bold;">${rec.name}</td>
+                <td>
+                    ${rec.dept}
+                    <div style="font-size: 13px; color: #424242; margin-top: 5px; font-weight: normal; background: #f0f0f0; padding: 3px 6px; border-radius: 3px; display: inline-block; border: 1px solid #ddd;">
+                        ${fullMemo}
+                    </div>
+                </td>
+                <td style="color: #1976d2; font-weight: bold;">${rec.type}</td>
+                <td style="font-size: 13px;">${displayDate}</td>
+                <td>
+                    <input type="date" value="${rec.issueDate || ''}" onchange="updateIssueDate(${rec.id}, this.value)" style="width: 100%; padding: 4px; font-size: 12px; border: 1px solid #ccc; border-radius: 3px;">
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-edit-rec" onclick="loadRecord(${rec.id})">Load</button>
+                        <button class="btn-delete-rec" onclick="deleteRecord(${rec.id})">Del</button>
+                    </div>
+                </td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function loadRecord(id) {
+        let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+        let rec = db.find(r => r.id === id);
+
+        if (rec) {
+            document.getElementById('inMemoDept').value = 'HSD';
+            document.getElementById('inMemoYear').value = '2025';
+
+            for (let key in rec.sharedInputs) {
+                let el = document.getElementById(key);
+                if (el) {
+                    if(el.type === 'checkbox') {
+                        el.checked = rec.sharedInputs[key];
+                    } else {
+                        el.value = rec.sharedInputs[key];
+                    }
+                }
+            }
+
+            document.getElementById('loan-tabs-container').innerHTML = '';
+            document.getElementById('loans-wrapper').innerHTML = '';
+            loanIndex = 0; activeLoans = [];
+            
+            rec.loanInputsArray.forEach((lInputs) => {
+                addLoanForm();
+                let currentIdx = activeLoans[activeLoans.length - 1]; 
+                for(let key in lInputs) {
+                    let field = key.replace(/_\d+$/, '') + "_" + currentIdx; 
+                    let el = document.getElementById(field);
+                    if(el) el.value = lInputs[key];
+                }
+            });
+
+            updateLoanTabLabels();
+
+            allCalculatedData = rec.allCalculatedData;
+            currentRecordId = rec.id;
+            document.getElementById('btnSaveRecord').innerHTML = "🔄 UPDATE RECORD";
+
+            switchMainTab('generator');
+            renderAllSheets(); 
+            
+            if (rec.noteHTMLSaved) {
+                document.getElementById('editable-note-wrapper').innerHTML = rec.noteHTMLSaved;
+            }
+            if (rec.legalCertHTMLSaved) {
+                document.getElementById('legal-cert-page').innerHTML = rec.legalCertHTMLSaved;
+                // Logo check for backward compatibility (in case loaded record is old)
+                let p1 = document.getElementById('legal-cert-page');
+                if(!p1.querySelector('img[alt="Bana Kaih Logo"]')) {
+                    p1.insertAdjacentHTML('afterbegin', '<img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style="position: absolute; top: 50px; left: 50px; height: 60px; z-index: 10;">');
+                }
+            }
+            if (rec.ndcCertHTMLSaved) {
+                document.getElementById('ndc-cert-page').innerHTML = rec.ndcCertHTMLSaved;
+                // Logo check for backward compatibility
+                let p2 = document.getElementById('ndc-cert-page');
+                if(!p2.querySelector('img[alt="Bana Kaih Logo"]')) {
+                    p2.insertAdjacentHTML('afterbegin', '<img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style="position: absolute; top: 50px; left: 50px; height: 60px; z-index: 10;">');
+                }
+            }
+            
+            updateLiveText(); 
+        }
+    }
+
+    function deleteRecord(id) {
+        if (confirm("He record hi i delete duh tak tak em?")) {
+            let db = JSON.parse(localStorage.getItem('hba_records_multi')) || [];
+            db = db.filter(r => r.id !== id);
+            localStorage.setItem('hba_records_multi', JSON.stringify(db));
+            if (currentRecordId === id) clearFormAndReset();
+            
+            if(document.getElementById('tab-main-list').classList.contains('active')){
+                populateFilterOptions();
+                renderRecordList();
+            }
+        }
+    }
+
+    function clearFormAndReset() {
+        if(confirm("Form ah hian thil thar type (New) i duh a, field zawng zawng clear turin i inpeih em?")) {
+            document.getElementById('inName').value = '';
+            document.getElementById('inDesig').value = '';
+            document.getElementById('inOffice').value = '';
+            document.getElementById('inRetireDate').value = '';
+            document.getElementById('inThawnnaTur').selectedIndex = 0;
+            document.getElementById('inDDOOffice').value = '';
+            document.getElementById('inDDOAddress').value = '';
+            
+            // Memo Default-a set letna
+            document.getElementById('inMemoDept').value = 'HSD'; 
+            document.getElementById('inMemoYear').value = '2025';
+            
+            document.getElementById('inMemoVol').value = '';
+            document.getElementById('inMemoPage').value = '';
+            document.getElementById('inIssueDate').value = '';
+            document.getElementById('inShowSd').checked = false;
+            
+            document.getElementById('loan-tabs-container').innerHTML = '';
+            document.getElementById('loans-wrapper').innerHTML = '';
+            loanIndex = 0; activeLoans = [];
+            addLoanForm(); 
+
+            let sName = localStorage.getItem('hba_sig_name'); if(sName) document.getElementById('inSigName').value = sName;
+            let sDesig = localStorage.getItem('hba_sig_desig'); if(sDesig) document.getElementById('inSigDesig').value = sDesig;
+            
+            allCalculatedData = [];
+            currentRecordId = null;
+            document.getElementById('btnSaveRecord').innerHTML = "💾 SAVE RECORD";
+            document.getElementById('legal-pages-container').innerHTML = `<div class="legal-sheet" style="display: flex; justify-content: center; align-items: center; color: #777;"><h3>Loan Details thun la, "Generate Calculation" hmet rawh le.</h3></div>`;
+            
+            document.getElementById('editable-note-wrapper').innerHTML = `
+                <div class="note-p" id="note-intro-paragraph">
+                    Received an application from the <span class="out-live-copy2-address">...</span>, for the issue of an NDC/DC for <span class="out-live-name">...</span>, <span class="out-live-action-text">who is due to retire on</span> <span class="out-live-retire-date">...</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">...</span>). Therefore, a <span id="out-note-cert-type">Demand Certificate</span> may be issued.
+                </div>
+                <div class="note-calc-header">Calculation :</div>
+                <div id="note-calc-container">
+                    <div style="text-align:center; color:#999; font-weight:normal; margin-bottom: 20px;">
+                        Loan Details thun la, "Generate Calculation" hmet rawh le.
+                    </div>
+                </div>
+                <div id="note-closing-text" style="margin-top: 30px; font-size: 16px; page-break-inside: avoid; page-break-before: avoid;">Put up for your approval, please.</div>
+            `;
+            
+            document.getElementById('certLiabilitiesContainer').innerHTML = '';
+            document.getElementById('certHeadsSection').style.display = 'none';
+            document.getElementById('outCertNoLiabilitiesStr').innerHTML = '';
+            document.getElementById('outCertTotalVal2').innerText = '0';
+            let copy2 = document.getElementById('outCertCopy2Action'); if(copy2) copy2.innerHTML = 'for information.';
+            
+            let ndcLoan = document.getElementById('ndcLoanListStr'); if(ndcLoan) ndcLoan.innerText = '...';
+            let ndcCode = document.getElementById('ndcCodeList'); if(ndcCode) ndcCode.innerHTML = '';
+            let ndcExcess = document.getElementById('ndcExcessClaimStr'); if(ndcExcess) ndcExcess.innerHTML = 'for information and necessary action.';
+            
+            isGlobalNDC = false;
+            
+            toggleNotePage('left'); 
+            
+            updateLiveText();
+            switchPreview('legal');
+        }
+    }
+
+    window.onload = function() {
+        // Initialize Department Dropdown
+        let deptSelect = document.getElementById('inMemoDept');
+        for (let key in DEPT_CODES) {
+            let opt = document.createElement('option');
+            opt.value = key;
+            opt.text = `${key} (${DEPT_CODES[key]})`;
+            deptSelect.add(opt);
+        }
+
+        // Load Persistent Memo Values
+        let sYear = localStorage.getItem('memo_year'); if(sYear) document.getElementById('inMemoYear').value = sYear;
+        let sDept = localStorage.getItem('memo_dept'); if(sDept) document.getElementById('inMemoDept').value = sDept; else document.getElementById('inMemoDept').value = "HSD";
+
+        addLoanForm(); 
+        let sName = localStorage.getItem('hba_sig_name'); if(sName) document.getElementById('inSigName').value = sName;
+        let sDesig = localStorage.getItem('hba_sig_desig'); if(sDesig) document.getElementById('inSigDesig').value = sDesig;
+        updateLiveText();
+    }
+</script>
+</body>
+</html>

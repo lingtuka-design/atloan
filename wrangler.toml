@@ -1,0 +1,7 @@
+name = "atloan"
+pages_build_output_dir = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "atloan"
+database_id = "cd3fe7cb-5d26-4239-8010-5fa104ffeddc"

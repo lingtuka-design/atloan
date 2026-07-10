@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L&amp;M Section</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:       #f7f3ea;
+    --paper-panel: #fffdf8;
+    --ink:         #241f16;
+    --ink-soft:    #6b6152;
+    --rule:        #ded2b3;
+    --gold:        #a4802e;
+    --gold-dim:    #cbb677;
+    --ndc-color:   #8c2b26;   /* seal red   — No Demand Certificate  */
+    --ndc-tint:    #f6e9e6;
+    --dc-color:    #1f4a63;   /* seal blue  — Demand Certificate     */
+    --dc-tint:     #e7eef2;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* faint laid-paper texture */
+  body {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(164,128,46,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  h1, h2, .display {
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  }
+
+  /* ============ LETTERHEAD TOP BAR ============ */
+  .letterhead {
+    background: var(--paper-panel);
+    padding: 14px 28px 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .letterhead-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding-bottom: 12px;
+  }
+
+  .seal {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+  }
+
+  .brand-block { margin-right: auto; }
+  .brand-title {
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink);
+  }
+  .brand-sub {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tool-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 15px;
+    border-radius: 3px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: 0.15s ease;
+    user-select: none;
+  }
+  .tool-tab:hover { background: rgba(164,128,46,0.08); color: var(--ink); }
+  .tool-tab .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--tab-color, #999);
+    flex-shrink: 0;
+  }
+  .tool-tab[data-tool="ndc"] { --tab-color: var(--ndc-color); }
+  .tool-tab[data-tool="dc"]  { --tab-color: var(--dc-color); }
+  .tool-tab.active {
+    background: var(--tab-color, #333);
+    border-color: var(--tab-color, #333);
+    color: #fff;
+  }
+
+  /* double rule under the letterhead, like an official notice */
+  .rule-double {
+    max-width: 1100px;
+    margin: 0 auto;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    height: 3px;
+  }
+
+  /* ============ HOME ============ */
+  .home-wrap.hidden { display: none; }
+  .home {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 64px 28px 40px 28px;
+  }
+  .home-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .home h1 {
+    font-size: 40px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    color: var(--ink);
+  }
+  .home p.sub {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 560px;
+    margin: 0 0 44px 0;
+    line-height: 1.6;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: var(--paper-panel);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0;
+    cursor: pointer;
+    transition: 0.18s ease;
+    overflow: hidden;
+    position: relative;
+  }
+  .card:hover {
+    box-shadow: 0 10px 28px rgba(36,31,22,0.10);
+    transform: translateY(-3px);
+    border-color: var(--card-color, var(--rule));
+  }
+  .card[data-tool="ndc"] { --card-color: var(--ndc-color); --card-tint: var(--ndc-tint); }
+  .card[data-tool="dc"]  { --card-color: var(--dc-color);  --card-tint: var(--dc-tint); }
+
+  .card-band {
+    height: 5px;
+    background: var(--card-color, #999);
+  }
+  .card-body { padding: 26px 26px 22px 26px; }
+
+  .card-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1.5px solid var(--card-color, #999);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--card-color, #999);
+    background: var(--card-tint, transparent);
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    margin: 0 0 10px 0;
+    font-size: 23px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .card p {
+    margin: 0;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .card .go {
+    margin-top: 20px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--card-color, #333);
+  }
+
+  /* signature block — echoes the "Sd/-" style used inside the documents themselves */
+  .credit {
+    max-width: 1000px;
+    margin: 56px auto 0 auto;
+    padding: 0 28px 40px 28px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .credit-inner {
+    text-align: center;
+  }
+  .credit-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink);
+    border-top: 1px solid var(--ink);
+    padding-top: 6px;
+    min-width: 220px;
+  }
+  .credit-label {
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  /* ============ TOOL FRAME AREA ============ */
+  .frame-wrap { display: none; height: calc(100vh - 78px); }
+  .frame-wrap.active { display: block; }
+  iframe { width: 100%; height: 100%; border: none; display: block; }
+
+  @media (max-width: 640px) {
+    .home h1 { font-size: 30px; }
+    .letterhead-inner { gap: 12px; }
+    .credit { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="letterhead">
+    <div class="letterhead-inner">
+      <svg class="seal" viewBox="0 0 100 100" role="img" aria-label="L and M Section seal">
+        <circle cx="50" cy="50" r="47" fill="none" stroke="#a4802e" stroke-width="2"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#a4802e" stroke-width="1"/>
+        <text x="50" y="59" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-weight="700" font-size="30" fill="#241f16">L&amp;M</text>
+      </svg>
+      <div class="brand-block">
+        <p class="brand-title">L&amp;M Section</p>
+        <p class="brand-sub">Certificate &amp; Documentation Desk</p>
+      </div>
+      <div class="tabs">
+        <div class="tool-tab" data-tool="home" onclick="showHome()">Home</div>
+        <div class="tool-tab" data-tool="ndc" onclick="showTool('ndc')">
+          <span class="dot"></span> No Demand Certificate
+        </div>
+        <div class="tool-tab" data-tool="dc" onclick="showTool('dc')">
+          <span class="dot"></span> Demand Certificate
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rule-double"></div>
+
+  <div class="home-wrap" id="home-wrap">
+    <div class="home">
+      <div class="home-eyebrow">L&amp;M Section — Internal Tools</div>
+      <h1>Certificate Workspace</h1>
+      <p class="sub">Select a document to prepare. Each workspace below is entirely self-contained — records, drafts and settings in one never touch the other.</p>
+
+      <div class="cards">
+        <div class="card" data-tool="ndc" onclick="showTool('ndc')">
+          <div class="card-band"></div>
+          <div class="card-body">
+            <div class="card-mark">ND</div>
+            <h2>No Demand Certificate</h2>
+            <p>Prepare No Demand Certificates and notesheets, keep the issue log, and export records to Excel.</p>
+            <div class="go">Open workspace →</div>
+          </div>
+        </div>
+
+        <div class="card" data-tool="dc" onclick="showTool('dc')">
+          <div class="card-band"></div>
+          <div class="card-body">
+            <div class="card-mark">DC</div>
+            <h2>Demand Certificate</h2>
+            <p>Prepare Demand Certificates, work out repayment figures, and manage related records.</p>
+            <div class="go">Open workspace →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-inner">
+        <div class="credit-line">Created by : Lalmalsawmtluanga</div>
+        <div class="credit-label">L&amp;M Section</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame-wrap" id="frame-ndc">
+    <iframe id="iframe-ndc" title="No Demand Certificate"></iframe>
+  </div>
+
+  <div class="frame-wrap" id="frame-dc">
+    <iframe id="iframe-dc" title="Demand Certificate"></iframe>
+  </div>
+
+  <script>
+    const SOURCES = {
+      ndc: 'ndc-notesheet.html',
+      dc: 'loan-calculator.html'
+    };
+    const loaded = { ndc: false, dc: false };
+
+    function clearActive() {
+      document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.frame-wrap').forEach(f => f.classList.remove('active'));
+      document.getElementById('home-wrap').classList.add('hidden');
+    }
+
+    function showHome() {
+      clearActive();
+      document.querySelector('.tool-tab[data-tool="home"]').classList.add('active');
+      document.getElementById('home-wrap').classList.remove('hidden');
+    }
+
+    function showTool(name) {
+      clearActive();
+      document.querySelector('.tool-tab[data-tool="' + name + '"]').classList.add('active');
+      document.getElementById('frame-' + name).classList.add('active');
+
+      if (!loaded[name]) {
+        document.getElementById('iframe-' + name).src = SOURCES[name];
+        loaded[name] = true;
+      }
+    }
+
+    showHome();
+  </script>
+
+</body>
+</html>
