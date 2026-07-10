@@ -378,7 +378,7 @@ h1, h2, h3, .display-font {
     border: none !important;
     width: 794px !important;
     height: 1123px !important;
-    page-break-after: always;
+    page-break-after: avoid !important;
   }
 
   #legal-page {
@@ -387,7 +387,7 @@ h1, h2, h3, .display-font {
     border: none !important;
     width: 816px !important;
     height: 1344px !important;
-    page-break-after: always;
+    page-break-after: avoid !important;
   }
 
   .cert-page {

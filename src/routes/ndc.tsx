@@ -118,8 +118,9 @@ function NdcComponent() {
   }, [dept, fileYear, fileNo])
 
   const formatOfficialDate = (dateStr: string) => {
-    if (!dateStr) return '...'
+    if (!dateStr) return { __html: '...' }
     const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return { __html: '...' }
     const day = date.getDate()
     const year = date.getFullYear()
     const months = [
@@ -264,6 +265,13 @@ function NdcComponent() {
     setDesignation('IV Grade')
     setOffice('District Hospital, Champhai District, Champhai, Mizoram')
     setReasonVal('who is due to <b>retire</b> on')
+    setFileYear('2026')
+    setFileNo('114')
+    setCopy1Val('Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl')
+    setDdoName('Director, Accounts & Treasuries, Mizoram, Aizawl')
+    setShowSd(true)
+    setSigName('THARA LUNGṬAU')
+    setSigDesig('Joint Director (L&M)')
     const today = new Date().toISOString().split('T')[0]
     setIssueDate(today)
     setPensionDate(today)
