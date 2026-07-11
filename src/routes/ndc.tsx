@@ -481,7 +481,7 @@ function NdcComponent() {
           className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
           onClick={() => setActiveTab('list')}
         >
-          Issue List Database
+          Case Records
         </button>
       </div>
 

@@ -798,7 +798,7 @@ function DcComponent() {
           className={`tab-btn ${activeMainTab === 'list' ? 'active' : ''}`}
           onClick={() => setActiveMainTab('list')}
         >
-          Saved Records
+          Case Records
         </button>
       </div>
 
