@@ -13,6 +13,12 @@ interface UserRecord {
   created_at: string
 }
 
+interface StatRecord {
+  username: string
+  ndc_count: number
+  dc_count: number
+}
+
 function UsersComponent() {
   const auth = useContext(AuthContext)
   const navigate = useNavigate()
@@ -27,6 +33,13 @@ function UsersComponent() {
 
   const [editingPasswordUserId, setEditingPasswordUserId] = useState<string | null>(null)
   const [newPasswordVal, setNewPasswordVal] = useState('')
+
+  const [statsMonth, setStatsMonth] = useState(() => {
+    const d = new Date()
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+  })
+  const [performanceStats, setPerformanceStats] = useState<StatRecord[]>([])
+  const [statsError, setStatsError] = useState('')
 
   const handleUpdatePassword = async (userId: string) => {
     if (!newPasswordVal.trim()) {
@@ -97,6 +110,29 @@ function UsersComponent() {
       fetchUsers()
     }
   }, [auth])
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch(`/api/admin/stats?month=${statsMonth}`)
+      if (res.ok) {
+        const data = await res.json()
+        setPerformanceStats(data)
+        setStatsError('')
+      } else {
+        const err = await res.json()
+        setStatsError(err.error || 'Failed to load stats')
+      }
+    } catch (err) {
+      console.error(err)
+      setStatsError('Connection error fetching stats')
+    }
+  }
+
+  useEffect(() => {
+    if (auth?.user?.role === 'admin') {
+      fetchStats()
+    }
+  }, [auth, statsMonth])
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -343,6 +379,60 @@ function UsersComponent() {
                 </td>
               </tr>
             ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Performance Stats (bottom) */}
+      <div style={{
+        flex: '1 0 100%', background: 'white', border: '1px solid var(--rule)',
+        borderRadius: '8px', boxShadow: 'var(--shadow-md)', padding: '25px', marginTop: '10px'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--rule)', paddingBottom: '10px', marginBottom: '20px' }}>
+          <h3 style={{ margin: 0, color: 'var(--ink)', fontSize: '20px' }}>
+            📊 Staff Performance Stats
+          </h3>
+          <input 
+            type="month" 
+            value={statsMonth} 
+            onChange={(e) => setStatsMonth(e.target.value)} 
+            style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid var(--rule)', fontSize: '15px' }}
+          />
+        </div>
+        
+        {statsError && <div style={{ color: '#c62828', marginBottom: '15px', fontSize: '13px' }}>{statsError}</div>}
+
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead>
+            <tr style={{ borderBottom: '2px solid var(--rule)', color: 'var(--ink-soft)' }}>
+              <th style={{ padding: '12px 8px', fontWeight: '600' }}>Username</th>
+              <th style={{ padding: '12px 8px', fontWeight: '600' }}>NDC Settled</th>
+              <th style={{ padding: '12px 8px', fontWeight: '600' }}>DC Settled</th>
+            </tr>
+          </thead>
+          <tbody>
+            {performanceStats.map((stat, i) => (
+              <tr key={i} style={{ borderBottom: '1px solid var(--rule)' }}>
+                <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{stat.username}</td>
+                <td style={{ padding: '12px 8px' }}>
+                  <span style={{ background: '#e3f2fd', color: '#1565c0', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
+                    {stat.ndc_count}
+                  </span>
+                </td>
+                <td style={{ padding: '12px 8px' }}>
+                  <span style={{ background: '#fce4ec', color: '#c2185b', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
+                    {stat.dc_count}
+                  </span>
+                </td>
+              </tr>
+            ))}
+            {performanceStats.length === 0 && (
+              <tr>
+                <td colSpan={3} style={{ textAlign: 'center', padding: '20px', color: 'var(--ink-soft)' }}>
+                  He thla chhung hian case tihfel a la awm lo.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
