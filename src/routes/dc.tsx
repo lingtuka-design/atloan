@@ -1293,14 +1293,20 @@ function DcComponent() {
             {/* NOTESHEET PREVIEW */}
             {previewTab === 'note' && (
               <div id="note-pages-container" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div id="legal-page" className={`note-sheet document-font ${notesheetSide === 'back' ? 'back-side' : ''}`} style={{ display: 'block' }}>
+                <div className="note-sheet document-font" style={{ display: 'block' }}>
                   <div className="note-horizontal-line"></div>
-                  <div className="note-vline"></div>
-                  <div className="note-content-wrapper note-left-line" contentEditable suppressContentEditableWarning id="editable-note-wrapper" style={{
-                    position: 'absolute', top: '96px', left: notesheetSide === 'front' ? '144px' : '40px',
-                    right: notesheetSide === 'front' ? '40px' : '96px', bottom: '40px',
-                    fontSize: '17px', lineHeight: 1.5, textAlign: 'justify', overflow: 'hidden'
-                  }}>
+                  <div
+                    id="editable-note-wrapper"
+                    className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
+                    contentEditable
+                    suppressContentEditableWarning
+                    style={{
+                      fontSize: '17px',
+                      lineHeight: 1.5,
+                      textAlign: 'justify',
+                      outline: 'none'
+                    }}
+                  >
                     <div className="note-p" id="note-intro-paragraph">
                       Received an application from the <span className="bold">{shared.inDDOAddress || '...'}</span>, for the issue of an NDC/DC for <span className="bold">{w.fullName}</span>, <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">{Array.from(w.takenTypes).join(' and ')}</span>). Therefore, a <span id="out-note-cert-type">{w.isGlobalNDC ? 'No Demand Certificate' : 'Demand Certificate'}</span> may be issued.
                     </div>
