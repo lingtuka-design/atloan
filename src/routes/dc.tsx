@@ -162,6 +162,7 @@ function DcComponent() {
   // Search & Filter
   const [searchName, setSearchName] = useState('')
   const [searchDept, setSearchDept] = useState('')
+  const [filterCreator, setFilterCreator] = useState('All')
 
   function createEmptyLoan(type: string): LoanInput {
     const today = new Date().toISOString().split('T')[0]
@@ -776,8 +777,13 @@ function DcComponent() {
   const filteredRecords = records.filter(r => {
     const matchName = (r.name || '').toLowerCase().includes(searchName.toLowerCase())
     const matchDept = (r.dept || '').toLowerCase().includes(searchDept.toLowerCase())
-    return matchName && matchDept
+    const matchCreator = filterCreator === 'All' || r.created_by === filterCreator
+    return matchName && matchDept && matchCreator
   })
+
+  const creatorsForFilter = Array.from(new Set(
+    records.filter(r => r.created_by).map(r => r.created_by)
+  )).sort()
 
   return (
     <div className="fade-in" style={{ padding: '20px 0' }}>
@@ -1611,6 +1617,17 @@ function DcComponent() {
                 ))}
               </select>
             </div>
+            
+            {auth?.user?.role === 'admin' && creatorsForFilter.length > 0 && (
+              <div style={{ flex: 1, minWidth: '120px' }}>
+                <select value={filterCreator} onChange={e => setFilterCreator(e.target.value)} style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box', fontSize: '14px' }}>
+                  <option value="All">👤 All Staff</option>
+                  {creatorsForFilter.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '10px', fontWeight: 'bold', color: '#1565c0', fontSize: '15px' }}>

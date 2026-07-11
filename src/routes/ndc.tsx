@@ -79,6 +79,7 @@ function NdcComponent() {
   const [searchDept, setSearchDept] = useState('')
   const [filterYear, setFilterYear] = useState('All')
   const [filterMonth, setFilterMonth] = useState('All')
+  const [filterCreator, setFilterCreator] = useState('All')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
@@ -441,7 +442,9 @@ function NdcComponent() {
       if (filterMonth !== 'All' && recMonth !== filterMonth) matchDate = false
     }
 
-    return matchName && matchDept && matchDate
+    const matchCreator = filterCreator === 'All' || r.created_by === filterCreator
+
+    return matchName && matchDept && matchDate && matchCreator
   })
 
   // Years for filter
@@ -453,8 +456,12 @@ function NdcComponent() {
         return match ? match[1] : null
       }
       return null
-    }).filter(Boolean) as string[]
+    }).filter(y => y !== null) as string[]
   )).sort().reverse()
+
+  const creatorsForFilter = Array.from(new Set(
+    records.filter(r => r.created_by).map(r => r.created_by)
+  )).sort()
 
   const totalPages = Math.ceil(filteredRecords.length / itemsPerPage)
   const paginatedRecords = filteredRecords.slice(
@@ -1040,6 +1047,18 @@ function NdcComponent() {
                   <option value="12">December</option>
                 </select>
               </div>
+
+              {auth?.user?.role === 'admin' && creatorsForFilter.length > 0 && (
+                <div className="filter-item" style={{ flex: 1, minWidth: '150px', display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ fontSize: '13px', color: '#334e68', marginBottom: '5px', fontWeight: 'bold' }}>👤 Siamtu (Creator)</label>
+                  <select value={filterCreator} onChange={(e) => setFilterCreator(e.target.value)}>
+                    <option value="All">All Staff</option>
+                    {creatorsForFilter.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
             <div className="case-counter" style={{ marginTop: '15px', fontSize: '18px', fontWeight: 'bold', color: '#243b53', borderTop: '1px dashed #bcccdc', paddingTop: '10px' }}>
               Total Cases: <span style={{ color: '#d32f2f', fontSize: '22px' }}>{filteredRecords.length}</span>
