@@ -384,22 +384,20 @@ h1, h2, h3, .display-font {
   
   .a4-page {
     box-shadow: none !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     border: none !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 1123px !important;
+    width: 794px !important;
+    height: 1123px !important;
     page-break-after: avoid !important;
     display: block !important;
   }
 
   #legal-page {
     box-shadow: none !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     border: none !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 1344px !important;
+    width: 816px !important;
+    height: 1344px !important;
     page-break-after: avoid !important;
     display: block !important;
   }
