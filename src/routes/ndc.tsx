@@ -759,7 +759,7 @@ function NdcComponent() {
             <div
               id="a4-page"
               className="a4-page document-font"
-              style={{ display: previewTab === 'ndc' ? 'inline-block' : 'none' }}
+              style={{ display: previewTab === 'ndc' ? 'block' : 'none' }}
             >
               <div className="ndc-page-actions no-print" style={{
                 position: 'absolute', top: '15px', right: '15px', background: 'white',
@@ -901,7 +901,7 @@ function NdcComponent() {
             <div
               id="legal-page"
               className={`note-sheet document-font ${notesheetSide === 'back' ? 'back-side' : ''}`}
-              style={{ display: previewTab === 'notesheet' ? 'inline-block' : 'none' }}
+              style={{ display: previewTab === 'notesheet' ? 'block' : 'none' }}
             >
               <div className="note-hline"></div>
               <div className="note-vline"></div>

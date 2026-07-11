@@ -92,7 +92,7 @@ h1, h2, h3, .display-font {
 
 /* Notesheet layout with vertical lines */
 .a4-page, .legal-sheet, .note-sheet, .cert-page {
-  display: inline-block;
+  display: block;
   text-align: left;
   vertical-align: top;
   margin: 10px auto !important;
