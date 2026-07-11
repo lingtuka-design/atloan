@@ -709,8 +709,7 @@ function NdcComponent() {
             </div>
           </div>
 
-          {/* Preview Section */}
-          <div className={`preview-section ${previewTab === 'ndc' ? 'print-ndc-only' : 'print-notesheet-only'}`} style={{ paddingBottom: '20px' }}>
+          <div className={`preview-section ${previewTab === 'ndc' ? 'print-ndc-only' : 'print-notesheet-only'}`} style={{ paddingBottom: '20px', textAlign: 'center' }}>
             <div className="preview-tabs no-print" style={{
               display: 'flex',
               gap: '10px',
