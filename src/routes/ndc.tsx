@@ -332,13 +332,13 @@ function NdcComponent() {
         style.innerHTML = `@media print { 
           @page { size: A4 portrait; margin: 0; } 
           #legal-page { display: none !important; } 
-          #a4-page { display: block !important; } 
+          #a4-page { display: block !important; margin: 0 auto !important; } 
         }`
       } else {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
           #a4-page { display: none !important; } 
-          #legal-page { display: block !important; } 
+          #legal-page { display: block !important; margin: 0 auto !important; } 
         }`
       }
       document.head.appendChild(style)
