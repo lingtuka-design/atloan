@@ -86,7 +86,7 @@ function DakComponent() {
       const res = await fetch('/api/auth/users')
       if (res.ok) {
         const data = await res.json()
-        setUsers(data) // Allow assigning to anyone
+        setUsers(data.filter((u: any) => u.username.toLowerCase() !== 'mala')) // Allow assigning to anyone except Super Admin 'mala'
       }
     } catch (e) {
       console.error(e)
