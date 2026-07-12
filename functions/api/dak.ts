@@ -187,7 +187,28 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const id = url.searchParams.get('id')
       if (!id) return new Response('Missing id parameter', { status: 400 })
 
+      // Get the record first to know its month
+      const record = await env.DB.prepare('SELECT created_at FROM dak_records WHERE id = ?').bind(id).first<{ created_at: string }>()
+      if (!record) return new Response('Not found', { status: 404 })
+
       await env.DB.prepare('DELETE FROM dak_records WHERE id = ?').bind(id).run()
+
+      // Re-sequence the sl_no for the month of the deleted record
+      const monthStr = record.created_at.substring(0, 7)
+      
+      const remaining = await env.DB.prepare(`
+        SELECT id FROM dak_records 
+        WHERE substr(created_at, 1, 7) = ? 
+        ORDER BY created_at ASC
+      `).bind(monthStr).all<{ id: string }>()
+
+      if (remaining.results) {
+        for (let i = 0; i < remaining.results.length; i++) {
+          await env.DB.prepare('UPDATE dak_records SET sl_no = ? WHERE id = ?')
+            .bind(i + 1, remaining.results[i].id)
+            .run()
+        }
+      }
 
       return Response.json({ success: true }, {
         headers: { 'Access-Control-Allow-Origin': '*' }

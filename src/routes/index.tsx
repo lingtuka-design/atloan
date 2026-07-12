@@ -53,7 +53,7 @@ function HomeComponent() {
                 color: 'var(--ndc-color)',
                 backgroundColor: 'var(--ndc-tint)',
                 marginBottom: '16px'
-              }}>ND</div>
+              }}>NDC</div>
               <h2 style={{ margin: '0 0 10px 0', fontSize: '23px', fontWeight: 600, color: 'var(--ink)' }}>No Demand Certificate</h2>
               <p style={{ margin: 0, fontSize: '14.5px', color: 'var(--ink-soft)', lineHeight: '1.6' }}>Prepare No Demand Certificates and notesheets, keep the issue log, and export records to Excel.</p>
               <div className="go" style={{
@@ -94,6 +94,37 @@ function HomeComponent() {
                 letterSpacing: '0.04em',
                 textTransform: 'uppercase',
                 color: 'var(--dc-color)'
+              }}>Open workspace →</div>
+            </div>
+          </Link>
+
+          <Link to="/dak" className="card card-dak" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="card-band" style={{ height: '5px', backgroundColor: '#334e68' }}></div>
+            <div className="card-body" style={{ padding: '26px 26px 22px 26px' }}>
+              <div className="card-mark" style={{
+                width: '34px',
+                height: '34px',
+                borderRadius: '50%',
+                border: '1.5px solid #334e68',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 700,
+                fontSize: '13px',
+                color: '#334e68',
+                backgroundColor: '#f0f4f8',
+                marginBottom: '16px'
+              }}>DAK</div>
+              <h2 style={{ margin: '0 0 10px 0', fontSize: '23px', fontWeight: 600, color: 'var(--ink)' }}>Dak Management</h2>
+              <p style={{ margin: 0, fontSize: '14.5px', color: 'var(--ink-soft)', lineHeight: '1.6' }}>Assign cases to staff and track work progress.</p>
+              <div className="go" style={{
+                marginTop: '20px',
+                fontSize: '12.5px',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+                color: '#334e68'
               }}>Open workspace →</div>
             </div>
           </Link>
@@ -144,6 +175,9 @@ function HomeComponent() {
         }
         .card-dc:hover {
           border-color: var(--dc-color);
+        }
+        .card-dak:hover {
+          border-color: #334e68;
         }
       `}</style>
     </div>
