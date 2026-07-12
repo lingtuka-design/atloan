@@ -109,8 +109,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const maxSlQuery = await env.DB.prepare(`
         SELECT MAX(sl_no) as max_sl 
         FROM dak_records 
-        WHERE strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now', 'localtime')
-      `).first<{ max_sl: number }>()
+        WHERE assigned_to = ? AND strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now', 'localtime')
+      `).bind(record.assigned_to || '').first<{ max_sl: number }>()
 
       const nextSl = (maxSlQuery?.max_sl || 0) + 1
 
@@ -187,20 +187,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const id = url.searchParams.get('id')
       if (!id) return new Response('Missing id parameter', { status: 400 })
 
-      // Get the record first to know its month
-      const record = await env.DB.prepare('SELECT created_at FROM dak_records WHERE id = ?').bind(id).first<{ created_at: string }>()
+      // Get the record first to know its month and assigned_to
+      const record = await env.DB.prepare('SELECT assigned_to, created_at FROM dak_records WHERE id = ?').bind(id).first<{ assigned_to: string, created_at: string }>()
       if (!record) return new Response('Not found', { status: 404 })
 
       await env.DB.prepare('DELETE FROM dak_records WHERE id = ?').bind(id).run()
 
-      // Re-sequence the sl_no for the month of the deleted record
+      // Re-sequence the sl_no for the month of the deleted record, specifically for that staff
       const monthStr = record.created_at.substring(0, 7)
       
       const remaining = await env.DB.prepare(`
         SELECT id FROM dak_records 
-        WHERE substr(created_at, 1, 7) = ? 
+        WHERE assigned_to = ? AND substr(created_at, 1, 7) = ? 
         ORDER BY created_at ASC
-      `).bind(monthStr).all<{ id: string }>()
+      `).bind(record.assigned_to, monthStr).all<{ id: string }>()
 
       if (remaining.results) {
         for (let i = 0; i < remaining.results.length; i++) {

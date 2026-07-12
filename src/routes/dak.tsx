@@ -39,6 +39,7 @@ function DakComponent() {
   const [filterDate, setFilterDate] = useState('')
   const [searchName, setSearchName] = useState('')
   const [filterStatus, setFilterStatus] = useState('All')
+  const [filterStaff, setFilterStaff] = useState('All')
   
   const [loading, setLoading] = useState(true)
 
@@ -176,6 +177,7 @@ function DakComponent() {
   const filteredRecords = records.filter(r => {
     if (searchName && !r.name.toLowerCase().includes(searchName.toLowerCase())) return false
     if (filterStatus !== 'All' && r.action !== filterStatus) return false
+    if (filterStaff !== 'All' && r.assigned_to !== filterStaff) return false
     if (filterMonth !== 'All' && !r.created_at.includes(filterMonth)) return false
     if (filterDate && !r.created_at.startsWith(filterDate)) return false
     return true
@@ -237,6 +239,14 @@ function DakComponent() {
 
       {/* Filters */}
       <div className="no-print" style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        {auth?.user?.role === 'admin' && (
+          <select value={filterStaff} onChange={e => setFilterStaff(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
+            <option value="All">All Staff</option>
+            {users.map(u => (
+              <option key={u.id} value={u.username}>{u.username}</option>
+            ))}
+          </select>
+        )}
         <input type="text" placeholder="Search Name..." value={searchName} onChange={e => setSearchName(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }} />
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
           <option value="All">All Actions</option>
