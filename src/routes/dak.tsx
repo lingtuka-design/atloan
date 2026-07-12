@@ -58,22 +58,9 @@ function DakComponent() {
       if (res.ok) {
         const data = await res.json()
         setRecords(data)
+        window.dispatchEvent(new Event('dak-read'))
         
-        // Mark as read for staff
-        if (auth?.user?.role !== 'admin') {
-          const newCases = data.filter((d: DakRecord) => d.is_new === 1)
-          if (newCases.length > 0) {
-            for (const c of newCases) {
-              await fetch('/api/dak', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: c.id, is_new: 0 })
-              })
-            }
-            // Dispatch custom event to update navbar badge
-            window.dispatchEvent(new Event('dak-read'))
-          }
-        }
+
       }
     } catch (e) {
       console.error(e)

@@ -86,6 +86,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
           'SELECT d.*, u.designation as user_designation FROM dak_records d LEFT JOIN users u ON LOWER(d.assigned_to) = LOWER(u.username) WHERE d.assigned_to = ? ORDER BY d.created_at DESC'
         ).bind(user.username).all()
         results = query.results
+
+        // Mark as read
+        await env.DB.prepare(
+          'UPDATE dak_records SET is_new = 0 WHERE assigned_to = ? AND is_new = 1'
+        ).bind(user.username).run()
       }
 
       return Response.json(results, {
