@@ -301,10 +301,10 @@ function DcComponent() {
   }
 
   const handleSharedChange = (field: keyof SharedInputs, value: any) => {
-    setShared({
-      ...shared,
+    setShared(prev => ({
+      ...prev,
       [field]: value
-    })
+    }))
   }
 
   // Calculate Auto EMI (like the legacy page logic: SanctionAmount / 120 or recovery installments)
@@ -676,7 +676,10 @@ function DcComponent() {
 
   const handleLoadRecord = (r: DcRecord) => {
     setCurrentEditId(r.id)
-    setShared(r.sharedInputs)
+    setShared({
+      ...r.sharedInputs,
+      inShowSd: Boolean(r.sharedInputs.inShowSd)
+    })
     setLoans(r.loanInputsArray)
     setCalculatedData(r.allCalculatedData)
     setActiveMainTab('generator')
@@ -1468,7 +1471,7 @@ function DcComponent() {
                     <div className="text-right cert-section-gap" style={{ textAlign: 'right', marginTop: '20px' }}>
                       <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontSize: '16px' }}>
                         <div className="sig-space" style={{ height: '45px' }}></div>
-                        {shared.inShowSd && <span className="cert-sd-mark">Sd/-<br /></span>}
+                        {shared.inShowSd ? <span className="cert-sd-mark">Sd/-<br /></span> : null}
                         <span className="bold cert-sig-name-disp">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</span><br />
                         <span className="out-live-sig-desig">{shared.inSigDesig}</span><br />
                         Accounts &amp; Treasuries
@@ -1536,7 +1539,7 @@ function DcComponent() {
                     <div className="text-right" style={{ marginTop: '20px', marginBottom: '20px', textAlign: 'right' }}>
                       <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontSize: '15px' }}>
                         <div style={{ height: '35px' }}></div>
-                        {shared.inShowSd && <span className="cert-sd-mark">Sd/-<br /></span>}
+                        {shared.inShowSd ? <span className="cert-sd-mark">Sd/-<br /></span> : null}
                         <span className="bold cert-sig-name-disp">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</span><br />
                         <span className="out-live-sig-desig">{shared.inSigDesig}</span><br />
                         Accounts &amp; Treasuries

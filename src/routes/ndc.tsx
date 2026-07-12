@@ -235,7 +235,7 @@ function NdcComponent() {
     setDdoName(r.ddoName)
     setSigName(r.sigName)
     setSigDesig(r.sigDesig)
-    setShowSd(r.showSd)
+    setShowSd(Boolean(r.showSd))
     setActiveTab('generator')
   }
 
@@ -847,7 +847,7 @@ function NdcComponent() {
                 <div style={{ textAlign: 'right', marginBottom: '0px' }}>
                   <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontSize: '16px', lineHeight: 1.2 }}>
                     <div style={{ height: '35px', position: 'relative' }}>
-                      {showSd && <span style={{ position: 'absolute', bottom: '3px', left: 0, right: 0, fontWeight: 'bold' }}>Sd/-</span>}
+                      {showSd ? <span style={{ position: 'absolute', bottom: '3px', left: 0, right: 0, fontWeight: 'bold' }}>Sd/-</span> : null}
                     </div>
                     <span className="bold">{showSd ? sigName.toUpperCase() : `(${sigName.toUpperCase()})`}</span><br />
                     <span>{sigDesig}</span><br />
