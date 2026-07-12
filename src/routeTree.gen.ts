@@ -13,6 +13,7 @@ import { Route as UsersRouteImport } from './routes/users'
 import { Route as NdcRouteImport } from './routes/ndc'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DcRouteImport } from './routes/dc'
+import { Route as DakRouteImport } from './routes/dak'
 import { Route as IndexRouteImport } from './routes/index'
 
 const UsersRoute = UsersRouteImport.update({
@@ -35,6 +36,11 @@ const DcRoute = DcRouteImport.update({
   path: '/dc',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DakRoute = DakRouteImport.update({
+  id: '/dak',
+  path: '/dak',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dak': typeof DakRoute
   '/dc': typeof DcRoute
   '/login': typeof LoginRoute
   '/ndc': typeof NdcRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dak': typeof DakRoute
   '/dc': typeof DcRoute
   '/login': typeof LoginRoute
   '/ndc': typeof NdcRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dak': typeof DakRoute
   '/dc': typeof DcRoute
   '/login': typeof LoginRoute
   '/ndc': typeof NdcRoute
@@ -65,14 +74,15 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dc' | '/login' | '/ndc' | '/users'
+  fullPaths: '/' | '/dak' | '/dc' | '/login' | '/ndc' | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dc' | '/login' | '/ndc' | '/users'
-  id: '__root__' | '/' | '/dc' | '/login' | '/ndc' | '/users'
+  to: '/' | '/dak' | '/dc' | '/login' | '/ndc' | '/users'
+  id: '__root__' | '/' | '/dak' | '/dc' | '/login' | '/ndc' | '/users'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DakRoute: typeof DakRoute
   DcRoute: typeof DcRoute
   LoginRoute: typeof LoginRoute
   NdcRoute: typeof NdcRoute
@@ -109,6 +119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DcRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dak': {
+      id: '/dak'
+      path: '/dak'
+      fullPath: '/dak'
+      preLoaderRoute: typeof DakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -121,6 +138,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DakRoute: DakRoute,
   DcRoute: DcRoute,
   LoginRoute: LoginRoute,
   NdcRoute: NdcRoute,

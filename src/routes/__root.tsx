@@ -23,7 +23,30 @@ export const Route = createRootRoute({
 function RootComponent() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [dakCount, setDakCount] = useState(0)
   const navigate = useNavigate()
+
+  const fetchDakCount = async () => {
+    if (!user || user.role === 'admin') return
+    try {
+      const res = await fetch('/api/dak/count')
+      if (res.ok) {
+        const data = await res.json()
+        setDakCount(data.new_cases || 0)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      fetchDakCount()
+      const handleRead = () => fetchDakCount()
+      window.addEventListener('dak-read', handleRead)
+      return () => window.removeEventListener('dak-read', handleRead)
+    }
+  }, [user])
 
   const checkSession = async () => {
     try {
@@ -159,6 +182,22 @@ function RootComponent() {
                     style={{ textDecoration: 'none' }}
                   >
                     Home
+                  </Link>
+                  <Link
+                    to="/dak"
+                    className="tool-tab"
+                    activeProps={{ className: 'tool-tab active' }}
+                    style={{ textDecoration: 'none', position: 'relative' }}
+                  >
+                    Dak
+                    {dakCount > 0 && (
+                      <span style={{
+                        background: '#d32f2f', color: 'white', fontSize: '10px', fontWeight: 'bold',
+                        padding: '2px 6px', borderRadius: '10px', marginLeft: '5px'
+                      }}>
+                        New Case ({dakCount})
+                      </span>
+                    )}
                   </Link>
                   <Link
                     to="/ndc"

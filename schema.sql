@@ -58,3 +58,19 @@ CREATE TABLE IF NOT EXISTS dc_records (
     created_by TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS dak_records (
+    id TEXT PRIMARY KEY,
+    sl_no INTEGER,
+    receive_no TEXT,
+    name TEXT,
+    department TEXT,
+    case_type TEXT,
+    sent_date TEXT,
+    action TEXT DEFAULT 'Pending',
+    issue_date TEXT,
+    assigned_to TEXT,
+    created_by TEXT,
+    is_new INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
