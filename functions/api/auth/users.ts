@@ -73,6 +73,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // POST: Create User
   if (request.method === 'POST') {
+    if (adminUser.username.toLowerCase() !== 'mala') {
+      return new Response(JSON.stringify({ error: 'Permission denied: Super Admin chiahin a siam thei' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
     try {
       const { username, password, role, designation } = await request.json() as Record<string, string>
 
@@ -123,6 +130,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // DELETE: Remove User
   if (request.method === 'DELETE') {
+    if (adminUser.username.toLowerCase() !== 'mala') {
+      return new Response(JSON.stringify({ error: 'Permission denied: Super Admin chiahin a delete thei' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
     try {
       const id = url.searchParams.get('id')
       if (!id) {

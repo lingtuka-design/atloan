@@ -256,7 +256,8 @@ function UsersComponent() {
   return (
     <div style={{ maxWidth: '1100px', margin: '30px auto', padding: '0 20px', display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
       
-      {/* Creation form (left side) */}
+      {/* Creation form (left side) - Only for Super Admin 'mala' */}
+      {auth.user?.username.toLowerCase() === 'mala' && (
       <div style={{
         flex: '1 0 350px', background: 'white', border: '1px solid var(--rule)',
         borderRadius: '8px', boxShadow: 'var(--shadow-md)', padding: '25px', height: 'fit-content'
@@ -323,6 +324,7 @@ function UsersComponent() {
           </button>
         </form>
       </div>
+      )}
 
       {/* User list table (right side) */}
       <div style={{
@@ -448,24 +450,26 @@ function UsersComponent() {
                       {u.id === auth.user?.id ? (
                         <span style={{ fontSize: '12px', color: 'var(--ink-soft)', fontStyle: 'italic', alignSelf: 'center', marginLeft: '5px' }}>Current User</span>
                       ) : (
-                        <button
-                          onClick={() => handleDeleteUser(u.id, u.username)}
-                          style={{
-                            background: 'transparent', color: '#d32f2f', border: '1px solid #d32f2f',
-                            borderRadius: '3px', padding: '3px 8px', fontSize: '12px', fontWeight: 'bold',
-                            cursor: 'pointer', transition: '0.2s'
-                          }}
-                          onMouseOver={e => {
-                            e.currentTarget.style.background = '#d32f2f'
-                            e.currentTarget.style.color = 'white'
-                          }}
-                          onMouseOut={e => {
-                            e.currentTarget.style.background = 'transparent'
-                            e.currentTarget.style.color = '#d32f2f'
-                          }}
-                        >
-                          Delete
-                        </button>
+                        auth.user?.username.toLowerCase() === 'mala' ? (
+                          <button
+                            onClick={() => handleDeleteUser(u.id, u.username)}
+                            style={{
+                              background: 'transparent', color: '#d32f2f', border: '1px solid #d32f2f',
+                              borderRadius: '3px', padding: '3px 8px', fontSize: '12px', fontWeight: 'bold',
+                              cursor: 'pointer', transition: '0.2s'
+                            }}
+                            onMouseOver={e => {
+                              e.currentTarget.style.background = '#d32f2f'
+                              e.currentTarget.style.color = 'white'
+                            }}
+                            onMouseOut={e => {
+                              e.currentTarget.style.background = 'transparent'
+                              e.currentTarget.style.color = '#d32f2f'
+                            }}
+                          >
+                            Delete
+                          </button>
+                        ) : null
                       )}
                     </div>
                   )}
