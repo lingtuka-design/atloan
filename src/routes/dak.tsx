@@ -86,7 +86,7 @@ function DakComponent() {
       const res = await fetch('/api/auth/users')
       if (res.ok) {
         const data = await res.json()
-        setUsers(data.filter((u: any) => u.role === 'user')) // only assign to staff
+        setUsers(data) // Allow assigning to anyone
       }
     } catch (e) {
       console.error(e)
