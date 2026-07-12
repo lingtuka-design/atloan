@@ -159,6 +159,20 @@ function DakComponent() {
     }
   }
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('He record hi i delete duh takzet em?')) return
+    try {
+      const res = await fetch(`/api/dak?id=${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        fetchRecords()
+      } else {
+        alert('Delete theih a ni lo')
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const filteredRecords = records.filter(r => {
     if (searchName && !r.name.toLowerCase().includes(searchName.toLowerCase())) return false
     if (filterStatus !== 'All' && r.action !== filterStatus) return false
@@ -260,6 +274,9 @@ function DakComponent() {
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Sent</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Action</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Issue</th>
+                  {auth?.user?.role === 'admin' && (
+                    <th className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}></th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -285,14 +302,18 @@ function DakComponent() {
 
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.sent_date}</td>
                     
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                    <td style={{ 
+                      border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold',
+                      background: r.action === 'Pending' ? '#ffcdd2' : (r.action === 'Processing' ? '#fff9c4' : '#c8e6c9'),
+                      color: r.action === 'Pending' ? '#c62828' : (r.action === 'Processing' ? '#f57f17' : '#2e7d32')
+                    }}>
                       {auth?.user?.role === 'admin' ? (
                         r.action
                       ) : (
-                        <select value={r.action} onChange={e => handleActionChange(r.id, e.target.value)} style={{ padding: '4px', border: 'none', background: 'transparent' }}>
-                          <option value="Pending">Pending</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Settled">Settled</option>
+                        <select value={r.action} onChange={e => handleActionChange(r.id, e.target.value)} style={{ padding: '4px', border: 'none', background: 'transparent', fontWeight: 'bold', width: '100%', color: 'inherit' }}>
+                          <option value="Pending" style={{color: 'black'}}>Pending</option>
+                          <option value="Processing" style={{color: 'black'}}>Processing</option>
+                          <option value="Settled" style={{color: 'black'}}>Settled</option>
                         </select>
                       )}
                     </td>
@@ -309,6 +330,14 @@ function DakComponent() {
                         />
                       )}
                     </td>
+
+                    {auth?.user?.role === 'admin' && (
+                      <td className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                        <button onClick={() => handleDelete(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                          Delete
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

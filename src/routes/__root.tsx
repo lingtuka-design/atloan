@@ -195,7 +195,7 @@ function RootComponent() {
                         background: '#d32f2f', color: 'white', fontSize: '10px', fontWeight: 'bold',
                         padding: '2px 6px', borderRadius: '10px', marginLeft: '5px'
                       }}>
-                        New Case ({dakCount})
+                        New Case received {dakCount}
                       </span>
                     )}
                   </Link>

@@ -178,5 +178,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
+  if (request.method === 'DELETE') {
+    if (user.role !== 'admin') {
+      return new Response(JSON.stringify({ error: 'Permission denied' }), { status: 403 })
+    }
+
+    try {
+      const id = url.searchParams.get('id')
+      if (!id) return new Response('Missing id parameter', { status: 400 })
+
+      await env.DB.prepare('DELETE FROM dak_records WHERE id = ?').bind(id).run()
+
+      return Response.json({ success: true }, {
+        headers: { 'Access-Control-Allow-Origin': '*' }
+      })
+    } catch (err: any) {
+      return new Response(err.message, { status: 500 })
+    }
+  }
+
   return new Response('Method not allowed', { status: 405 })
 }
