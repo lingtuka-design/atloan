@@ -302,7 +302,7 @@ function DakComponent() {
                     <td style={{ border: '1px solid #000', padding: '8px' }}>{r.department}</td>
                     
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
-                      {auth?.user?.role === 'admin' ? (
+                      {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.case_type
                       ) : (
                         <select value={r.case_type} onChange={e => handleCaseTypeChange(r.id, e.target.value)} style={{ padding: '4px', border: 'none', background: 'transparent' }}>
@@ -321,7 +321,7 @@ function DakComponent() {
                       background: r.action === 'Pending' ? '#ffcdd2' : (r.action === 'Processing' ? '#fff9c4' : '#c8e6c9'),
                       color: r.action === 'Pending' ? '#c62828' : (r.action === 'Processing' ? '#f57f17' : '#2e7d32')
                     }}>
-                      {auth?.user?.role === 'admin' ? (
+                      {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.action
                       ) : (
                         <select value={r.action} onChange={e => handleActionChange(r.id, e.target.value)} style={{ padding: '4px', border: 'none', background: 'transparent', fontWeight: 'bold', width: '100%', color: 'inherit' }}>
@@ -333,7 +333,7 @@ function DakComponent() {
                     </td>
 
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
-                      {auth?.user?.role === 'admin' ? (
+                      {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.issue_date
                       ) : (
                         <input 
