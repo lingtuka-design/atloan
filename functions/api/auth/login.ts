@@ -38,9 +38,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       ).bind(adminId, 'mala', defaultHash, 'admin').run()
     }
 
-    // 2. Query user
+    // 2. Query user (ignore case and spaces)
     const dbUser = await env.DB.prepare(
-      'SELECT * FROM users WHERE LOWER(username) = LOWER(?)'
+      "SELECT * FROM users WHERE REPLACE(LOWER(username), ' ', '') = REPLACE(LOWER(?), ' ', '')"
     ).bind(username.trim()).first<{ id: string; username: string; password_hash: string; role: string }>()
 
     if (!dbUser) {

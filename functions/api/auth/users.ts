@@ -97,9 +97,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         })
       }
 
-      // Check duplicate username
+      // Check duplicate username (ignore case and spaces)
       const existing = await env.DB.prepare(
-        'SELECT id FROM users WHERE LOWER(username) = LOWER(?)'
+        "SELECT id FROM users WHERE REPLACE(LOWER(username), ' ', '') = REPLACE(LOWER(?), ' ', '')"
       ).bind(username.trim()).first()
 
       if (existing) {
