@@ -56,8 +56,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (request.method === 'GET') {
     try {
       const { results } = await env.DB.prepare(
-        'SELECT id, username, role, created_at FROM users ORDER BY created_at DESC'
-      ).all<{ id: string; username: string; role: string; created_at: string }>()
+        'SELECT id, username, role, designation, created_at FROM users ORDER BY created_at DESC'
+      ).all<{ id: string; username: string; role: string; designation: string; created_at: string }>()
 
       return new Response(JSON.stringify(results), {
         status: 200,
@@ -74,7 +74,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   // POST: Create User
   if (request.method === 'POST') {
     try {
-      const { username, password, role } = await request.json() as Record<string, string>
+      const { username, password, role, designation } = await request.json() as Record<string, string>
 
       if (!username || !password || !role) {
         return new Response(JSON.stringify({ error: 'Khawngaihin form hi thun kim rawh' }), {
@@ -106,8 +106,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const passwordHash = await sha256(password)
 
       await env.DB.prepare(
-        'INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, ?, ?)'
-      ).bind(userId, username.trim(), passwordHash, role).run()
+        'INSERT INTO users (id, username, password_hash, role, designation) VALUES (?, ?, ?, ?, ?)'
+      ).bind(userId, username.trim(), passwordHash, role, designation || '').run()
 
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
@@ -156,18 +156,22 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   // PUT: Update User details (Password Change)
   if (request.method === 'PUT') {
     try {
-      const { id, password } = await request.json() as Record<string, string>
+      const { id, password, designation } = await request.json() as Record<string, string>
 
-      if (!id || !password) {
-        return new Response(JSON.stringify({ error: 'Missing ID or Password' }), {
+      if (!id) {
+        return new Response(JSON.stringify({ error: 'Missing ID' }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
         })
       }
 
-      const passwordHash = await sha256(password)
-
-      await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(passwordHash, id).run()
+      if (password) {
+        const passwordHash = await sha256(password)
+        await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(passwordHash, id).run()
+      }
+      if (designation !== undefined) {
+        await env.DB.prepare('UPDATE users SET designation = ? WHERE id = ?').bind(designation, id).run()
+      }
 
       return new Response(JSON.stringify({ success: true }), {
         status: 200,

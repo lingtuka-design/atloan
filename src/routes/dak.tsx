@@ -253,11 +253,15 @@ function DakComponent() {
         let title = ''
         if (auth?.user?.role === 'admin') {
           const [staff, d] = key.split('_')
+          const desig = groupedRecords[key][0]?.user_designation
+          const namePart = desig ? `${staff} - ${desig}` : staff
           const dateObj = new Date(d)
-          title = `${staff} Dak : ${dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} (${dateObj.toLocaleDateString('en-US', { weekday: 'long' })})`
+          title = `${namePart} Dak : ${dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} (${dateObj.toLocaleDateString('en-US', { weekday: 'long' })})`
         } else {
           const dateObj = new Date(key)
-          title = `Dak : ${dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} (${dateObj.toLocaleDateString('en-US', { weekday: 'long' })})`
+          const desig = groupedRecords[key][0]?.user_designation
+          const namePart = desig ? `${auth.user?.username} - ${desig}` : (auth.user?.username || '')
+          title = `${namePart ? namePart + ' ' : ''}Dak : ${dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })} (${dateObj.toLocaleDateString('en-US', { weekday: 'long' })})`
         }
 
         return (

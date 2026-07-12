@@ -10,6 +10,7 @@ interface UserRecord {
   id: string
   username: string
   role: 'admin' | 'user'
+  designation?: string
   created_at: string
 }
 
@@ -26,6 +27,7 @@ function UsersComponent() {
   const [usersList, setUsersList] = useState<UserRecord[]>([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [designation, setDesignation] = useState('')
   const [role, setRole] = useState<'admin' | 'user'>('user')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -33,6 +35,9 @@ function UsersComponent() {
 
   const [editingPasswordUserId, setEditingPasswordUserId] = useState<string | null>(null)
   const [newPasswordVal, setNewPasswordVal] = useState('')
+
+  const [editingDesigUserId, setEditingDesigUserId] = useState<string | null>(null)
+  const [newDesigVal, setNewDesigVal] = useState('')
 
   const [statsMonth, setStatsMonth] = useState(() => {
     const d = new Date()
@@ -73,6 +78,38 @@ function UsersComponent() {
     } catch (err) {
       console.error(err)
       setError('Connection error changing password')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleUpdateDesignation = async (userId: string) => {
+    setError('')
+    setMessage('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: userId,
+          designation: newDesigVal.trim()
+        })
+      })
+
+      if (res.ok) {
+        setMessage('Designation thlak a ni ta!')
+        setEditingDesigUserId(null)
+        setNewDesigVal('')
+        fetchUsers()
+      } else {
+        const data = await res.json()
+        setError(data.error || 'Designation thlak a hlawhchham')
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Connection error changing designation')
     } finally {
       setLoading(false)
     }
@@ -153,7 +190,8 @@ function UsersComponent() {
         body: JSON.stringify({
           username: username.trim(),
           password: password.trim(),
-          role
+          role,
+          designation: designation.trim()
         })
       })
 
@@ -161,6 +199,7 @@ function UsersComponent() {
         setMessage('User thar siam a ni ta!')
         setUsername('')
         setPassword('')
+        setDesignation('')
         setRole('user')
         fetchUsers() // Refresh list
       } else {
@@ -253,6 +292,17 @@ function UsersComponent() {
           </div>
 
           <div className="input-box" style={{ marginBottom: 0 }}>
+            <label>Designation</label>
+            <input
+              type="text"
+              value={designation}
+              onChange={e => setDesignation(e.target.value)}
+              placeholder="e.g. LDC"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="input-box" style={{ marginBottom: 0 }}>
             <label>Access Role</label>
             <select value={role} onChange={e => setRole(e.target.value as 'admin' | 'user')} disabled={loading}>
               <option value="user">User (Regular Staff - isolated files)</option>
@@ -295,7 +345,10 @@ function UsersComponent() {
           <tbody>
             {usersList.map((u) => (
               <tr key={u.id} style={{ borderBottom: '1px solid var(--rule)' }}>
-                <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{u.username}</td>
+                <td style={{ padding: '12px 8px' }}>
+                  <div style={{ fontWeight: 'bold' }}>{u.username}</div>
+                  {u.designation && <div style={{ fontSize: '12px', color: 'var(--ink-soft)' }}>{u.designation}</div>}
+                </td>
                 <td style={{ padding: '12px 8px' }}>
                   <span style={{
                     padding: '2px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold',
@@ -349,9 +402,49 @@ function UsersComponent() {
                           e.currentTarget.style.color = '#673ab7'
                         }}
                       >
-                        Change Password
+                        Change Pass
                       </button>
-
+                      <button
+                        onClick={() => { setEditingDesigUserId(u.id); setNewDesigVal(u.designation || ''); }}
+                        style={{
+                          background: 'transparent', color: '#1976d2', border: '1px solid #1976d2',
+                          borderRadius: '3px', padding: '3px 8px', fontSize: '12px', fontWeight: 'bold',
+                          cursor: 'pointer', transition: '0.2s'
+                        }}
+                        onMouseOver={e => {
+                          e.currentTarget.style.background = '#1976d2'
+                          e.currentTarget.style.color = 'white'
+                        }}
+                        onMouseOut={e => {
+                          e.currentTarget.style.background = 'transparent'
+                          e.currentTarget.style.color = '#1976d2'
+                        }}
+                      >
+                        Edit Desig
+                      </button>
+                      {editingDesigUserId === u.id && (
+                        <div style={{ display: 'flex', gap: '5px', justifyContent: 'flex-end', alignItems: 'center', marginTop: '5px' }}>
+                          <input
+                            type="text"
+                            placeholder="Designation"
+                            value={newDesigVal}
+                            onChange={e => setNewDesigVal(e.target.value)}
+                            style={{ padding: '4px 8px', fontSize: '12px', border: '1px solid var(--rule)', borderRadius: '3px', width: '110px' }}
+                          />
+                          <button
+                            onClick={() => handleUpdateDesignation(u.id)}
+                            style={{ background: '#2e7d32', color: 'white', border: 'none', borderRadius: '3px', padding: '4px 8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => { setEditingDesigUserId(null); setNewDesigVal(''); }}
+                            style={{ background: '#757575', color: 'white', border: 'none', borderRadius: '3px', padding: '4px 8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      )}
                       {u.id === auth.user?.id ? (
                         <span style={{ fontSize: '12px', color: 'var(--ink-soft)', fontStyle: 'italic', alignSelf: 'center', marginLeft: '5px' }}>Current User</span>
                       ) : (

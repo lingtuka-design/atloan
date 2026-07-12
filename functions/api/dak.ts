@@ -78,12 +78,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       let results
       if (user.role === 'admin') {
         const query = await env.DB.prepare(
-          'SELECT * FROM dak_records ORDER BY created_at DESC'
+          'SELECT d.*, u.designation as user_designation FROM dak_records d LEFT JOIN users u ON LOWER(d.assigned_to) = LOWER(u.username) ORDER BY d.created_at DESC'
         ).all()
         results = query.results
       } else {
         const query = await env.DB.prepare(
-          'SELECT * FROM dak_records WHERE assigned_to = ? ORDER BY created_at DESC'
+          'SELECT d.*, u.designation as user_designation FROM dak_records d LEFT JOIN users u ON LOWER(d.assigned_to) = LOWER(u.username) WHERE d.assigned_to = ? ORDER BY d.created_at DESC'
         ).bind(user.username).all()
         results = query.results
       }
