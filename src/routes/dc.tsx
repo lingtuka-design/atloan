@@ -742,21 +742,21 @@ function DcComponent() {
       const style = document.createElement('style')
       if (type === 'cert' && w.isGlobalNDC) {
         style.innerHTML = `@media print { 
-          @page { size: A4 portrait; margin: 20mm; } 
+          @page { size: A4 portrait; margin: 0; } 
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #legal-pages-container, #note-pages-container { display: none !important; }
           #ndc-cert-page { display: block !important; } 
-          .cert-page { display: block !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
+          .cert-page { display: block !important; padding: 60px 70px !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'cert') {
         style.innerHTML = `@media print { 
-          @page { size: legal portrait; margin: 20mm; } 
+          @page { size: legal portrait; margin: 0; } 
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #legal-pages-container, #note-pages-container { display: none !important; }
           #legal-cert-page { display: block !important; } 
-          .cert-page { display: block !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
+          .cert-page { display: block !important; padding: 60px 70px !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'note') {
         style.innerHTML = `@media print { 
