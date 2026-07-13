@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS dak_records (
     department TEXT,
     case_type TEXT,
     sent_date TEXT,
+    amount TEXT DEFAULT '',
     action TEXT DEFAULT 'Pending',
     issue_date TEXT,
     assigned_to TEXT,

@@ -122,8 +122,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       await env.DB.prepare(`
         INSERT INTO dak_records (
           id, sl_no, receive_no, name, department, case_type, sent_date, 
-          assigned_to, created_by, action, issue_date, is_new
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', '', 1)
+          assigned_to, created_by, action, issue_date, is_new, amount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', '', 1, ?)
       `).bind(
         id,
         nextSl,
@@ -133,7 +133,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         record.case_type || 'Others',
         record.sent_date || '',
         record.assigned_to || '',
-        user.username
+        user.username,
+        record.amount || ''
       ).run()
 
       return Response.json({ success: true, id }, {
@@ -167,6 +168,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       if (record.issue_date !== undefined) { updates.push('issue_date = ?'); values.push(record.issue_date) }
       if (record.case_type !== undefined) { updates.push('case_type = ?'); values.push(record.case_type) }
       if (record.is_new !== undefined) { updates.push('is_new = ?'); values.push(record.is_new ? 1 : 0) }
+      if (record.amount !== undefined) { updates.push('amount = ?'); values.push(record.amount) }
 
       if (updates.length > 0) {
         values.push(record.id)

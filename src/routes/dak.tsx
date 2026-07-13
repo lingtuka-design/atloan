@@ -13,7 +13,7 @@ interface DakRecord {
   name: string
   department: string
   case_type: string
-  sent_date: string
+  amount: string
   action: string
   issue_date: string
   assigned_to: string
@@ -137,6 +137,10 @@ function DakComponent() {
 
   const handleCaseTypeChange = (id: string, val: string) => {
     updateRecord(id, { case_type: val })
+  }
+
+  const handleAmountBlur = (id: string, val: string) => {
+    updateRecord(id, { amount: val })
   }
 
   const handleIssueDateBlur = (id: string, val: string) => {
@@ -272,7 +276,7 @@ function DakComponent() {
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Name</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Department</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Case</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Sent</th>
+                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Amount</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Action</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
@@ -301,7 +305,23 @@ function DakComponent() {
                       )}
                     </td>
 
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.sent_date}</td>
+                    <td style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
+                      {auth?.user?.username?.toLowerCase() === 'mala' ? (
+                        r.amount || ''
+                      ) : (
+                        <input
+                          type="text"
+                          value={r.amount || ''}
+                          onChange={(e) => {
+                            const newAmount = e.target.value
+                            setRecords(records.map(rec => rec.id === r.id ? { ...rec, amount: newAmount } : rec))
+                          }}
+                          onBlur={(e) => handleAmountBlur(r.id, e.target.value)}
+                          style={{ width: '80px', padding: '4px', textAlign: 'center', border: '1px solid #ccc', borderRadius: '4px' }}
+                          placeholder="Amount"
+                        />
+                      )}
+                    </td>
                     
                     <td style={{ 
                       border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold',
