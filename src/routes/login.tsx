@@ -143,13 +143,7 @@ function LoginComponent() {
           </button>
         </form>
 
-        <div style={{
-          marginTop: '25px', textAlign: 'center', fontSize: '11px',
-          color: 'var(--ink-soft)', borderTop: '1px solid #eee', paddingTop: '15px'
-        }}>
-          <div>Default Admin Username: <strong style={{ color: 'var(--ink)' }}>mala</strong></div>
-          <div style={{ marginTop: '2px' }}>Default Password: <strong style={{ color: 'var(--ink)' }}>12345</strong></div>
-        </div>
+
       </div>
     </div>
   )
