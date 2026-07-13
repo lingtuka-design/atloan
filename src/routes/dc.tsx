@@ -739,31 +739,43 @@ function DcComponent() {
       const style = document.createElement('style')
       if (type === 'cert' && w.isGlobalNDC) {
         style.innerHTML = `@media print { 
-          @page { size: A4 portrait; margin: 0; } 
+          @page { size: A4 portrait; margin: 20mm; } 
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #legal-pages-container, #note-pages-container { display: none !important; }
           #ndc-cert-page { display: block !important; } 
+          .cert-page { display: block !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'cert') {
         style.innerHTML = `@media print { 
-          @page { size: legal portrait; margin: 0; } 
+          @page { size: legal portrait; margin: 20mm; } 
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #legal-pages-container, #note-pages-container { display: none !important; }
           #legal-cert-page { display: block !important; } 
+          .cert-page { display: block !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'note') {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #legal-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
-          #note-pages-container { display: flex !important; flex-direction: column !important; }
+          #note-pages-container { display: flex !important; flex-direction: column !important; width: 100% !important; }
+          .note-sheet { padding: 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; width: 100% !important; position: relative !important; }
+          .note-horizontal-line { position: absolute !important; top: 2cm !important; left: 0 !important; right: 0 !important; height: 1.5px !important; background-color: #777 !important; display: block !important; }
+          .note-content-wrapper { padding-top: 1.5cm !important; margin-top: 2cm !important; min-height: calc(100vh - 2cm) !important; box-sizing: border-box !important; border-top: none !important; outline: none !important; }
+          .note-left-line { margin-left: 2cm !important; margin-right: 2cm !important; border-left: 1.5px solid #60a5fa !important; border-right: none !important; padding-left: 10mm !important; padding-right: 5mm !important; }
+          .note-right-line { margin-right: 2cm !important; margin-left: 2cm !important; border-right: 1.5px solid #60a5fa !important; border-left: none !important; padding-right: 10mm !important; padding-left: 5mm !important; }
         }`
       } else {
         style.innerHTML = `@media print { 
-          @page { size: legal portrait; margin: 0; } 
+          @page { size: legal portrait; margin: 10mm 15mm; } 
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #note-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
-          #legal-pages-container { display: flex !important; flex-direction: column !important; }
+          #legal-pages-container { display: block !important; }
+          .legal-sheet { padding: 0 0 10mm 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
         }`
       }
       document.head.appendChild(style)
