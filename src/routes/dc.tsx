@@ -540,6 +540,7 @@ function DcComponent() {
     let grandTotalOutstandingPrincipal = 0
     let grandTotalOutstandingInterest = 0
     let grandTotalOutstandingPositive = 0
+    let totalExcessAmount = 0
     let excessDetails: string[] = []
     let loansWithLiability = new Set<string>()
     let takenTypes = new Set<string>()
@@ -575,6 +576,7 @@ function DcComponent() {
         loansWithLiability.add(loan.loanType)
       } else if (totalOutstanding < 0) {
         const absExcess = Math.abs(totalOutstanding)
+        totalExcessAmount += absExcess
         if (outstandingPrincipal < 0 && trueOutstandingInterest < 0) {
           excessDetails.push(`excess recovery of ${loan.loanType} principal & interest amounting Rs. ${fmtAmt(absExcess)}`)
         } else if (outstandingPrincipal < 0) {
@@ -614,6 +616,7 @@ function DcComponent() {
       grandTotalOutstandingPrincipal,
       grandTotalOutstandingInterest,
       grandTotalOutstandingPositive,
+      totalExcessAmount,
       excessDetails,
       loansWithLiability,
       takenTypes,
@@ -1541,6 +1544,10 @@ function DcComponent() {
                       <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>This is to certify that <span className="bold">{w.fullName}</span> under the Department/Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span> was granted <span id="ndcLoanListStr">{w.ndcLoanStrings.join(' and ')}</span></p>
 
                       <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no any outstanding balances in respect of <span className="bold">{w.cleanName}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loan.</p>
+
+                      {w.totalExcessAmount > 0 && (
+                        <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to Rs {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)}).</p>
+                      )}
 
                       <p style={{ textIndent: '40px', marginBottom: '15px', marginTop: 0 }}>Hence, No Demand Certificate of <span className="bold">HBA, Scooter Advance, Computer Advance, Motor Car Advance and Special Car Loan</span> is hereby issued.</p>
 
