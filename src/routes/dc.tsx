@@ -578,11 +578,11 @@ function DcComponent() {
         const absExcess = Math.abs(totalOutstanding)
         totalExcessAmount += absExcess
         if (outstandingPrincipal < 0 && trueOutstandingInterest < 0) {
-          excessDetails.push(`excess recovery of ${loan.loanType} principal & interest amounting Rs. ${fmtAmt(absExcess)}`)
+          excessDetails.push(`excess recovery of ${loan.loanType} principal & interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
         } else if (outstandingPrincipal < 0) {
-          excessDetails.push(`excess recovery of ${loan.loanType} principal amounting Rs. ${fmtAmt(absExcess)}`)
+          excessDetails.push(`excess recovery of ${loan.loanType} principal amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
         } else if (trueOutstandingInterest < 0) {
-          excessDetails.push(`excess recovery of ${loan.loanType} interest amounting Rs. ${fmtAmt(absExcess)}`)
+          excessDetails.push(`excess recovery of ${loan.loanType} interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
         }
       }
 
@@ -1505,7 +1505,7 @@ function DcComponent() {
                       <ol style={{ margin: 0, paddingLeft: '65px', textAlign: 'justify', lineHeight: 1.4 }}>
                         <li className="mb-1">The <span className="bold">{shared.inThawnnaTur}</span> for making adjustment of the Outstanding amount of <span className="bold">Rs. {fmtAmt(w.grandTotalOutstandingPositive)}/-</span> shown above from the DCRG of the <span className="out-live-status">{w.statusWord}</span> Govt. Servant.</li>
                         <li className="mb-1">The <span className="bold">{w.copy2Address}</span> <span>{w.excessDetails.length > 0 ? (
-                          <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span></>
+                          <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span>.</>
                         ) : 'for information.'}</span></li>
                         <li>Person concerned for information.</li>
                       </ol>
@@ -1546,7 +1546,7 @@ function DcComponent() {
                       <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no any outstanding balances in respect of <span className="bold">{w.cleanName}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loan.</p>
 
                       {w.totalExcessAmount > 0 && (
-                        <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to Rs {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)}).</p>
+                        <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)})</span>.</p>
                       )}
 
                       <p style={{ textIndent: '40px', marginBottom: '15px', marginTop: 0 }}>Hence, No Demand Certificate of <span className="bold">HBA, Scooter Advance, Computer Advance, Motor Car Advance and Special Car Loan</span> is hereby issued.</p>
@@ -1577,7 +1577,7 @@ function DcComponent() {
                       <ol style={{ margin: 0, paddingLeft: '65px', textAlign: 'justify', lineHeight: 1.4 }}>
                         <li className="mb-1">The <span className="bold">Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl</span> for information.</li>
                         <li className="mb-1">The <span className="bold">{w.copy2Address}</span> <span id="ndcExcessClaimStr">{w.excessDetails.length > 0 ? (
-                          <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span></>
+                          <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span>.</>
                         ) : 'for information and necessary action.'}</span></li>
                         <li>Person concerned for information.</li>
                       </ol>
