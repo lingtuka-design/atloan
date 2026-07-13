@@ -508,7 +508,7 @@ function UsersComponent() {
             </tr>
           </thead>
           <tbody>
-            {performanceStats.map((stat, i) => (
+            {performanceStats.filter(stat => stat.username !== 'mala').map((stat, i) => (
               <tr key={i} style={{ borderBottom: '1px solid var(--rule)' }}>
                 <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{stat.username}</td>
                 <td style={{ padding: '12px 8px' }}>
