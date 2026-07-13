@@ -770,12 +770,12 @@ function DcComponent() {
         }`
       } else {
         style.innerHTML = `@media print { 
-          @page { size: legal portrait; margin: 10mm 15mm; } 
+          @page { size: legal portrait; margin: 15mm 15mm 20mm 15mm; } 
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #note-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
           #legal-pages-container { display: block !important; }
-          .legal-sheet { padding: 0 0 10mm 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
+          .legal-sheet { padding: 0 0 10mm 0 !important; margin: 0 0 15mm 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
         }`
       }
       document.head.appendChild(style)
