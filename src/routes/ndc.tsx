@@ -84,7 +84,18 @@ function NdcComponent() {
   const itemsPerPage = 10
 
   // Notesheet entries
-  const [notesheetEntries, setNotesheetEntries] = useState<string[]>([])
+  const [notesheetEntries, setNotesheetEntries] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('ndc_notesheet_entries')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem('ndc_notesheet_entries', JSON.stringify(notesheetEntries))
+  }, [notesheetEntries])
 
   const ndcContentRef = useRef<HTMLDivElement>(null)
 
@@ -196,7 +207,6 @@ function NdcComponent() {
       if (res.ok) {
         alert(currentEditId ? 'Record siamṭhat (Updated) a ni ta!' : 'Record vawn fel a ni ta! (Database-ah a lut e)')
         setCurrentEditId(null)
-        clearForm(false)
         fetchRecords()
       } else {
         alert('Server database save load a hlawhchham.')

@@ -92,18 +92,20 @@ const LOAN_TYPES: Record<string, string> = {
 
 const HEADS_OF_ACCOUNT = {
   PRINCIPAL: {
-    "HBA": "8011-00-101(01)-Principal (HBA)",
-    "SA": "8011-00-101(02)-Principal (Scooter)",
-    "MCA": "8011-00-101(03)-Principal (MCA)",
-    "COM": "8011-00-101(04)-Principal (Computer)",
-    "SCL": "8011-00-101(05)-Principal (SCL)"
+    "HBA": "761000201000000",
+    "SA": "761000203000000",
+    "MCA": "761000202000000",
+    "COM": "761000204000000",
+    "SCL": "761000203000000",
+    "Other conveyance": "761000203000000"
   } as Record<string, string>,
   INTEREST: {
-    "HBA": "0049-04-800(01)-Interest on HBA",
-    "SA": "0049-04-800(02)-Interest on Scooter",
-    "MCA": "0049-04-800(03)-Interest on MCA",
-    "COM": "0049-04-800(04)-Interest on Computer",
-    "SCL": "0049-04-800(05)-Interest on SCL"
+    "HBA": "004904800010100",
+    "SA": "004904800010300",
+    "MCA": "004904800010200",
+    "COM": "004904800010400",
+    "SCL": "004904800010300",
+    "Other conveyance": "004904800010300"
   } as Record<string, string>
 }
 
