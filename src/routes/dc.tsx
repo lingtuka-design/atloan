@@ -1324,21 +1324,33 @@ function DcComponent() {
               <div id="note-pages-container" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div className="note-sheet document-font" style={{ display: 'block' }}>
                   <div className="note-horizontal-line"></div>
-                  <div
-                    id="editable-note-wrapper"
-                    className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
-                    contentEditable
-                    suppressContentEditableWarning
-                    style={{
-                      fontSize: '17px',
-                      lineHeight: 1.5,
-                      textAlign: 'justify',
-                      outline: 'none'
-                    }}
-                    {...(savedNoteHTML ? { dangerouslySetInnerHTML: { __html: savedNoteHTML } } : {})}
-                  >
-                    {!savedNoteHTML && (
-                      <>
+                  {savedNoteHTML ? (
+                    <div
+                      id="editable-note-wrapper"
+                      className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
+                      contentEditable
+                      suppressContentEditableWarning
+                      style={{
+                        fontSize: '17px',
+                        lineHeight: 1.5,
+                        textAlign: 'justify',
+                        outline: 'none'
+                      }}
+                      dangerouslySetInnerHTML={{ __html: savedNoteHTML }}
+                    />
+                  ) : (
+                    <div
+                      id="editable-note-wrapper"
+                      className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
+                      contentEditable
+                      suppressContentEditableWarning
+                      style={{
+                        fontSize: '17px',
+                        lineHeight: 1.5,
+                        textAlign: 'justify',
+                        outline: 'none'
+                      }}
+                    >
                     <div className="note-p" id="note-intro-paragraph">
                       Received an application from the <span className="bold">{shared.inDDOAddress || '...'}</span>, for the issue of an NDC/DC for <span className="bold">{w.fullName}</span>, <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">{Array.from(w.takenTypes).join(' and ')}</span>). Therefore, a <span id="out-note-cert-type">{w.isGlobalNDC ? 'No Demand Certificate' : 'Demand Certificate'}</span> may be issued.
                     </div>
@@ -1379,10 +1391,9 @@ function DcComponent() {
                         )
                       })
                     )}
-                    <div id="note-closing-text" style={{ marginTop: '30px', fontSize: '16px' }}>Put up for your approval, please.</div>
-                      </>
-                    )}
-                  </div>
+                      <div id="note-closing-text" style={{ marginTop: '30px', fontSize: '16px' }}>Put up for your approval, please.</div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
