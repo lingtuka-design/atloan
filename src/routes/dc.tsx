@@ -1538,7 +1538,7 @@ function DcComponent() {
                       </div>
                     </div>
 
-                    <div style={{ marginTop: '50px', borderTop: '1px dashed #999', paddingTop: '5px', textAlign: 'center', fontSize: '9px', color: '#555', lineHeight: 1.2 }}>
+                    <div style={{ position: 'absolute', bottom: '40px', left: '70px', right: '70px', borderTop: '1px dashed #999', paddingTop: '5px', textAlign: 'center', fontSize: '9px', color: '#555', lineHeight: 1.2 }}>
                       <span style={{ fontFamily: 'Arial, sans-serif' }}>☎</span> 0389-2343381/2347781(CCA) Fax-2342588/2343383(Director)/2345591(ELFA)/2345187[JD(A)]<br />
                       2345270 [JD(P)]/2345820 [DD(A)]/2340055[DD(E)]/ 2306221[DD(P)]/2345235[DD(F)]/2345825[AD(P)]/ 2356162 [Supdt.]
                     </div>
