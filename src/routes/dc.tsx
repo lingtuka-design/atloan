@@ -157,6 +157,7 @@ function DcComponent() {
   // Calculation outputs
   const [calculatedData, setCalculatedData] = useState<CalculatedLoan[]>([])
   const [currentEditId, setCurrentEditId] = useState<string | null>(null)
+  const [savedNoteHTML, setSavedNoteHTML] = useState<string | null>(null)
 
   // Database Records
   const [records, setRecords] = useState<DcRecord[]>([])
@@ -650,7 +651,7 @@ function DcComponent() {
       sharedInputs: shared,
       loanInputsArray: loans,
       allCalculatedData: calculatedData,
-      noteHTMLSaved: '',
+      noteHTMLSaved: document.getElementById('editable-note-wrapper')?.innerHTML || '',
       legalCertHTMLSaved: '',
       ndcCertHTMLSaved: ''
     }
@@ -687,6 +688,7 @@ function DcComponent() {
     })
     setLoans(r.loanInputsArray)
     setCalculatedData(r.allCalculatedData)
+    setSavedNoteHTML(r.noteHTMLSaved || null)
     setActiveMainTab('generator')
   }
 
@@ -730,6 +732,7 @@ function DcComponent() {
     setLoans([createEmptyLoan('HBA')])
     setCalculatedData([])
     setCurrentEditId(null)
+    setSavedNoteHTML(null)
     setActiveLoanFormTab(0)
     if (withAlert) {
       alert('Form tihruak a ni e.')
@@ -1332,7 +1335,10 @@ function DcComponent() {
                       textAlign: 'justify',
                       outline: 'none'
                     }}
+                    {...(savedNoteHTML ? { dangerouslySetInnerHTML: { __html: savedNoteHTML } } : {})}
                   >
+                    {!savedNoteHTML && (
+                      <>
                     <div className="note-p" id="note-intro-paragraph">
                       Received an application from the <span className="bold">{shared.inDDOAddress || '...'}</span>, for the issue of an NDC/DC for <span className="bold">{w.fullName}</span>, <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">{Array.from(w.takenTypes).join(' and ')}</span>). Therefore, a <span id="out-note-cert-type">{w.isGlobalNDC ? 'No Demand Certificate' : 'Demand Certificate'}</span> may be issued.
                     </div>
@@ -1374,6 +1380,8 @@ function DcComponent() {
                       })
                     )}
                     <div id="note-closing-text" style={{ marginTop: '30px', fontSize: '16px' }}>Put up for your approval, please.</div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
