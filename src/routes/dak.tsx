@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import { AuthContext } from './__root'
 
 export const Route = createFileRoute('/dak')({
@@ -42,6 +42,13 @@ function DakComponent() {
   const [filterStaff, setFilterStaff] = useState('All')
   
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 20
+  const initialFilterSet = useRef(false)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filterMonth, filterDate, searchName, filterStatus, filterStaff])
 
   useEffect(() => {
     if (auth?.user) {
@@ -58,9 +65,17 @@ function DakComponent() {
       if (res.ok) {
         const data = await res.json()
         setRecords(data)
-        window.dispatchEvent(new Event('dak-read'))
         
-
+        if (auth?.user?.role === 'admin' && data.length > 0 && !initialFilterSet.current) {
+          const dates = data.map((r: any) => r.created_at.split(' ')[0])
+          const uniqueDates = Array.from(new Set(dates)).sort((a: any, b: any) => b.localeCompare(a))
+          if (uniqueDates.length > 0) {
+            setFilterDate(uniqueDates[0] as string)
+          }
+          initialFilterSet.current = true
+        }
+        
+        window.dispatchEvent(new Event('dak-read'))
       }
     } catch (e) {
       console.error(e)
@@ -174,9 +189,12 @@ function DakComponent() {
     return true
   })
 
+  const totalPages = Math.ceil(filteredRecords.length / itemsPerPage)
+  const paginatedRecords = filteredRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
   // Group by date (using created_at YYYY-MM-DD for grouping, and showing staff name if admin)
   const groupedRecords: Record<string, DakRecord[]> = {}
-  filteredRecords.forEach(r => {
+  paginatedRecords.forEach(r => {
     const d = r.created_at.split(' ')[0] // YYYY-MM-DD
     const key = auth?.user?.role === 'admin' ? `${r.assigned_to}_${d}` : d
     if (!groupedRecords[key]) groupedRecords[key] = []
@@ -368,8 +386,32 @@ function DakComponent() {
       })}
       
       {filteredRecords.length === 0 && (
-        <div style={{ textAlign: 'center', color: '#627d98', marginTop: '50px' }}>
-          No records found.
+        <div style={{ textAlign: 'center', padding: '40px', background: 'white', borderRadius: '8px', color: '#777' }}>
+          Record hmuh a ni lo.
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="no-print" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '30px' }}>
+          <button 
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            style={{ padding: '8px 16px', borderRadius: '4px', border: '1px solid #ccc', background: currentPage === 1 ? '#f0f0f0' : 'white', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+          >
+            Previous
+          </button>
+          
+          <span style={{ fontWeight: 'bold' }}>
+            Page {currentPage} of {totalPages}
+          </span>
+          
+          <button 
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            style={{ padding: '8px 16px', borderRadius: '4px', border: '1px solid #ccc', background: currentPage === totalPages ? '#f0f0f0' : 'white', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+          >
+            Next
+          </button>
         </div>
       )}
     </div>
