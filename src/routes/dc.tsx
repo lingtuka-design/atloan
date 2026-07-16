@@ -46,6 +46,12 @@ interface SharedInputs {
   inShowSd: boolean
 }
 
+const formatDateStrict = (d: Date | string) => {
+  const dt = new Date(d)
+  if (isNaN(dt.getTime())) return ''
+  return String(dt.getDate()).padStart(2, '0') + '/' + String(dt.getMonth() + 1).padStart(2, '0') + '/' + dt.getFullYear()
+}
+
 interface CalculatedRow {
   month: string
   paidAmt: number
@@ -646,8 +652,8 @@ function DcComponent() {
       name: shared.inName.trim(),
       dept: shared.inMemoDept,
       type: `${typesSumm} (${loans.length})`,
-      dateSaved: new Date().toLocaleDateString('en-IN'),
-      issueDate: shared.inIssueDate,
+      dateSaved: formatDateStrict(new Date()),
+      issueDate: currentEditId ? records.find(r => r.id === currentEditId)?.issueDate || '' : '',
       sharedInputs: shared,
       loanInputsArray: loans,
       allCalculatedData: calculatedData,
@@ -1712,7 +1718,7 @@ function DcComponent() {
                         </div>
                       </td>
                       <td style={{ padding: '10px' }}>{r.type}</td>
-                      <td style={{ padding: '10px' }}>{r.sharedInputs.inIssueDate ? new Date(r.sharedInputs.inIssueDate).toLocaleDateString('en-IN') : ''}</td>
+                      <td style={{ padding: '10px' }}>{r.sharedInputs.inIssueDate ? formatDateStrict(new Date(r.sharedInputs.inIssueDate)) : ''}</td>
                       <td
                         style={{ padding: '10px', cursor: 'text' }}
                         contentEditable

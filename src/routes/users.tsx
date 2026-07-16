@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { AuthContext } from './__root'
+import { Edit, UserPlus, KeyRound, Shield, Eye, EyeOff } from 'lucide-react'
+
+const formatDateStrict = (d: Date | string) => {
+  const dt = new Date(d)
+  if (isNaN(dt.getTime())) return ''
+  return String(dt.getDate()).padStart(2, '0') + '/' + String(dt.getMonth() + 1).padStart(2, '0') + '/' + dt.getFullYear()
+}
 
 export const Route = createFileRoute('/users')({
   component: UsersComponent,
@@ -361,7 +368,7 @@ function UsersComponent() {
                   </span>
                 </td>
                 <td style={{ padding: '12px 8px', fontSize: '13px', color: 'var(--ink-soft)' }}>
-                  {new Date(u.created_at).toLocaleDateString()}
+                  {formatDateStrict(new Date(u.created_at))}
                 </td>
                 <td style={{ padding: '12px 8px', textAlign: 'right' }}>
                   {editingPasswordUserId === u.id ? (
