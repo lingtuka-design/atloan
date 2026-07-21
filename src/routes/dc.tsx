@@ -493,9 +493,7 @@ function DcComponent() {
     const mDept = shared.inMemoDept || 'HSD'
     const mVol = shared.inMemoVol.trim()
     const mPage = shared.inMemoPage || '...'
-    const mCode = DEPT_CODES[mDept] || '00'
     const mVolStr = mVol ? `-${mVol}` : ''
-    const fullMemo = `No.G. 26041/${mCode}/${mYear}-CCA(L&M)/${mDept}${mVolStr}/${mPage}`
 
     const copy2Address = ddo !== '...' ? ddo : '...'
 
@@ -602,6 +600,12 @@ function DcComponent() {
     })
 
     const isGlobalNDC = calculatedData.length > 0 && loansWithLiability.size === 0
+
+    let mCode = DEPT_CODES[mDept] || '00'
+    if (!isGlobalNDC && DEPT_CODES[mDept]) {
+      mCode = String(Number(DEPT_CODES[mDept]) - 1)
+    }
+    const fullMemo = `No.G. 26041/${mCode}/${mYear}-CCA(L&M)/${mDept}${mVolStr}/${mPage}`
 
     return {
       fullName: name + (desig !== '' ? ', ' + desig : ''),
