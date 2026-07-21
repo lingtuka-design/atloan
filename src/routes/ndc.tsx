@@ -215,8 +215,11 @@ function NdcComponent() {
       })
 
       if (res.ok) {
+        const result = await res.json()
         alert(currentEditId ? 'Record siamṭhat (Updated) a ni ta!' : 'Record vawn fel a ni ta! (Database-ah a lut e)')
-        setCurrentEditId(null)
+        if (result.id) {
+          setCurrentEditId(result.id)
+        }
         fetchRecords()
       } else {
         alert('Server database save load a hlawhchham.')
@@ -552,6 +555,39 @@ function NdcComponent() {
             <h2 style={{ marginTop: 0, color: '#d32f2f', fontSize: '19px', textAlign: 'center' }}>
               NDC Generator
             </h2>
+
+            {currentEditId && (
+              <div style={{
+                background: '#e3f2fd',
+                color: '#0d47a1',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                marginBottom: '15px',
+                fontSize: '13px',
+                fontWeight: 'bold',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                border: '1px solid #90caf9'
+              }}>
+                <span>✏️ Record hi siamṭhat (Edit) mek a ni: {employeeName || 'Record'}</span>
+                <button
+                  onClick={() => clearForm(false)}
+                  style={{
+                    background: '#d32f2f',
+                    color: 'white',
+                    border: 'none',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '11px'
+                  }}
+                >
+                  Cancel Edit (Thar siam rawh)
+                </button>
+              </div>
+            )}
             
             <div className="panel-columns" style={{ display: 'flex', gap: '20px', marginTop: '15px' }}>
               <div className="panel-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '15px' }}>

@@ -676,8 +676,9 @@ function DcComponent() {
 
       if (res.ok) {
         const result = await res.json()
+        const isUpdate = Boolean(currentEditId)
         setCurrentEditId(result.id)
-        alert('I calculation data leh Notesheet hi save a ni ta e.')
+        alert(isUpdate ? 'Record siamṭhat (Updated) a ni ta!' : 'I calculation data leh Notesheet hi save a ni ta e.')
         fetchRecords()
       } else {
         alert('Error saving record to database.')
@@ -867,6 +868,39 @@ function DcComponent() {
             <div style={{ textAlign: 'center', fontStyle: 'italic', color: '#555', marginBottom: '15px', fontSize: '12px', fontWeight: 'bold' }}>
               Created by Lalmalsawmtluanga
             </div>
+
+            {currentEditId && (
+              <div style={{
+                background: '#e3f2fd',
+                color: '#0d47a1',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                marginBottom: '15px',
+                fontSize: '13px',
+                fontWeight: 'bold',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                border: '1px solid #90caf9'
+              }}>
+                <span>✏️ Record hi siamṭhat (Edit) mek a ni: {shared.inName || 'Record'}</span>
+                <button
+                  onClick={() => clearFormAndReset(false)}
+                  style={{
+                    background: '#d32f2f',
+                    color: 'white',
+                    border: 'none',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontSize: '11px'
+                  }}
+                >
+                  Cancel Edit (Thar siam rawh)
+                </button>
+              </div>
+            )}
 
             {/* Shared Fields */}
             <h3 className="section-title">Personal Details (Shared)</h3>
