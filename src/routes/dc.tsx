@@ -116,18 +116,18 @@ const HEADS_OF_ACCOUNT = {
 }
 
 const DEPT_CODES: Record<string, string> = {
-  "COOP": "14", "DC": "16", "DAT": "18", "DMR": "20", "DIET": "22",
-  "ECS": "24", "EXE": "26", "EDN": "28", "ELCN": "30", "FOR": "32",
-  "FCA": "34", "FISH": "36", "GHC": "38", "GAD": "40", "G&M": "42",
-  "GOV": "44", "HTE": "46", "HSD": "48", "HME": "50", "IND": "52",
-  "HOR": "54", "I&PR": "56", "ICT": "58", "IFSL": "60", "IRI": "62",
-  "LRS": "64", "LAD": "66", "LAE": "68", "LGM": "70", "L&J": "72",
-  "MLAS": "74", "MPSC": "76", "MRHG": "78", "MIC": "80", "POL": "82",
-  "P&E": "84", "P&S": "86", "PWD": "88", "PHE": "90", "PRI": "92",
-  "RD": "94", "SWD": "96", "SOIL": "98", "S&T": "100", "SAD": "102",
-  "SYS": "104", "SERI": "106", "SPB": "108", "SIPMIU": "110", "SIN": "112",
-  "TAX": "114", "TRP": "116", "TRM": "118", "T&C": "120", "UD&PA": "122",
-  "VETY": "124", "ZSB": "126"
+  "COOP": "13", "DC": "15", "DAT": "17", "DMR": "19", "DIET": "21",
+  "ECS": "23", "EXE": "25", "EDN": "27", "ELCN": "29", "FOR": "31",
+  "FCA": "33", "FISH": "35", "GHC": "37", "GAD": "39", "G&M": "41",
+  "GOV": "43", "HTE": "45", "HSD": "47", "HME": "49", "IND": "51",
+  "HOR": "53", "I&PR": "55", "ICT": "57", "IFSL": "59", "IRI": "61",
+  "LRS": "63", "LAD": "65", "LAE": "67", "LGM": "69", "L&J": "71",
+  "MLAS": "73", "MPSC": "75", "MRHG": "77", "MIC": "79", "POL": "81",
+  "P&E": "83", "P&S": "85", "PWD": "87", "PHE": "89", "PRI": "91",
+  "RD": "93", "SWD": "95", "SOIL": "97", "S&T": "99", "SAD": "101",
+  "SYS": "103", "SERI": "105", "SPB": "107", "SIPMIU": "109", "SIN": "111",
+  "TAX": "113", "TRP": "115", "TRM": "117", "T&C": "119", "UD&PA": "121",
+  "VETY": "123", "ZSB": "125"
 }
 
 function DcComponent() {
@@ -601,10 +601,7 @@ function DcComponent() {
 
     const isGlobalNDC = calculatedData.length > 0 && loansWithLiability.size === 0
 
-    let mCode = DEPT_CODES[mDept] || '00'
-    if (!isGlobalNDC && DEPT_CODES[mDept]) {
-      mCode = String(Number(DEPT_CODES[mDept]) - 1)
-    }
+    const mCode = DEPT_CODES[mDept] || '00'
     const fullMemo = `No.G. 26041/${mCode}/${mYear}-CCA(L&M)/${mDept}${mVolStr}/${mPage}`
 
     return {
