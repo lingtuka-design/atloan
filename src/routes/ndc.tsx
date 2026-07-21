@@ -44,6 +44,16 @@ const DEPT_CODES: Record<string, string> = {
   "VETY": "124", "ZSB": "126"
 }
 
+const getLastDayOfCurrentMonthStr = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const lastDay = new Date(year, month, 0).getDate()
+  const mm = String(month).padStart(2, '0')
+  const dd = String(lastDay).padStart(2, '0')
+  return `${year}-${mm}-${dd}`
+}
+
 function NdcComponent() {
   const auth = useContext(AuthContext)
   const [activeTab, setActiveTab] = useState<'generator' | 'list'>('generator')
@@ -52,18 +62,18 @@ function NdcComponent() {
   const [isNdcEditable, setIsNdcEditable] = useState(false)
 
   // Form State
-  const [fileYear, setFileYear] = useState('2026')
+  const [fileYear, setFileYear] = useState(() => new Date().getFullYear().toString())
   const [dept, setDept] = useState('')
-  const [fileNo, setFileNo] = useState('114')
-  const [refNo, setRefNo] = useState('G.26041/48/2026-CCA(L&M)/HSD/114')
+  const [fileNo, setFileNo] = useState('')
+  const [refNo, setRefNo] = useState('')
   const [issueDate, setIssueDate] = useState(() => new Date().toISOString().split('T')[0])
   const [employeeName, setEmployeeName] = useState('')
-  const [designation, setDesignation] = useState('IV Grade')
-  const [office, setOffice] = useState('District Hospital, Champhai District, Champhai, Mizoram')
+  const [designation, setDesignation] = useState('')
+  const [office, setOffice] = useState('')
   const [reasonVal, setReasonVal] = useState('who is due to <b>retire</b> on')
-  const [pensionDate, setPensionDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [pensionDate, setPensionDate] = useState(() => getLastDayOfCurrentMonthStr())
   const [copy1Val, setCopy1Val] = useState('Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl')
-  const [ddoName, setDdoName] = useState('Director, Accounts & Treasuries, Mizoram, Aizawl')
+  const [ddoName, setDdoName] = useState('')
   
   // Signatory State
   const [showSd, setShowSd] = useState(true)
@@ -233,18 +243,34 @@ function NdcComponent() {
 
   const handleEditRecord = (r: NdcRecord) => {
     setCurrentEditId(r.id)
-    setDept(r.dept)
-    setRefNo(r.refNo)
-    setEmployeeName(r.name)
-    setDesignation(r.desig)
-    setOffice(r.office)
+
+    let extractedFileNo = ''
+    let extractedYear = new Date().getFullYear().toString()
+    if (r.refNo) {
+      const parts = r.refNo.split('/')
+      if (parts.length > 0) {
+        extractedFileNo = parts[parts.length - 1]
+      }
+      const yearMatch = r.refNo.match(/(\d{4})-CCA/)
+      if (yearMatch) {
+        extractedYear = yearMatch[1]
+      }
+    }
+
+    setFileYear(extractedYear)
+    setFileNo(extractedFileNo)
+    setDept(r.dept || '')
+    setRefNo(r.refNo || '')
+    setEmployeeName(r.name || '')
+    setDesignation(r.desig || '')
+    setOffice(r.office || '')
     setReasonVal(r.reasonVal || 'who is due to <b>retire</b> on')
     setPensionDate(r.rawRetireDate || r.retireDate || '')
     setIssueDate(r.rawIssueDate || r.issueDate || '')
-    setCopy1Val(r.copy1Val)
-    setDdoName(r.ddoName)
-    setSigName(r.sigName)
-    setSigDesig(r.sigDesig)
+    setCopy1Val(r.copy1Val || 'Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl')
+    setDdoName(r.ddoName || '')
+    setSigName(r.sigName || 'THARA LUNGṬAU')
+    setSigDesig(r.sigDesig || 'Joint Director (L&M)')
     setShowSd(Boolean(r.showSd))
     setActiveTab('generator')
   }
@@ -273,19 +299,19 @@ function NdcComponent() {
   const clearForm = (withAlert = true) => {
     setDept('')
     setEmployeeName('')
-    setDesignation('IV Grade')
-    setOffice('District Hospital, Champhai District, Champhai, Mizoram')
+    setDesignation('')
+    setOffice('')
     setReasonVal('who is due to <b>retire</b> on')
-    setFileYear('2026')
-    setFileNo('114')
+    setFileYear(new Date().getFullYear().toString())
+    setFileNo('')
     setCopy1Val('Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl')
-    setDdoName('Director, Accounts & Treasuries, Mizoram, Aizawl')
+    setDdoName('')
     setShowSd(true)
     setSigName('THARA LUNGṬAU')
     setSigDesig('Joint Director (L&M)')
     const today = new Date().toISOString().split('T')[0]
     setIssueDate(today)
-    setPensionDate(today)
+    setPensionDate(getLastDayOfCurrentMonthStr())
     setCurrentEditId(null)
     if (withAlert) {
       alert('Form tihruak a ni e.')
