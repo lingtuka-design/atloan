@@ -1435,12 +1435,10 @@ function DcComponent() {
                           const outstandingPrincipal = loan.calcData.length > 0 ? loan.calcData[loan.calcData.length - 1].principalAtEnd : 0
                           const totalOutstanding = outstandingPrincipal + trueOutstandingInterest
 
-                          if (totalOutstanding <= 0) return null
-
                           const cPVal = outstandingPrincipal > 0 ? '₹ ' + fmtAmt(outstandingPrincipal) : (outstandingPrincipal < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(outstandingPrincipal)) : '₹ NIL')
-                          const cIVal = trueOutstandingInterest < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(trueOutstandingInterest)) : '₹ ' + fmtAmt(trueOutstandingInterest) + '/-'
-                          const cTVal = totalOutstanding < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(totalOutstanding)) : '₹ ' + fmtAmt(totalOutstanding) + '/-'
-                          const individualWords = amountToWords(totalOutstanding)
+                          const cIVal = trueOutstandingInterest > 0 ? '₹ ' + fmtAmt(trueOutstandingInterest) + '/-' : (trueOutstandingInterest < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(trueOutstandingInterest)) : '₹ NIL')
+                          const cTVal = totalOutstanding > 0 ? '₹ ' + fmtAmt(totalOutstanding) + '/-' : (totalOutstanding < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(totalOutstanding)) : '₹ NIL')
+                          const individualWords = totalOutstanding === 0 ? 'Rupees NIL' : amountToWords(totalOutstanding)
 
                           return (
                             <div key={lIdx} className="liab-item" style={{ marginBottom: '15px' }}>
