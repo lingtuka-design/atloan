@@ -411,7 +411,7 @@ function DakComponent() {
                   <th className="col-remarks" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '130px' }}>Remarks</th>
                   <th className="col-issue" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '85px' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
-                    <th className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '45px' }}></th>
+                    <th className="no-print" style={{ border: '1px solid #000', padding: '4px 2px', textAlign: 'center', width: '60px', boxSizing: 'border-box' }}></th>
                   )}
                 </tr>
               </thead>
@@ -539,8 +539,8 @@ function DakComponent() {
                     </td>
 
                     {auth?.user?.role === 'admin' && (
-                      <td className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '45px' }}>
-                        <button onClick={() => handleDelete(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 6px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
+                      <td className="no-print" style={{ border: '1px solid #000', padding: '4px 2px', textAlign: 'center', width: '60px', boxSizing: 'border-box' }}>
+                        <button onClick={() => handleDelete(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 6px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', maxWidth: '100%', boxSizing: 'border-box' }}>
                           Delete
                         </button>
                       </td>
