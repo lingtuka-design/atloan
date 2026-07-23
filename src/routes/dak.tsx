@@ -262,6 +262,7 @@ function DakComponent() {
           }
           table {
             width: 100% !important;
+            table-layout: fixed !important;
             border-collapse: collapse !important;
             font-size: 13px !important;
             margin-top: 5px !important;
@@ -272,13 +273,15 @@ function DakComponent() {
             font-size: 13px !important;
             color: black !important;
           }
-          .col-sl { width: 40px !important; text-align: center !important; }
-          .col-receive { width: 85px !important; }
+          .col-sl { width: 35px !important; text-align: center !important; }
+          .col-receive { width: 65px !important; }
           .col-name { white-space: normal !important; word-break: break-word !important; }
           .col-dept { white-space: normal !important; word-break: break-word !important; }
-          .col-case, .col-amount, .col-action, .col-remarks, .col-issue { width: 80px !important; min-width: 80px !important; max-width: 80px !important; }
-          .col-case, .col-amount, .col-action, .col-issue { text-align: center !important; }
-          .col-remarks { text-align: left !important; white-space: normal !important; word-break: break-word !important; }
+          .col-case { width: 65px !important; text-align: center !important; }
+          .col-amount { width: 70px !important; text-align: center !important; }
+          .col-action { width: 75px !important; text-align: center !important; }
+          .col-remarks { width: 110px !important; text-align: left !important; white-space: normal !important; word-break: break-word !important; }
+          .col-issue { width: 70px !important; text-align: center !important; }
           
           input, select, textarea {
             border: none !important;
@@ -386,20 +389,20 @@ function DakComponent() {
         return (
           <div key={key} className="dak-group-box" style={{ marginBottom: '40px', background: 'white', padding: '20px', borderRadius: '8px' }}>
             <h3 style={{ marginTop: 0, marginBottom: '15px', color: '#102a43', textDecoration: 'underline' }}>{title}</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', fontSize: '14px' }}>
               <thead>
                 <tr style={{ border: '1px solid #000' }}>
-                  <th className="col-sl" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '40px' }}>Sl. No</th>
-                  <th className="col-receive" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', width: '85px' }}>Receive No.</th>
-                  <th className="col-name" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Name</th>
-                  <th className="col-dept" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Department</th>
-                  <th className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Case</th>
-                  <th className="col-amount" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Amount</th>
-                  <th className="col-action" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Action</th>
-                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', minWidth: '160px' }}>Remarks</th>
-                  <th className="col-issue" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Issue</th>
+                  <th className="col-sl" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '35px' }}>Sl. No</th>
+                  <th className="col-receive" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '65px' }}>Receive No.</th>
+                  <th className="col-name" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left' }}>Name</th>
+                  <th className="col-dept" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left' }}>Department</th>
+                  <th className="col-case" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '70px' }}>Case</th>
+                  <th className="col-amount" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '75px' }}>Amount</th>
+                  <th className="col-action" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '80px' }}>Action</th>
+                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '140px' }}>Remarks</th>
+                  <th className="col-issue" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '75px' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
-                    <th className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '50px' }}></th>
+                    <th className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '45px' }}></th>
                   )}
                 </tr>
               </thead>
@@ -525,8 +528,8 @@ function DakComponent() {
                     </td>
 
                     {auth?.user?.role === 'admin' && (
-                      <td className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '50px' }}>
-                        <button onClick={() => handleDelete(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
+                      <td className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '45px' }}>
+                        <button onClick={() => handleDelete(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 6px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
                           Delete
                         </button>
                       </td>
