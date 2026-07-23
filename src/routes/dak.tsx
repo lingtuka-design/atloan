@@ -125,6 +125,7 @@ function DakComponent() {
           name: name,
           department: department,
           case_type: caseType,
+          amount: caseType === 'NDC' ? 'N/A' : '',
           sent_date: sentDateStr,
           assigned_to: assignTo
         })
@@ -161,7 +162,15 @@ function DakComponent() {
   }
 
   const handleCaseTypeChange = (id: string, val: string) => {
-    updateRecord(id, { case_type: val })
+    if (val === 'NDC') {
+      updateRecord(id, { case_type: val, amount: 'N/A' })
+      setRecords(records.map(rec => rec.id === id ? { ...rec, case_type: val, amount: 'N/A' } : rec))
+    } else {
+      const existing = records.find(r => r.id === id)
+      const newAmount = existing?.amount === 'N/A' ? '' : (existing?.amount || '')
+      updateRecord(id, { case_type: val, amount: newAmount })
+      setRecords(records.map(rec => rec.id === id ? { ...rec, case_type: val, amount: newAmount } : rec))
+    }
   }
 
   const handleAmountBlur = (id: string, val: string) => {
@@ -428,7 +437,9 @@ function DakComponent() {
                     </td>
 
                     <td className="col-amount" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
-                      {auth?.user?.username?.toLowerCase() === 'mala' ? (
+                      {r.case_type === 'NDC' ? (
+                        <span style={{ color: '#555', fontWeight: 'bold', fontSize: '13px' }}>N/A</span>
+                      ) : auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.amount || ''
                       ) : (
                         <input
