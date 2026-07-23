@@ -279,7 +279,7 @@ function DakComponent() {
           .col-remarks { white-space: normal !important; word-break: break-word !important; }
           .col-issue { width: 85px !important; max-width: 85px !important; text-align: center !important; }
           
-          input, select {
+          input, select, textarea {
             border: none !important;
             background: transparent !important;
             color: black !important;
@@ -289,6 +289,10 @@ function DakComponent() {
             padding: 0 !important;
             width: 100% !important;
             box-shadow: none !important;
+            font-family: inherit !important;
+            resize: none !important;
+            white-space: pre-wrap !important;
+            word-break: break-word !important;
           }
         }
       `}</style>
@@ -455,17 +459,28 @@ function DakComponent() {
 
                     <td className="col-remarks" style={{ border: '1px solid #000', padding: '4px', textAlign: 'left', whiteSpace: 'normal', wordBreak: 'break-word' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
-                        <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>{r.remarks || ''}</span>
+                        <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{r.remarks || ''}</span>
                       ) : (
-                        <input
-                          type="text"
+                        <textarea
+                          rows={1}
                           value={r.remarks || ''}
                           onChange={(e) => {
                             const newRemarks = e.target.value
                             setRecords(records.map(rec => rec.id === r.id ? { ...rec, remarks: newRemarks } : rec))
                           }}
                           onBlur={(e) => handleRemarksBlur(r.id, e.target.value)}
-                          style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px' }}
+                          style={{
+                            width: '100%',
+                            padding: '4px',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            fontSize: '13px',
+                            fontFamily: 'inherit',
+                            resize: 'vertical',
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            boxSizing: 'border-box'
+                          }}
                           placeholder="Remarks / Reason"
                         />
                       )}
