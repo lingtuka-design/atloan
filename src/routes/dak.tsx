@@ -49,6 +49,9 @@ function DakComponent() {
   const [filterStatus, setFilterStatus] = useState('All')
   const [filterStaff, setFilterStaff] = useState('All')
   
+  // Remarks Modal State
+  const [activeRemarksModal, setActiveRemarksModal] = useState<{ id: string; name: string; receive_no: string; remarks: string } | null>(null)
+  
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 20
@@ -393,10 +396,10 @@ function DakComponent() {
                   <th className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Case</th>
                   <th className="col-amount" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Amount</th>
                   <th className="col-action" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Action</th>
-                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', width: '80px' }}>Remarks</th>
+                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', minWidth: '160px' }}>Remarks</th>
                   <th className="col-issue" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '80px' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
-                    <th className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}></th>
+                    <th className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '50px' }}></th>
                   )}
                 </tr>
               </thead>
@@ -457,30 +460,54 @@ function DakComponent() {
 
                     <td className="col-remarks" style={{ border: '1px solid #000', padding: '4px', textAlign: 'left', whiteSpace: 'normal', wordBreak: 'break-word' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
-                        <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{r.remarks || ''}</span>
+                        <div 
+                          onClick={() => r.remarks && setActiveRemarksModal({ id: r.id, name: r.name, receive_no: r.receive_no, remarks: r.remarks || '' })}
+                          style={{ fontSize: '13px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', cursor: r.remarks ? 'pointer' : 'default' }}
+                          title={r.remarks ? "Click to view full remarks popup" : ""}
+                        >
+                          {r.remarks || ''}
+                        </div>
                       ) : (
-                        <textarea
-                          rows={1}
-                          value={r.remarks || ''}
-                          onChange={(e) => {
-                            const newRemarks = e.target.value
-                            setRecords(records.map(rec => rec.id === r.id ? { ...rec, remarks: newRemarks } : rec))
-                          }}
-                          onBlur={(e) => handleRemarksBlur(r.id, e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '4px',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
-                            fontSize: '13px',
-                            fontFamily: 'inherit',
-                            resize: 'vertical',
-                            whiteSpace: 'pre-wrap',
-                            wordBreak: 'break-word',
-                            boxSizing: 'border-box'
-                          }}
-                          placeholder="Remarks / Reason"
-                        />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <textarea
+                            rows={1}
+                            value={r.remarks || ''}
+                            onChange={(e) => {
+                              const newRemarks = e.target.value
+                              setRecords(records.map(rec => rec.id === r.id ? { ...rec, remarks: newRemarks } : rec))
+                            }}
+                            onBlur={(e) => handleRemarksBlur(r.id, e.target.value)}
+                            style={{
+                              flex: 1,
+                              padding: '4px',
+                              border: '1px solid #ccc',
+                              borderRadius: '4px',
+                              fontSize: '13px',
+                              fontFamily: 'inherit',
+                              resize: 'vertical',
+                              whiteSpace: 'pre-wrap',
+                              wordBreak: 'break-word',
+                              boxSizing: 'border-box'
+                            }}
+                            placeholder="Remarks"
+                          />
+                          <button
+                            type="button"
+                            className="no-print"
+                            onClick={() => setActiveRemarksModal({ id: r.id, name: r.name, receive_no: r.receive_no, remarks: r.remarks || '' })}
+                            title="Pop up - Text pumpui enna/ziahna"
+                            style={{
+                              background: '#e2e8f0',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '4px',
+                              padding: '3px 6px',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            🔍
+                          </button>
+                        </div>
                       )}
                     </td>
 
@@ -498,7 +525,7 @@ function DakComponent() {
                     </td>
 
                     {auth?.user?.role === 'admin' && (
-                      <td className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                      <td className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '50px' }}>
                         <button onClick={() => handleDelete(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>
                           Delete
                         </button>
@@ -539,6 +566,76 @@ function DakComponent() {
           >
             Next
           </button>
+        </div>
+      )}
+
+      {/* Pop up Modal for full Remarks */}
+      {activeRemarksModal && (
+        <div 
+          className="no-print"
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px'
+          }}
+        >
+          <div style={{ background: 'white', borderRadius: '8px', width: '100%', maxWidth: '550px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ marginTop: 0, color: '#102a43', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+              Remarks - {activeRemarksModal.name} (Rec No: {activeRemarksModal.receive_no})
+            </h3>
+            
+            {auth?.user?.username?.toLowerCase() === 'mala' ? (
+              <div style={{ padding: '12px', background: '#f8f9fa', borderRadius: '4px', border: '1px solid #e9ecef', minHeight: '120px', maxHeight: '300px', overflowY: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '14px', lineHeight: '1.5' }}>
+                {activeRemarksModal.remarks || '(Remarks a awm lo)'}
+              </div>
+            ) : (
+              <textarea
+                rows={8}
+                value={activeRemarksModal.remarks}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setActiveRemarksModal({ ...activeRemarksModal, remarks: val })
+                  setRecords(records.map(rec => rec.id === activeRemarksModal.id ? { ...rec, remarks: val } : rec))
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: '1px solid #ccc',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                  lineHeight: '1.5',
+                  boxSizing: 'border-box'
+                }}
+                placeholder="Remarks / Case chhan ziahna..."
+              />
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+              {auth?.user?.username?.toLowerCase() !== 'mala' && (
+                <button
+                  onClick={() => {
+                    handleRemarksBlur(activeRemarksModal.id, activeRemarksModal.remarks)
+                    setActiveRemarksModal(null)
+                  }}
+                  style={{ padding: '8px 20px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  Save & Close
+                </button>
+              )}
+              <button
+                onClick={() => setActiveRemarksModal(null)}
+                style={{ padding: '8px 16px', background: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
