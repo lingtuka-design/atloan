@@ -445,11 +445,11 @@ function DakComponent() {
                       color: r.action === 'Pending' ? '#c62828' : (r.action === 'Processing' ? '#f57f17' : '#2e7d32')
                     }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
-                        r.action
+                        r.action === 'Processing' ? 'Process' : r.action
                       ) : (
                         <select value={r.action} onChange={e => handleActionChange(r.id, e.target.value)} style={{ padding: '4px', border: 'none', background: 'transparent', fontWeight: 'bold', width: '100%', color: 'inherit' }}>
                           <option value="Pending" style={{color: 'black'}}>Pending</option>
-                          <option value="Processing" style={{color: 'black'}}>Processing</option>
+                          <option value="Processing" style={{color: 'black'}}>Process</option>
                           <option value="Settled" style={{color: 'black'}}>Settled</option>
                         </select>
                       )}
