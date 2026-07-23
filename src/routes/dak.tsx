@@ -22,6 +22,13 @@ interface DakRecord {
   created_at: string
 }
 
+const getCurrentMonthStr = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  return `${year}-${month}`
+}
+
 function DakComponent() {
   const auth = useContext(AuthContext)
   const [records, setRecords] = useState<DakRecord[]>([])
@@ -35,7 +42,7 @@ function DakComponent() {
   const [caseType, setCaseType] = useState('DC')
   
   // Filters
-  const [filterMonth, setFilterMonth] = useState('All')
+  const [filterMonth, setFilterMonth] = useState(getCurrentMonthStr)
   const [filterDate, setFilterDate] = useState('')
   const [searchName, setSearchName] = useState('')
   const [filterStatus, setFilterStatus] = useState('All')
@@ -55,6 +62,15 @@ function DakComponent() {
       fetchRecords()
       if (auth.user.role === 'admin') {
         fetchUsers()
+        if (!initialFilterSet.current) {
+          const usernameLower = auth.user.username.toLowerCase()
+          const nameLower = (auth.user.name || '').toLowerCase()
+          const isSuperAdmin = usernameLower === 'mala' || usernameLower === 'h zonunmawii' || nameLower.includes('zonunmawii')
+          if (!isSuperAdmin) {
+            setFilterStaff(auth.user.username)
+          }
+          initialFilterSet.current = true
+        }
       }
     }
   }, [auth])
@@ -65,16 +81,6 @@ function DakComponent() {
       if (res.ok) {
         const data = await res.json()
         setRecords(data)
-        
-        if (auth?.user?.role === 'admin' && data.length > 0 && !initialFilterSet.current) {
-          const dates = data.map((r: any) => r.created_at.split(' ')[0])
-          const uniqueDates = Array.from(new Set(dates)).sort((a: any, b: any) => b.localeCompare(a))
-          if (uniqueDates.length > 0) {
-            setFilterDate(uniqueDates[0] as string)
-          }
-          initialFilterSet.current = true
-        }
-        
         window.dispatchEvent(new Event('dak-read'))
       }
     } catch (e) {
@@ -249,7 +255,15 @@ function DakComponent() {
       {/* Filters */}
       <div className="no-print" style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
         {auth?.user?.role === 'admin' && (
-          <select value={filterStaff} onChange={e => setFilterStaff(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
+          <select
+            value={filterStaff}
+            onChange={e => {
+              setFilterStaff(e.target.value)
+              setFilterMonth(getCurrentMonthStr())
+              setFilterDate('')
+            }}
+            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
             <option value="All">All Staff</option>
             {users.map(u => (
               <option key={u.id} value={u.username}>{u.username}</option>
