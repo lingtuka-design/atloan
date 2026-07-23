@@ -215,48 +215,77 @@ function DakComponent() {
   if (loading) return <div>Loading...</div>
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+    <div className="dak-print-container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
       <style>{`
         @media print {
           @page {
             size: A4 landscape;
-            margin: 10mm;
+            margin: 8mm 10mm;
           }
-          body {
+          html, body {
             background: white !important;
             color: black !important;
-            font-size: 12px !important;
             margin: 0 !important;
             padding: 0 !important;
+            height: auto !important;
+            overflow: visible !important;
           }
           .no-print {
             display: none !important;
           }
-          div {
+          .dak-print-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+          }
+          .dak-group-box {
             box-shadow: none !important;
             border: none !important;
             padding: 0 !important;
             margin-bottom: 20px !important;
+            page-break-inside: avoid;
+          }
+          .dak-group-box:last-child {
+            margin-bottom: 0 !important;
+          }
+          h1 {
+            display: none !important;
+          }
+          h3 {
+            margin: 0 0 10px 0 !important;
+            font-size: 16px !important;
+            color: black !important;
+            text-decoration: underline !important;
           }
           table {
             width: 100% !important;
             border-collapse: collapse !important;
-            font-size: 11px !important;
-            margin-top: 10px !important;
+            font-size: 13px !important;
+            margin-top: 5px !important;
           }
           th, td {
             border: 1px solid #000 !important;
-            padding: 5px 6px !important;
+            padding: 6px 6px !important;
+            font-size: 13px !important;
+            color: black !important;
           }
+          .col-sl { width: 45px !important; max-width: 45px !important; text-align: center !important; }
+          .col-receive { width: 95px !important; max-width: 95px !important; }
+          .col-case { width: 60px !important; max-width: 60px !important; text-align: center !important; }
+          .col-amount { width: 75px !important; max-width: 75px !important; text-align: center !important; }
+          .col-action { width: 85px !important; max-width: 85px !important; text-align: center !important; }
+          .col-issue { width: 85px !important; max-width: 85px !important; text-align: center !important; }
+          
           input, select {
             border: none !important;
             background: transparent !important;
             color: black !important;
             appearance: none !important;
             -webkit-appearance: none !important;
-            font-size: 11px !important;
+            font-size: 13px !important;
             padding: 0 !important;
-            width: auto !important;
+            width: 100% !important;
+            box-shadow: none !important;
           }
         }
       `}</style>
@@ -347,20 +376,20 @@ function DakComponent() {
         }
 
         return (
-          <div key={key} style={{ marginBottom: '40px', background: 'white', padding: '20px', borderRadius: '8px' }}>
+          <div key={key} className="dak-group-box" style={{ marginBottom: '40px', background: 'white', padding: '20px', borderRadius: '8px' }}>
             <h3 style={{ marginTop: 0, marginBottom: '15px', color: '#102a43', textDecoration: 'underline' }}>{title}</h3>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
               <thead>
                 <tr style={{ border: '1px solid #000' }}>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Sl. No</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Receive No.</th>
+                  <th className="col-sl" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '45px' }}>Sl. No</th>
+                  <th className="col-receive" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', width: '95px' }}>Receive No.</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Name</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Department</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Case</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Amount</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Action</th>
+                  <th className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '60px' }}>Case</th>
+                  <th className="col-amount" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '75px' }}>Amount</th>
+                  <th className="col-action" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '85px' }}>Action</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Remarks</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Issue</th>
+                  <th className="col-issue" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '85px' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
                     <th className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}></th>
                   )}
@@ -369,12 +398,12 @@ function DakComponent() {
               <tbody>
                 {groupedRecords[key].map(r => (
                   <tr key={r.id} style={{ border: '1px solid #000' }}>
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.sl_no}.</td>
-                    <td style={{ border: '1px solid #000', padding: '8px' }}>{r.receive_no}</td>
+                    <td className="col-sl" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.sl_no}.</td>
+                    <td className="col-receive" style={{ border: '1px solid #000', padding: '8px' }}>{r.receive_no}</td>
                     <td style={{ border: '1px solid #000', padding: '8px' }}>{r.name}</td>
                     <td style={{ border: '1px solid #000', padding: '8px' }}>{r.department}</td>
                     
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                    <td className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.case_type
                       ) : (
@@ -387,7 +416,7 @@ function DakComponent() {
                       )}
                     </td>
 
-                    <td style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
+                    <td className="col-amount" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.amount || ''
                       ) : (
@@ -399,13 +428,13 @@ function DakComponent() {
                             setRecords(records.map(rec => rec.id === r.id ? { ...rec, amount: newAmount } : rec))
                           }}
                           onBlur={(e) => handleAmountBlur(r.id, e.target.value)}
-                          style={{ width: '80px', padding: '4px', textAlign: 'center', border: '1px solid #ccc', borderRadius: '4px' }}
+                          style={{ width: '65px', padding: '4px', textAlign: 'center', border: '1px solid #ccc', borderRadius: '4px' }}
                           placeholder="Amount"
                         />
                       )}
                     </td>
                     
-                    <td style={{ 
+                    <td className="col-action" style={{ 
                       border: '1px solid #000', padding: '8px', textAlign: 'center', fontWeight: 'bold',
                       background: r.action === 'Pending' ? '#ffcdd2' : (r.action === 'Processing' ? '#fff9c4' : '#c8e6c9'),
                       color: r.action === 'Pending' ? '#c62828' : (r.action === 'Processing' ? '#f57f17' : '#2e7d32')
@@ -433,13 +462,13 @@ function DakComponent() {
                             setRecords(records.map(rec => rec.id === r.id ? { ...rec, remarks: newRemarks } : rec))
                           }}
                           onBlur={(e) => handleRemarksBlur(r.id, e.target.value)}
-                          style={{ width: '100%', minWidth: '130px', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px' }}
+                          style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px' }}
                           placeholder="Remarks / Reason"
                         />
                       )}
                     </td>
 
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                    <td className="col-issue" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.issue_date
                       ) : (
@@ -447,7 +476,7 @@ function DakComponent() {
                           type="text" 
                           defaultValue={r.issue_date} 
                           onBlur={e => handleIssueDateBlur(r.id, e.target.value)}
-                          style={{ width: '80px', padding: '4px', border: '1px solid #ccc', textAlign: 'center' }}
+                          style={{ width: '70px', padding: '4px', border: '1px solid #ccc', textAlign: 'center' }}
                         />
                       )}
                     </td>
