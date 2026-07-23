@@ -269,11 +269,14 @@ function DakComponent() {
             font-size: 13px !important;
             color: black !important;
           }
-          .col-sl { width: 45px !important; max-width: 45px !important; text-align: center !important; }
-          .col-receive { width: 95px !important; max-width: 95px !important; }
-          .col-case { width: 60px !important; max-width: 60px !important; text-align: center !important; }
+          .col-sl { width: 40px !important; max-width: 40px !important; text-align: center !important; }
+          .col-receive { width: 85px !important; max-width: 85px !important; }
+          .col-name { white-space: nowrap !important; }
+          .col-dept { white-space: normal !important; word-break: break-word !important; }
+          .col-case { width: 55px !important; max-width: 55px !important; text-align: center !important; }
           .col-amount { width: 75px !important; max-width: 75px !important; text-align: center !important; }
           .col-action { width: 85px !important; max-width: 85px !important; text-align: center !important; }
+          .col-remarks { white-space: normal !important; word-break: break-word !important; }
           .col-issue { width: 85px !important; max-width: 85px !important; text-align: center !important; }
           
           input, select {
@@ -381,14 +384,14 @@ function DakComponent() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
               <thead>
                 <tr style={{ border: '1px solid #000' }}>
-                  <th className="col-sl" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '45px' }}>Sl. No</th>
-                  <th className="col-receive" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', width: '95px' }}>Receive No.</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Name</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Department</th>
-                  <th className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '60px' }}>Case</th>
+                  <th className="col-sl" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '40px' }}>Sl. No</th>
+                  <th className="col-receive" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', width: '85px' }}>Receive No.</th>
+                  <th className="col-name" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left', whiteSpace: 'nowrap' }}>Name</th>
+                  <th className="col-dept" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Department</th>
+                  <th className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '55px' }}>Case</th>
                   <th className="col-amount" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '75px' }}>Amount</th>
                   <th className="col-action" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '85px' }}>Action</th>
-                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Remarks</th>
+                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Remarks</th>
                   <th className="col-issue" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center', width: '85px' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
                     <th className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}></th>
@@ -400,8 +403,8 @@ function DakComponent() {
                   <tr key={r.id} style={{ border: '1px solid #000' }}>
                     <td className="col-sl" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.sl_no}.</td>
                     <td className="col-receive" style={{ border: '1px solid #000', padding: '8px' }}>{r.receive_no}</td>
-                    <td style={{ border: '1px solid #000', padding: '8px' }}>{r.name}</td>
-                    <td style={{ border: '1px solid #000', padding: '8px' }}>{r.department}</td>
+                    <td className="col-name" style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'nowrap' }}>{r.name}</td>
+                    <td className="col-dept" style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{r.department}</td>
                     
                     <td className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
@@ -450,7 +453,7 @@ function DakComponent() {
                       )}
                     </td>
 
-                    <td style={{ border: '1px solid #000', padding: '4px', textAlign: 'left' }}>
+                    <td className="col-remarks" style={{ border: '1px solid #000', padding: '4px', textAlign: 'left', whiteSpace: 'normal', wordBreak: 'break-word' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>{r.remarks || ''}</span>
                       ) : (
