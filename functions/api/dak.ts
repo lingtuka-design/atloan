@@ -72,6 +72,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
+  // Ensure remarks column exists
+  try {
+    await env.DB.prepare('ALTER TABLE dak_records ADD COLUMN remarks TEXT').run()
+  } catch (e) {}
+
   // Normal /api/dak endpoints
   if (request.method === 'GET') {
     try {
@@ -169,6 +174,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       if (record.case_type !== undefined) { updates.push('case_type = ?'); values.push(record.case_type) }
       if (record.is_new !== undefined) { updates.push('is_new = ?'); values.push(record.is_new ? 1 : 0) }
       if (record.amount !== undefined) { updates.push('amount = ?'); values.push(record.amount) }
+      if (record.remarks !== undefined) { updates.push('remarks = ?'); values.push(record.remarks) }
 
       if (updates.length > 0) {
         values.push(record.id)

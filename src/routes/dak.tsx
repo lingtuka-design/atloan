@@ -15,6 +15,7 @@ interface DakRecord {
   case_type: string
   amount: string
   action: string
+  remarks?: string
   issue_date: string
   assigned_to: string
   created_by: string
@@ -164,6 +165,10 @@ function DakComponent() {
     updateRecord(id, { amount: val })
   }
 
+  const handleRemarksBlur = (id: string, val: string) => {
+    updateRecord(id, { remarks: val })
+  }
+
   const handleIssueDateBlur = (id: string, val: string) => {
     if (val.trim() !== '') {
       updateRecord(id, { issue_date: val, action: 'Settled' })
@@ -211,6 +216,50 @@ function DakComponent() {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
+      <style>{`
+        @media print {
+          @page {
+            size: A4 landscape;
+            margin: 10mm;
+          }
+          body {
+            background: white !important;
+            color: black !important;
+            font-size: 12px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          div {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+            margin-bottom: 20px !important;
+          }
+          table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            font-size: 11px !important;
+            margin-top: 10px !important;
+          }
+          th, td {
+            border: 1px solid #000 !important;
+            padding: 5px 6px !important;
+          }
+          input, select {
+            border: none !important;
+            background: transparent !important;
+            color: black !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            font-size: 11px !important;
+            padding: 0 !important;
+            width: auto !important;
+          }
+        }
+      `}</style>
       <h1 style={{ color: '#243b53', borderBottom: '2px solid #bcccdc', paddingBottom: '10px' }}>Dak Management</h1>
       
       {auth?.user?.role === 'admin' && (
@@ -310,6 +359,7 @@ function DakComponent() {
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Case</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Amount</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Action</th>
+                  <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'left' }}>Remarks</th>
                   <th style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
                     <th className="no-print" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}></th>
@@ -368,6 +418,24 @@ function DakComponent() {
                           <option value="Processing" style={{color: 'black'}}>Processing</option>
                           <option value="Settled" style={{color: 'black'}}>Settled</option>
                         </select>
+                      )}
+                    </td>
+
+                    <td style={{ border: '1px solid #000', padding: '4px', textAlign: 'left' }}>
+                      {auth?.user?.username?.toLowerCase() === 'mala' ? (
+                        <span style={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>{r.remarks || ''}</span>
+                      ) : (
+                        <input
+                          type="text"
+                          value={r.remarks || ''}
+                          onChange={(e) => {
+                            const newRemarks = e.target.value
+                            setRecords(records.map(rec => rec.id === r.id ? { ...rec, remarks: newRemarks } : rec))
+                          }}
+                          onBlur={(e) => handleRemarksBlur(r.id, e.target.value)}
+                          style={{ width: '100%', minWidth: '130px', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px' }}
+                          placeholder="Remarks / Reason"
+                        />
                       )}
                     </td>
 
