@@ -286,11 +286,11 @@ function DakComponent() {
           .col-receive { width: 65px !important; }
           .col-name { white-space: normal !important; word-break: break-word !important; }
           .col-dept { white-space: normal !important; word-break: break-word !important; }
-          .col-case { width: 65px !important; text-align: center !important; }
+          .col-case { width: 75px !important; text-align: center !important; }
           .col-amount { width: 70px !important; text-align: center !important; }
           .col-action { width: 75px !important; text-align: center !important; }
-          .col-remarks { width: 110px !important; text-align: left !important; white-space: normal !important; word-break: break-word !important; }
-          .col-issue { width: 70px !important; text-align: center !important; }
+          .col-remarks { width: 105px !important; text-align: left !important; white-space: normal !important; word-break: break-word !important; }
+          .col-issue { width: 75px !important; text-align: center !important; }
           
           input, select, textarea {
             border: none !important;
@@ -405,11 +405,11 @@ function DakComponent() {
                   <th className="col-receive" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '65px' }}>Receive No.</th>
                   <th className="col-name" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left' }}>Name</th>
                   <th className="col-dept" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left' }}>Department</th>
-                  <th className="col-case" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '70px' }}>Case</th>
+                  <th className="col-case" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '90px' }}>Case</th>
                   <th className="col-amount" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '75px' }}>Amount</th>
                   <th className="col-action" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '80px' }}>Action</th>
-                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '140px' }}>Remarks</th>
-                  <th className="col-issue" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '75px' }}>Issue</th>
+                  <th className="col-remarks" style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '130px' }}>Remarks</th>
+                  <th className="col-issue" style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '85px' }}>Issue</th>
                   {auth?.user?.role === 'admin' && (
                     <th className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '45px' }}></th>
                   )}
@@ -423,11 +423,11 @@ function DakComponent() {
                     <td className="col-name" style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{r.name}</td>
                     <td className="col-dept" style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{r.department}</td>
                     
-                    <td className="col-case" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                    <td className="col-case" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.case_type
                       ) : (
-                        <select value={r.case_type} onChange={e => handleCaseTypeChange(r.id, e.target.value)} style={{ padding: '4px', border: 'none', background: 'transparent' }}>
+                        <select value={r.case_type} onChange={e => handleCaseTypeChange(r.id, e.target.value)} style={{ width: '100%', padding: '4px', border: 'none', background: 'transparent', fontSize: '13px', boxSizing: 'border-box' }}>
                           <option value="DC">DC</option>
                           <option value="NDC">NDC</option>
                           <option value="Challan">Challan</option>
@@ -450,7 +450,7 @@ function DakComponent() {
                             setRecords(records.map(rec => rec.id === r.id ? { ...rec, amount: newAmount } : rec))
                           }}
                           onBlur={(e) => handleAmountBlur(r.id, e.target.value)}
-                          style={{ width: '65px', padding: '4px', textAlign: 'center', border: '1px solid #ccc', borderRadius: '4px' }}
+                          style={{ width: '100%', padding: '4px', textAlign: 'center', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box' }}
                           placeholder="Amount"
                         />
                       )}
@@ -525,7 +525,7 @@ function DakComponent() {
                       )}
                     </td>
 
-                    <td className="col-issue" style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>
+                    <td className="col-issue" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
                       {auth?.user?.username?.toLowerCase() === 'mala' ? (
                         r.issue_date
                       ) : (
@@ -533,7 +533,7 @@ function DakComponent() {
                           type="text" 
                           defaultValue={r.issue_date} 
                           onBlur={e => handleIssueDateBlur(r.id, e.target.value)}
-                          style={{ width: '70px', padding: '4px', border: '1px solid #ccc', textAlign: 'center' }}
+                          style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', textAlign: 'center', fontSize: '13px', boxSizing: 'border-box' }}
                         />
                       )}
                     </td>
