@@ -23,8 +23,10 @@ interface UserRecord {
 
 interface StatRecord {
   username: string
-  ndc_count: number
-  dc_count: number
+  ndc_attempt: number
+  ndc_settled: number
+  dc_attempt: number
+  dc_settled: number
 }
 
 function UsersComponent() {
@@ -506,33 +508,57 @@ function UsersComponent() {
         
         {statsError && <div style={{ color: '#c62828', marginBottom: '15px', fontSize: '13px' }}>{statsError}</div>}
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid var(--rule)', color: 'var(--ink-soft)' }}>
-              <th style={{ padding: '12px 8px', fontWeight: '600' }}>Username</th>
-              <th style={{ padding: '12px 8px', fontWeight: '600' }}>NDC Settled</th>
-              <th style={{ padding: '12px 8px', fontWeight: '600' }}>DC Settled</th>
+            <tr style={{ borderBottom: '1px solid var(--rule)', color: 'var(--ink)' }}>
+              <th rowSpan={2} style={{ padding: '12px 8px', fontWeight: 'bold', textAlign: 'left', borderRight: '1px solid var(--rule)', width: '25%' }}>
+                Username
+              </th>
+              <th colSpan={2} style={{ padding: '10px 8px', fontWeight: 'bold', background: '#e3f2fd', color: '#1565c0', borderRight: '1px solid var(--rule)', borderBottom: '1px solid #bbdefb' }}>
+                NDC
+              </th>
+              <th colSpan={2} style={{ padding: '10px 8px', fontWeight: 'bold', background: '#fce4ec', color: '#c2185b', borderBottom: '1px solid #f8bbd0' }}>
+                DC
+              </th>
+            </tr>
+            <tr style={{ borderBottom: '2px solid var(--rule)', color: 'var(--ink-soft)', fontSize: '13px' }}>
+              <th style={{ padding: '8px', fontWeight: '600', background: '#f0f4f8' }}>Attempt</th>
+              <th style={{ padding: '8px', fontWeight: '600', background: '#e3f2fd', color: '#1565c0', borderRight: '1px solid var(--rule)' }}>Settled</th>
+              <th style={{ padding: '8px', fontWeight: '600', background: '#f0f4f8' }}>Attempt</th>
+              <th style={{ padding: '8px', fontWeight: '600', background: '#fce4ec', color: '#c2185b' }}>Settled</th>
             </tr>
           </thead>
           <tbody>
             {performanceStats.filter(stat => stat.username !== 'mala').map((stat, i) => (
               <tr key={i} style={{ borderBottom: '1px solid var(--rule)' }}>
-                <td style={{ padding: '12px 8px', fontWeight: 'bold' }}>{stat.username}</td>
+                <td style={{ padding: '12px 8px', fontWeight: 'bold', textAlign: 'left', borderRight: '1px solid var(--rule)' }}>
+                  {stat.username}
+                </td>
                 <td style={{ padding: '12px 8px' }}>
+                  <span style={{ fontWeight: '600', color: '#555' }}>
+                    {stat.ndc_attempt || 0}
+                  </span>
+                </td>
+                <td style={{ padding: '12px 8px', borderRight: '1px solid var(--rule)' }}>
                   <span style={{ background: '#e3f2fd', color: '#1565c0', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
-                    {stat.ndc_count}
+                    {stat.ndc_settled || 0}
+                  </span>
+                </td>
+                <td style={{ padding: '12px 8px' }}>
+                  <span style={{ fontWeight: '600', color: '#555' }}>
+                    {stat.dc_attempt || 0}
                   </span>
                 </td>
                 <td style={{ padding: '12px 8px' }}>
                   <span style={{ background: '#fce4ec', color: '#c2185b', padding: '3px 10px', borderRadius: '12px', fontWeight: 'bold' }}>
-                    {stat.dc_count}
+                    {stat.dc_settled || 0}
                   </span>
                 </td>
               </tr>
             ))}
-            {performanceStats.length === 0 && (
+            {performanceStats.filter(stat => stat.username !== 'mala').length === 0 && (
               <tr>
-                <td colSpan={3} style={{ textAlign: 'center', padding: '20px', color: 'var(--ink-soft)' }}>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '20px', color: 'var(--ink-soft)' }}>
                   He thla chhung hian case tihfel a la awm lo.
                 </td>
               </tr>
