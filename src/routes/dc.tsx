@@ -576,7 +576,7 @@ function DcComponent() {
       ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- Rupees (${rawWords}) only. Vide No ${sanction}`)
       ndcCodeStrings.push(loan.code)
 
-      if (totalOutstanding > 0) {
+      if (totalOutstanding > 100) {
         grandTotalOutstandingPositive += totalOutstanding
         loansWithLiability.add(loan.loanType)
       } else if (totalOutstanding < 0) {
@@ -1338,7 +1338,7 @@ function DcComponent() {
                                   <td style={{ textAlign: 'right', paddingRight: '15px' }}>{totalLabel}</td>
                                   <td style={{ textAlign: 'center' }}>:</td>
                                   <td style={{ textAlign: 'center' }}>₹</td>
-                                  <td style={{ textAlign: 'left', paddingLeft: '8px' }}>{fmtAmt(Math.abs(totalOutstanding))}</td>
+                                  <td style={{ textAlign: 'left', paddingLeft: '8px' }}>{fmtAmt(Math.abs(totalOutstanding))}{totalOutstanding > 0 && totalOutstanding <= 100 ? ' (Ignored)' : ''}</td>
                                 </tr>
                               </tbody>
                             </table>
@@ -1425,7 +1425,7 @@ function DcComponent() {
                                 <tr><td className="col-label">Interest Accrued</td><td style={{ textAlign: 'center' }}>:</td><td>₹{fmtAmt(roundedInterest)}</td></tr>
                                 <tr><td className="col-label">Interest already recovered</td><td style={{ textAlign: 'center' }}>:</td><td>₹{fmtAmt(loan.recoveredInt)}</td></tr>
                                 <tr><td className="col-label">{nOLabel}</td><td style={{ textAlign: 'center' }}>:</td><td>₹{fmtAmt(Math.abs(trueOutstandingInterest))}</td></tr>
-                                <tr><td className="col-label">{nTLabel}</td><td style={{ textAlign: 'center' }}>:</td><td>₹{fmtAmt(Math.abs(totalOutstanding))}</td></tr>
+                                <tr><td className="col-label">{nTLabel}</td><td style={{ textAlign: 'center' }}>:</td><td>₹{fmtAmt(Math.abs(totalOutstanding))}{totalOutstanding > 0 && totalOutstanding <= 100 ? ' (May be ignored)' : ''}</td></tr>
                               </tbody>
                             </table>
                           </div>
