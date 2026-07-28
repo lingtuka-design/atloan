@@ -746,10 +746,10 @@ h1, h2, h3, .display-font {
 }
 .preview-tabs {
   position: sticky;
-  top: 0;
-  z-index: 100;
+  top: 66px;
+  z-index: 99;
   background: #f4f6f8;
-  padding: 12px 0;
+  padding: 10px 0;
   margin-bottom: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;

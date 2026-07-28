@@ -243,15 +243,15 @@ function RootComponent() {
                   </div>
                 </div>
               </div>
+              <div className="rule-double no-print" style={{
+                maxWidth: '1100px',
+                margin: '0 auto',
+                borderTop: '2px solid var(--ink)',
+                borderBottom: '1px solid var(--ink)',
+                height: '3px',
+                width: '100%'
+              }}></div>
             </div>
-            <div className="rule-double no-print" style={{
-              maxWidth: '1100px',
-              margin: '0 auto',
-              borderTop: '2px solid var(--ink)',
-              borderBottom: '1px solid var(--ink)',
-              height: '3px',
-              width: '100%'
-            }}></div>
           </>
         )}
 
