@@ -648,6 +648,11 @@ function DcComponent() {
       return
     }
 
+    const currentNoteDOM = document.getElementById('editable-note-wrapper')?.innerHTML
+    const finalNoteHTML = (currentNoteDOM !== undefined && currentNoteDOM.trim() !== '')
+      ? currentNoteDOM
+      : (savedNoteHTML || '')
+
     const typesSumm = Array.from(new Set(calculatedData.map(l => l.loanType))).join(', ')
     const recordPayload: Partial<DcRecord> = {
       name: shared.inName.trim(),
@@ -658,7 +663,7 @@ function DcComponent() {
       sharedInputs: shared,
       loanInputsArray: loans,
       allCalculatedData: calculatedData,
-      noteHTMLSaved: document.getElementById('editable-note-wrapper')?.innerHTML || '',
+      noteHTMLSaved: finalNoteHTML,
       legalCertHTMLSaved: '',
       ndcCertHTMLSaved: ''
     }
@@ -678,6 +683,9 @@ function DcComponent() {
         const result = await res.json()
         const isUpdate = Boolean(currentEditId)
         setCurrentEditId(result.id)
+        if (finalNoteHTML) {
+          setSavedNoteHTML(finalNoteHTML)
+        }
         alert(isUpdate ? 'Record siamṭhat (Updated) a ni ta!' : 'I calculation data leh Notesheet hi save a ni ta e.')
         fetchRecords()
       } else {
@@ -1371,6 +1379,8 @@ function DcComponent() {
                       className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
                       contentEditable
                       suppressContentEditableWarning
+                      onInput={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
+                      onBlur={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       style={{
                         fontSize: '17px',
                         lineHeight: 1.5,
@@ -1385,6 +1395,8 @@ function DcComponent() {
                       className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
                       contentEditable
                       suppressContentEditableWarning
+                      onInput={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
+                      onBlur={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       style={{
                         fontSize: '17px',
                         lineHeight: 1.5,
