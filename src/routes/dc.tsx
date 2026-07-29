@@ -523,9 +523,15 @@ function DcComponent() {
     } else if (retireLabel === 'Date of Resignation') {
       actionText = 'who resigned on'
       statusWord = 'resigned'
+    } else if (retireLabel === 'Date of Retired') {
+      actionText = 'who retired on'
+      statusWord = 'retired'
+    } else if (retireLabel === 'Date of Retired (Vol)') {
+      actionText = 'who retired (Voluntary) on'
+      statusWord = 'retired'
     } else if (retireLabel === 'Date of Retirement (Vol)') {
       if (isPast) {
-        actionText = 'who retired (voluntarily) on'
+        actionText = 'who retired (Voluntary) on'
         statusWord = 'retired'
       } else {
         actionText = 'who is due to retire (voluntarily) on'
@@ -929,9 +935,11 @@ function DcComponent() {
               <div style={{ display: 'flex', gap: '5px' }}>
                 <select value={shared.inRetireLabel} onChange={e => handleSharedChange('inRetireLabel', e.target.value)} style={{ flex: 1.2 }}>
                   <option value="Date of Retirement">Date of Retirement</option>
+                  <option value="Date of Retired">Date of Retired</option>
+                  <option value="Date of Retirement (Vol)">Date of Retirement (Vol)</option>
+                  <option value="Date of Retired (Vol)">Date of Retired (Vol)</option>
                   <option value="Date of Expiry">Date of Expiry</option>
                   <option value="Date of Resignation">Date of Resignation</option>
-                  <option value="Date of Retirement (Vol)">Date of Retirement (Vol)</option>
                 </select>
                 <input type="date" value={shared.inRetireDate} onChange={e => handleSharedChange('inRetireDate', e.target.value)} style={{ flex: 1 }} />
               </div>
