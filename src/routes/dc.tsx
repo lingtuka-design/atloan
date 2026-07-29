@@ -1379,7 +1379,6 @@ function DcComponent() {
                       className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
                       contentEditable
                       suppressContentEditableWarning
-                      onInput={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       onBlur={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       style={{
                         fontSize: '17px',
@@ -1395,7 +1394,6 @@ function DcComponent() {
                       className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
                       contentEditable
                       suppressContentEditableWarning
-                      onInput={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       onBlur={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       style={{
                         fontSize: '17px',
