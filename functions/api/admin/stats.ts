@@ -81,7 +81,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         SELECT 
           LOWER(created_by) as staff_name,
           COUNT(*) as ndc_attempt,
-          SUM(CASE WHEN n.issueDate = (SELECT MAX(issueDate) FROM ndc_records WHERE LOWER(created_by) = LOWER(n.created_by)) THEN 1 ELSE 0 END) as ndc_settled
+          SUM(CASE WHEN n.issueDate IS NOT NULL AND TRIM(n.issueDate) != '' THEN 1 ELSE 0 END) as ndc_settled
         FROM ndc_records n
         WHERE strftime('%Y-%m', n.created_at) = ? OR n.created_at LIKE ? || '%'
         GROUP BY LOWER(n.created_by)
@@ -90,7 +90,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         SELECT 
           LOWER(created_by) as staff_name,
           COUNT(*) as dc_attempt,
-          SUM(CASE WHEN d.issueDate = (SELECT MAX(issueDate) FROM dc_records WHERE LOWER(created_by) = LOWER(d.created_by)) THEN 1 ELSE 0 END) as dc_settled
+          SUM(CASE WHEN d.issueDate IS NOT NULL AND TRIM(d.issueDate) != '' THEN 1 ELSE 0 END) as dc_settled
         FROM dc_records d
         WHERE strftime('%Y-%m', d.created_at) = ? OR d.created_at LIKE ? || '%'
         GROUP BY LOWER(d.created_by)
