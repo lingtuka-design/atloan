@@ -116,6 +116,7 @@ const HEADS_OF_ACCOUNT = {
 }
 
 const DEPT_CODES: Record<string, string> = {
+  "AGRI": "01", "A&C": "03", "AH&VETY": "05", "ATI": "07", "AT&P": "09", "C&I": "11",
   "COOP": "13", "DC": "15", "DAT": "17", "DMR": "19", "DIET": "21",
   "ECS": "23", "EXE": "25", "EDN": "27", "ELCN": "29", "FOR": "31",
   "FCA": "33", "FISH": "35", "GHC": "37", "GAD": "39", "G&M": "41",
