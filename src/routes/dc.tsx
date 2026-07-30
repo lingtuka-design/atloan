@@ -834,7 +834,7 @@ function DcComponent() {
           .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
           #legal-pages-container, #note-pages-container { display: none !important; }
           #legal-cert-page { display: block !important; } 
-          .cert-page { display: block !important; padding: 60px 70px !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
+          .cert-page { display: block !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'note') {
         style.innerHTML = `@media print { 
@@ -1523,26 +1523,31 @@ function DcComponent() {
             {/* DEMAND / NO DEMAND CERTIFICATE */}
             {previewTab === 'cert' && (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {!w.isGlobalNDC ? (
+                {!w.isGlobalNDC ? (() => {
+                  const numLoans = calculatedData.length
+                  const layoutClass = numLoans <= 2 ? 'cert-layout-default' : (numLoans === 3 ? 'cert-layout-compact' : 'cert-layout-ultra')
+                  const paddingStyle = numLoans >= 4 ? '35px 50px' : (numLoans === 3 ? '48px 60px' : '60px 70px')
+
+                  return (
                   /* Demand Certificate */
-                  <div id="legal-cert-page" className="cert-page document-font cert-layout-default" style={{ display: 'block', padding: '60px 70px', minHeight: '1344px', width: '816px', background: 'white', position: 'relative' }}>
-                    <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }} />
-                    <div className="text-center cert-header" style={{ fontSize: '15px', marginBottom: '15px', fontWeight: 'bold', textAlign: 'center' }}>
+                  <div id="legal-cert-page" className={`cert-page document-font ${layoutClass}`} style={{ display: 'block', padding: paddingStyle, minHeight: '1344px', width: '816px', background: 'white', position: 'relative' }}>
+                    <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: numLoans >= 4 ? '30px' : '50px', left: '50px', height: '60px', zIndex: 10 }} />
+                    <div className="text-center cert-header" style={{ fontWeight: 'bold', textAlign: 'center' }}>
                       GOVERNMENT OF MIZORAM<br />
                       OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br />
                       ACCOUNTS &amp; TREASURIES; MIZORAM : AIZAWL
                     </div>
-                    <div style={{ textAlign: 'right', marginBottom: '25px', fontSize: '15px', lineHeight: 1.4 }}>
+                    <div className="cert-memo-date-header" style={{ textAlign: 'right', lineHeight: 1.4 }}>
                       <span>{w.fullMemo}</span><br />
                       Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.
                     </div>
-                    <div className="text-center cert-title" style={{ fontSize: '17px', fontWeight: 'bold', textDecoration: 'underline', marginBottom: '25px', textAlign: 'center' }}>
+                    <div className="text-center cert-title" style={{ fontWeight: 'bold', textDecoration: 'underline', textAlign: 'center' }}>
                       DEMAND CERTIFICATE
                     </div>
-                    <div className="cert-body cert-body-text" style={{ textAlign: 'justify', fontSize: '16px', lineHeight: 1.6 }}>
+                    <div className="cert-body cert-body-text" style={{ textAlign: 'justify' }}>
                       <span style={{ marginLeft: '40px' }}>This</span> is to certify that <span className="bold">{w.fullName}</span> under the Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span style={{ marginLeft: '10px', marginRight: '10px' }} className="bold">{formatDotDate(shared.inRetireDate)}</span> has an outstanding liabilities as shown below:
                       
-                      <div className="liabilities-list" id="certLiabilitiesContainer" style={{ marginTop: '20px', marginBottom: '5px' }}>
+                      <div className="liabilities-list" id="certLiabilitiesContainer">
                         {calculatedData.map((loan, lIdx) => {
                           const totalIBB = loan.calcData.reduce((acc, row) => acc + Math.max(0, row.principalAtEnd), 0)
                           const calculatedInterest = (totalIBB * loan.intRate) / 1200
@@ -1557,7 +1562,7 @@ function DcComponent() {
                           const individualWords = totalOutstanding === 0 ? 'Rupees NIL' : amountToWords(totalOutstanding)
 
                           return (
-                            <div key={lIdx} className="liab-item" style={{ marginBottom: '15px' }}>
+                            <div key={lIdx} className="liab-item">
                               <div className="bold" style={{ display: 'flex', gap: '30px' }}>
                                 <span>{lIdx + 1}. &nbsp;&nbsp;&nbsp;&nbsp;{loan.loanNameFull} ({loan.loanType})</span>
                                 <span>CODE No. : - {loan.code}</span>
@@ -1580,7 +1585,7 @@ function DcComponent() {
                       </div>
 
                       <div id="certHeadsSection" style={{ display: (w.prinHeadsToShow.size > 0 || w.intHeadsToShow.size > 0) ? 'block' : 'none' }}>
-                        <div className="cert-head-title" style={{ fontWeight: 'bold', margin: '15px 0 5px 0' }}>The outstanding amount is to be credited under the <span className="bold">Head/Heads</span> of Account :</div>
+                        <div className="cert-head-title" style={{ fontWeight: 'bold' }}>The outstanding amount is to be credited under the <span className="bold">Head/Heads</span> of Account :</div>
                         <table className="cert-head-table" style={{ width: '85%', marginLeft: 'auto', marginRight: 'auto', textAlign: 'left', fontWeight: 'bold' }}>
                           <tbody>
                             <tr>
@@ -1589,7 +1594,7 @@ function DcComponent() {
                             </tr>
                             <tr>
                               <td style={{ verticalAlign: 'top', paddingRight: '25px' }}>
-                                <table id="certHeadsPrinTable" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                                <table id="certHeadsPrinTable" style={{ width: '100%', borderCollapse: 'collapse' }}>
                                   <tbody>
                                     {Array.from(w.prinHeadsToShow).map((cat) => (
                                       <tr key={cat}>
@@ -1602,7 +1607,7 @@ function DcComponent() {
                                 </table>
                               </td>
                               <td style={{ verticalAlign: 'top', paddingLeft: '25px' }}>
-                                <table id="certHeadsIntTable" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                                <table id="certHeadsIntTable" style={{ width: '100%', borderCollapse: 'collapse' }}>
                                   <tbody>
                                     {Array.from(w.intHeadsToShow).map((cat) => (
                                       <tr key={cat}>
@@ -1619,14 +1624,14 @@ function DcComponent() {
                         </table>
                       </div>
 
-                      <div className="cert-closing-note" style={{ fontWeight: 'bold', fontStyle: 'italic', textIndent: '40px', textAlign: 'justify', marginTop: '15px' }}>
+                      <div className="cert-closing-note" style={{ fontWeight: 'bold', fontStyle: 'italic', textIndent: '40px', textAlign: 'justify' }}>
                         Original final recovery challan may be submitted to the undersigned after drawal of Pension &amp; DCRG for closing the account.
                       </div>
                     </div>
 
-                    <div className="text-right cert-section-gap" style={{ textAlign: 'right', marginTop: '20px' }}>
-                      <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontSize: '16px' }}>
-                        <div className="sig-space" style={{ height: '45px' }}></div>
+                    <div className="text-right cert-section-gap" style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px' }}>
+                        <div className="sig-space"></div>
                         {shared.inShowSd ? <span className="cert-sd-mark">Sd/-<br /></span> : null}
                         <span className="bold cert-sig-name-disp">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</span><br />
                         <span className="out-live-sig-desig">{shared.inSigDesig}</span><br />
@@ -1634,14 +1639,14 @@ function DcComponent() {
                       </div>
                     </div>
                     
-                    <div className="cert-memo-date" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', fontSize: '15px' }}>
+                    <div className="cert-memo-date" style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <div>Memo <span>{w.fullMemo}</span></div>
                       <div>Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.</div>
                     </div>
                     
-                    <div className="cert-copy-to" style={{ marginTop: '15px', fontSize: '15px' }}>
+                    <div className="cert-copy-to">
                       <div style={{ fontStyle: 'italic', marginBottom: '5px' }}>Copy to :</div>
-                      <ol style={{ margin: 0, paddingLeft: '65px', textAlign: 'justify', lineHeight: 1.4 }}>
+                      <ol style={{ margin: 0, paddingLeft: '65px', textAlign: 'justify' }}>
                         <li className="mb-1">The <span className="bold">{shared.inThawnnaTur}</span> for making adjustment of the Outstanding amount of <span className="bold">Rs. {fmtAmt(w.grandTotalOutstandingPositive)}/-</span> shown above from the DCRG of the <span className="out-live-status">{w.statusWord}</span> Govt. Servant.</li>
                         <li className="mb-1">The <span className="bold">{w.copy2Address}</span> <span>{w.excessDetails.length > 0 ? (
                           <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span>.</>
@@ -1650,20 +1655,21 @@ function DcComponent() {
                       </ol>
                     </div>
                     
-                    <div className="text-right cert-footer-gap" style={{ textAlign: 'right', marginTop: '30px' }}>
-                      <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '15px' }}>
-                        <div className="sig-space" style={{ height: '45px' }}></div>
+                    <div className="text-right cert-footer-gap" style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                        <div className="sig-space"></div>
                         <span className="out-live-sig-desig-upper">{shared.inSigDesig.toUpperCase()}</span><br />
                         Accounts &amp; Treasuries
                       </div>
                     </div>
 
-                    <div style={{ position: 'absolute', bottom: '40px', left: '70px', right: '70px', borderTop: '1px dashed #999', paddingTop: '5px', textAlign: 'center', fontSize: '9px', color: '#555', lineHeight: 1.2 }}>
+                    <div style={{ position: 'absolute', bottom: numLoans >= 4 ? '25px' : '40px', left: '70px', right: '70px', borderTop: '1px dashed #999', paddingTop: '5px', textAlign: 'center', fontSize: '9px', color: '#555', lineHeight: 1.2 }}>
                       <span style={{ fontFamily: 'Arial, sans-serif' }}>☎</span> 0389-2343381/2347781(CCA) Fax-2342588/2343383(Director)/2345591(ELFA)/2345187[JD(A)]<br />
                       2345270 [JD(P)]/2345820 [DD(A)]/2340055[DD(E)]/ 2306221[DD(P)]/2345235[DD(F)]/2345825[AD(P)]/ 2356162 [Supdt.]
                     </div>
                   </div>
-                ) : (
+                  )
+                })() : (
                   /* No Demand Certificate (A4) */
                   <div id="ndc-cert-page" className="cert-page cert-layout-default" style={{ display: 'block', width: '816px', background: 'white', position: 'relative', minHeight: '1123px', padding: '60px 70px' }}>
                     <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }} />
