@@ -449,6 +449,7 @@ function DcComponent() {
 
     if (!hasError) {
       setCalculatedData(results)
+      setSavedNoteHTML(null)
       setPreviewTab('calc')
     }
   }
@@ -561,7 +562,14 @@ function DcComponent() {
     let ndcLoanStrings: string[] = []
     let ndcCodeStrings: string[] = []
 
-    const typeGroups: Record<string, { totalOutstanding: number; outstandingPrincipal: number; trueOutstandingInterest: number }> = {}
+    let adjustmentSummaries: string[] = []
+    interface LoanTypeGroup {
+      totalOutstanding: number
+      outstandingPrincipal: number
+      trueOutstandingInterest: number
+      loans: { code: string; totalOutstanding: number; outstandingPrincipal: number; trueOutstandingInterest: number }[]
+    }
+    const typeGroups: Record<string, LoanTypeGroup> = {}
 
     calculatedData.forEach((loan) => {
       takenTypes.add(loan.loanType)
@@ -593,11 +601,17 @@ function DcComponent() {
       grandTotalOutstandingInterest += trueOutstandingInterest
 
       if (!typeGroups[loan.loanType]) {
-        typeGroups[loan.loanType] = { totalOutstanding: 0, outstandingPrincipal: 0, trueOutstandingInterest: 0 }
+        typeGroups[loan.loanType] = { totalOutstanding: 0, outstandingPrincipal: 0, trueOutstandingInterest: 0, loans: [] }
       }
       typeGroups[loan.loanType].totalOutstanding += totalOutstanding
       typeGroups[loan.loanType].outstandingPrincipal += outstandingPrincipal
       typeGroups[loan.loanType].trueOutstandingInterest += trueOutstandingInterest
+      typeGroups[loan.loanType].loans.push({
+        code: loan.code,
+        totalOutstanding,
+        outstandingPrincipal,
+        trueOutstandingInterest
+      })
     })
 
     // Evaluate net grouped totals per loanType (Head of Account adjustment for same loan types)
@@ -606,6 +620,20 @@ function DcComponent() {
       const netTotalOutstanding = grp.totalOutstanding
       const netPrincipal = grp.outstandingPrincipal
       const netInterest = grp.trueOutstandingInterest
+
+      if (grp.loans.length > 1) {
+        const excessLoans = grp.loans.filter(l => l.totalOutstanding < 0)
+        const positiveLoans = grp.loans.filter(l => l.totalOutstanding > 0)
+        if (excessLoans.length > 0 && positiveLoans.length > 0) {
+          excessLoans.forEach(exL => {
+            const absEx = Math.abs(exL.totalOutstanding)
+            const targetCodes = positiveLoans.map(pL => `${pL.code} (₹ ${fmtAmt(pL.totalOutstanding)})`).join(', ')
+            adjustmentSummaries.push(
+              `Excess recovery of ${lType} (Code: ${exL.code}) amounting to ₹ ${fmtAmt(absEx)}/- is adjusted against ${lType} Outstanding Balance of Code ${targetCodes}. Net ${lType} Outstanding Balance = ₹ ${fmtAmt(Math.max(0, netTotalOutstanding))}/-.`
+            )
+          })
+        }
+      }
 
       if (netTotalOutstanding > 100) {
         grandTotalOutstandingPositive += netTotalOutstanding
@@ -622,6 +650,12 @@ function DcComponent() {
         }
       }
     })
+
+    if (Object.keys(typeGroups).length > 1 && grandTotalOutstandingPositive > 0) {
+      adjustmentSummaries.push(
+        `Total Net Outstanding Balance to be recovered/adjusted from DCRG = ₹ ${fmtAmt(grandTotalOutstandingPositive)}/-.`
+      )
+    }
 
     const isGlobalNDC = calculatedData.length > 0 && loansWithLiability.size === 0
 
@@ -656,7 +690,8 @@ function DcComponent() {
       intHeadsToShow,
       isGlobalNDC,
       ndcLoanStrings,
-      ndcCodeStrings
+      ndcCodeStrings,
+      adjustmentSummaries
     }
   }
 
@@ -1468,6 +1503,16 @@ function DcComponent() {
                         )
                       })
                     )}
+                      {w.adjustmentSummaries.length > 0 && (
+                        <div className="note-adjustment-section" style={{ marginTop: '20px', marginBottom: '20px', borderTop: '1px dashed #777', paddingTop: '10px' }}>
+                          <div style={{ fontWeight: 'bold', textDecoration: 'underline', marginBottom: '6px' }}>Adjustment Summary :</div>
+                          <ol style={{ margin: 0, paddingLeft: '22px', lineHeight: 1.5 }}>
+                            {w.adjustmentSummaries.map((summaryText, sIdx) => (
+                              <li key={sIdx} style={{ fontWeight: 'bold', marginBottom: '4px' }}>{summaryText}</li>
+                            ))}
+                          </ol>
+                        </div>
+                      )}
                       <div id="note-closing-text" style={{ marginTop: '30px', fontSize: '16px' }}>Put up for your approval, please.</div>
                     </div>
                   )}
