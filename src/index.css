@@ -200,6 +200,54 @@ h1, h2, h3, .display-font {
   width: 280px;
 }
 
+/* Compact Notesheet styling for 3+ loans to preserve bottom space for signatures/notes */
+.note-layout-compact {
+  font-size: 14.5px !important;
+  line-height: 1.35 !important;
+}
+
+.note-layout-compact .note-p {
+  margin-bottom: 12px;
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+
+.note-layout-compact .note-calc-header {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  font-size: 14.5px;
+}
+
+.note-layout-compact .note-loan-block {
+  margin-bottom: 6px !important;
+}
+
+.note-layout-compact .note-loan-title {
+  margin-bottom: 3px !important;
+  font-size: 14px;
+}
+
+.note-layout-compact .note-table {
+  font-size: 13.5px;
+  line-height: 1.2;
+}
+
+.note-layout-compact .note-table td {
+  padding: 1px 0;
+}
+
+.note-layout-compact .note-adjustment-section {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  padding-top: 6px !important;
+  font-size: 13.5px;
+}
+
+.note-layout-compact #note-closing-text {
+  margin-top: 12px !important;
+  font-size: 14.5px !important;
+}
+
 .note-table .col-colon {
   width: 20px;
   text-align: center;

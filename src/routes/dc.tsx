@@ -1437,13 +1437,13 @@ function DcComponent() {
                   {savedNoteHTML ? (
                     <div
                       id="editable-note-wrapper"
-                      className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
+                      className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'} ${calculatedData.length >= 3 ? 'note-layout-compact' : ''}`}
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       style={{
-                        fontSize: '17px',
-                        lineHeight: 1.5,
+                        fontSize: calculatedData.length >= 3 ? '14.5px' : '16px',
+                        lineHeight: calculatedData.length >= 3 ? 1.35 : 1.5,
                         textAlign: 'justify',
                         outline: 'none'
                       }}
@@ -1452,13 +1452,13 @@ function DcComponent() {
                   ) : (
                     <div
                       id="editable-note-wrapper"
-                      className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'}`}
+                      className={`note-content-wrapper ${notesheetSide === 'front' ? 'note-left-line' : 'note-right-line'} ${calculatedData.length >= 3 ? 'note-layout-compact' : ''}`}
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(e) => setSavedNoteHTML(e.currentTarget.innerHTML)}
                       style={{
-                        fontSize: '17px',
-                        lineHeight: 1.5,
+                        fontSize: calculatedData.length >= 3 ? '14.5px' : '16px',
+                        lineHeight: calculatedData.length >= 3 ? 1.35 : 1.5,
                         textAlign: 'justify',
                         outline: 'none'
                       }}
