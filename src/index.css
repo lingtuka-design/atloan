@@ -303,60 +303,51 @@ h1, h2, h3, .display-font {
   background-color: #ffffff;
 }
 
-/* Font and layout sizing versions (Responsive sizing inside Certificate container) */
-.cert-layout-default .cert-body-text { font-size: 16px; line-height: 1.6; }
-.cert-layout-default .cert-memo-date-header { margin-bottom: 25px; font-size: 15px; }
-.cert-layout-default .cert-title { margin-bottom: 25px; font-size: 17px; }
-.cert-layout-default .liabilities-list { margin-top: 20px; margin-bottom: 5px; }
+/* Font and layout sizing versions (Responsive sizing inside Certificate container - Exact Legacy Rules) */
+.cert-layout-default .cert-body-text { font-size: 16px; line-height: 1.6; } 
 .cert-layout-default .liab-item { margin-bottom: 15px; line-height: 1.8; }
 .cert-layout-default .liab-table { font-size: 15px; margin-top: 2px; }
 .cert-layout-default .liab-words { line-height: 1.2; margin-top: 2px; }
-.cert-layout-default .cert-section-gap { margin-top: 25px; margin-bottom: 15px; }
+.cert-layout-default .cert-section-gap { margin-top: 25px; margin-bottom: 15px; } 
 .cert-layout-default .cert-head-title { margin-top: 15px; margin-bottom: 5px; font-size: 15px; }
-.cert-layout-default .cert-head-table { font-size: 15px; margin-bottom: 10px; line-height: 1.2; }
-.cert-layout-default .cert-head-table td { padding-bottom: 2px; }
-.cert-layout-default .cert-closing-note { margin-bottom: 20px; margin-top: 10px; line-height: 1.2; }
-.cert-layout-default .cert-no-liab { margin-bottom: 5px; line-height: 1.3; }
+.cert-layout-default .cert-head-table { font-size: 15px; margin-bottom: 10px; line-height: 1.2; } 
+.cert-layout-default .cert-head-table td { padding-bottom: 2px; } 
+.cert-layout-default .cert-closing-note { margin-bottom: 20px; margin-top: 10px; line-height: 1.2; } 
+.cert-layout-default .cert-no-liab { margin-bottom: 5px; line-height: 1.3; } 
 .cert-layout-default .cert-memo-date { font-size: 15px; margin-bottom: 10px; }
-.cert-layout-default .cert-copy-to { font-size: 15px; line-height: 1.4; }
-.cert-layout-default .cert-footer-gap { margin-top: 30px; margin-bottom: 15px; }
-.cert-layout-default .sig-space { height: 45px; }
+.cert-layout-default .cert-copy-to { font-size: 15px; line-height: 1.4; } 
+.cert-layout-default .cert-footer-gap { margin-top: 30px; margin-bottom: 15px; } 
+.cert-layout-default .sig-space { height: 45px; } 
 
-.cert-layout-compact .cert-body-text { font-size: 14.5px; line-height: 1.5; }
-.cert-layout-compact .cert-memo-date-header { margin-bottom: 25px; font-size: 14.5px; }
-.cert-layout-compact .cert-title { margin-bottom: 25px; font-size: 16.5px; }
-.cert-layout-compact .liabilities-list { margin-top: 25px; margin-bottom: 15px; }
-.cert-layout-compact .liab-item { margin-bottom: 12px; line-height: 1.5; }
-.cert-layout-compact .liab-table { font-size: 14px; margin-top: 2px; }
-.cert-layout-compact .liab-words { line-height: 1.2; margin-top: 2px; }
-.cert-layout-compact .cert-section-gap { margin-top: 20px; margin-bottom: 12px; }
-.cert-layout-compact .cert-head-title { margin-top: 18px; margin-bottom: 8px; font-size: 14px; }
-.cert-layout-compact .cert-head-table { font-size: 14px; margin-bottom: 12px; line-height: 1.2; }
+.cert-layout-compact .cert-body-text { font-size: 15px; line-height: 1.5; } 
+.cert-layout-compact .liab-item { margin-bottom: 8px; line-height: 1.5; }
+.cert-layout-compact .liab-table { font-size: 14px; margin-top: 1px; }
+.cert-layout-compact .liab-words { line-height: 1.1; margin-top: 1px; }
+.cert-layout-compact .cert-section-gap { margin-top: 15px; margin-bottom: 10px; }
+.cert-layout-compact .cert-head-title { margin-top: 10px; margin-bottom: 5px; font-size: 14px; }
+.cert-layout-compact .cert-head-table { font-size: 14px; margin-bottom: 8px; line-height: 1.1; }
 .cert-layout-compact .cert-head-table td { padding-bottom: 1px; }
-.cert-layout-compact .cert-closing-note { margin-bottom: 15px; margin-top: 15px; line-height: 1.3; }
-.cert-layout-compact .cert-no-liab { margin-bottom: 5px; line-height: 1.3; }
-.cert-layout-compact .cert-memo-date { font-size: 14px; margin-bottom: 10px; }
-.cert-layout-compact .cert-copy-to { font-size: 14px; line-height: 1.4; }
-.cert-layout-compact .cert-footer-gap { margin-top: 20px; margin-bottom: 12px; }
-.cert-layout-compact .sig-space { height: 35px; }
+.cert-layout-compact .cert-closing-note { margin-bottom: 10px; margin-top: 5px; line-height: 1.15; }
+.cert-layout-compact .cert-no-liab { margin-bottom: 3px; line-height: 1.2; }
+.cert-layout-compact .cert-memo-date { font-size: 14px; margin-bottom: 5px; }
+.cert-layout-compact .cert-copy-to { font-size: 14px; line-height: 1.3; } 
+.cert-layout-compact .cert-footer-gap { margin-top: 15px; margin-bottom: 10px; }
+.cert-layout-compact .sig-space { height: 30px; }
 
-.cert-layout-ultra .cert-body-text { font-size: 13.5px; line-height: 1.35; }
-.cert-layout-ultra .cert-memo-date-header { margin-bottom: 12px; font-size: 13.5px; }
-.cert-layout-ultra .cert-title { margin-bottom: 14px; font-size: 15px; }
-.cert-layout-ultra .liabilities-list { margin-top: 10px; margin-bottom: 2px; }
-.cert-layout-ultra .liab-item { margin-bottom: 5px; line-height: 1.35; }
+.cert-layout-ultra .cert-body-text { font-size: 14px; line-height: 1.3; } 
+.cert-layout-ultra .liab-item { margin-bottom: 4px; line-height: 1.3; }
 .cert-layout-ultra .liab-table { font-size: 13px; margin-top: 0; }
 .cert-layout-ultra .liab-words { line-height: 1.1; margin-top: 0; }
 .cert-layout-ultra .cert-section-gap { margin-top: 10px; margin-bottom: 5px; }
-.cert-layout-ultra .cert-head-title { margin-top: 6px; margin-bottom: 2px; font-size: 13px; }
-.cert-layout-ultra .cert-head-table { font-size: 12.5px; margin-bottom: 5px; line-height: 1.0; }
+.cert-layout-ultra .cert-head-title { margin-top: 5px; margin-bottom: 2px; font-size: 13px; }
+.cert-layout-ultra .cert-head-table { font-size: 13px; margin-bottom: 5px; line-height: 1.0; }
 .cert-layout-ultra .cert-head-table td { padding-bottom: 0px; }
-.cert-layout-ultra .cert-closing-note { margin-bottom: 8px; margin-top: 6px; line-height: 1.15; }
+.cert-layout-ultra .cert-closing-note { margin-bottom: 8px; margin-top: 5px; line-height: 1.1; }
 .cert-layout-ultra .cert-no-liab { margin-bottom: 2px; line-height: 1.1; }
 .cert-layout-ultra .cert-memo-date { font-size: 13px; margin-bottom: 5px; }
-.cert-layout-ultra .cert-copy-to { font-size: 13px; line-height: 1.25; }
+.cert-layout-ultra .cert-copy-to { font-size: 13px; line-height: 1.2; } 
 .cert-layout-ultra .cert-footer-gap { margin-top: 10px; margin-bottom: 5px; }
-.cert-layout-ultra .sig-space { height: 22px; }
+.cert-layout-ultra .sig-space { height: 20px; }
 
 /* ==========================================================================
    PRINT LAYOUT RESETS

@@ -1526,28 +1526,27 @@ function DcComponent() {
                 {!w.isGlobalNDC ? (() => {
                   const numLoans = calculatedData.length
                   const layoutClass = numLoans <= 2 ? 'cert-layout-default' : (numLoans <= 4 ? 'cert-layout-compact' : 'cert-layout-ultra')
-                  const paddingStyle = numLoans >= 5 ? '38px 50px' : (numLoans >= 3 ? '45px 60px' : '60px 70px')
 
                   return (
                   /* Demand Certificate */
-                  <div id="legal-cert-page" className={`cert-page document-font ${layoutClass}`} style={{ display: 'block', padding: paddingStyle, minHeight: '1344px', width: '816px', background: 'white', position: 'relative' }}>
-                    <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: numLoans >= 4 ? '30px' : '50px', left: '50px', height: '60px', zIndex: 10 }} />
-                    <div className="text-center cert-header" style={{ fontWeight: 'bold', textAlign: 'center' }}>
+                  <div id="legal-cert-page" className={`cert-page document-font ${layoutClass}`} style={{ display: 'block', padding: '60px 70px', minHeight: '1344px', width: '816px', background: 'white', position: 'relative' }}>
+                    <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }} />
+                    <div className="text-center cert-header" style={{ fontSize: '15px', marginBottom: '15px', fontFamily: "'Times New Roman', serif", fontWeight: 'bold', textAlign: 'center' }}>
                       GOVERNMENT OF MIZORAM<br />
                       OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br />
                       ACCOUNTS &amp; TREASURIES; MIZORAM : AIZAWL
                     </div>
-                    <div className="cert-memo-date-header" style={{ textAlign: 'right', lineHeight: 1.4 }}>
+                    <div className="cert-memo-date-header" style={{ textAlign: 'right', marginBottom: '25px', fontSize: '15px', lineHeight: 1.4 }}>
                       <span>{w.fullMemo}</span><br />
                       Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.
                     </div>
-                    <div className="text-center cert-title" style={{ fontWeight: 'bold', textDecoration: 'underline', textAlign: 'center' }}>
+                    <div className="text-center cert-title" style={{ fontSize: '17px', fontWeight: 'bold', textDecoration: 'underline', marginBottom: '25px', textAlign: 'center' }}>
                       DEMAND CERTIFICATE
                     </div>
                     <div className="cert-body cert-body-text" style={{ textAlign: 'justify' }}>
                       <span style={{ marginLeft: '40px' }}>This</span> is to certify that <span className="bold">{w.fullName}</span> under the Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span style={{ marginLeft: '10px', marginRight: '10px' }} className="bold">{formatDotDate(shared.inRetireDate)}</span> has an outstanding liabilities as shown below:
                       
-                      <div className="liabilities-list" id="certLiabilitiesContainer">
+                      <div className="liabilities-list" id="certLiabilitiesContainer" style={{ marginTop: '20px', marginBottom: '5px' }}>
                         {calculatedData.map((loan, lIdx) => {
                           const totalIBB = loan.calcData.reduce((acc, row) => acc + Math.max(0, row.principalAtEnd), 0)
                           const calculatedInterest = (totalIBB * loan.intRate) / 1200
