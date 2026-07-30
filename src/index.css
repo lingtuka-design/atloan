@@ -305,6 +305,9 @@ h1, h2, h3, .display-font {
 
 /* Font and layout sizing versions (Responsive sizing inside Certificate container) */
 .cert-layout-default .cert-body-text { font-size: 16px; line-height: 1.6; }
+.cert-layout-default .cert-memo-date-header { margin-bottom: 25px; font-size: 15px; }
+.cert-layout-default .cert-title { margin-bottom: 25px; font-size: 17px; }
+.cert-layout-default .liabilities-list { margin-top: 20px; margin-bottom: 5px; }
 .cert-layout-default .liab-item { margin-bottom: 15px; line-height: 1.8; }
 .cert-layout-default .liab-table { font-size: 15px; margin-top: 2px; }
 .cert-layout-default .liab-words { line-height: 1.2; margin-top: 2px; }
@@ -320,6 +323,9 @@ h1, h2, h3, .display-font {
 .cert-layout-default .sig-space { height: 45px; }
 
 .cert-layout-compact .cert-body-text { font-size: 14.5px; line-height: 1.45; }
+.cert-layout-compact .cert-memo-date-header { margin-bottom: 18px; font-size: 14.5px; }
+.cert-layout-compact .cert-title { margin-bottom: 18px; font-size: 16px; }
+.cert-layout-compact .liabilities-list { margin-top: 15px; margin-bottom: 5px; }
 .cert-layout-compact .liab-item { margin-bottom: 8px; line-height: 1.45; }
 .cert-layout-compact .liab-table { font-size: 14px; margin-top: 1px; }
 .cert-layout-compact .liab-words { line-height: 1.15; margin-top: 1px; }
@@ -335,6 +341,9 @@ h1, h2, h3, .display-font {
 .cert-layout-compact .sig-space { height: 28px; }
 
 .cert-layout-ultra .cert-body-text { font-size: 13.5px; line-height: 1.35; }
+.cert-layout-ultra .cert-memo-date-header { margin-bottom: 12px; font-size: 13.5px; }
+.cert-layout-ultra .cert-title { margin-bottom: 14px; font-size: 15px; }
+.cert-layout-ultra .liabilities-list { margin-top: 10px; margin-bottom: 2px; }
 .cert-layout-ultra .liab-item { margin-bottom: 5px; line-height: 1.35; }
 .cert-layout-ultra .liab-table { font-size: 13px; margin-top: 0; }
 .cert-layout-ultra .liab-words { line-height: 1.1; margin-top: 0; }
