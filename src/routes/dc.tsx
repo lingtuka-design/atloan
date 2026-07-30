@@ -1525,8 +1525,8 @@ function DcComponent() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 {!w.isGlobalNDC ? (() => {
                   const numLoans = calculatedData.length
-                  const layoutClass = numLoans <= 2 ? 'cert-layout-default' : (numLoans === 3 ? 'cert-layout-compact' : 'cert-layout-ultra')
-                  const paddingStyle = numLoans >= 4 ? '35px 50px' : (numLoans === 3 ? '48px 60px' : '60px 70px')
+                  const layoutClass = numLoans <= 2 ? 'cert-layout-default' : (numLoans <= 4 ? 'cert-layout-compact' : 'cert-layout-ultra')
+                  const paddingStyle = numLoans >= 5 ? '38px 50px' : (numLoans >= 3 ? '45px 60px' : '60px 70px')
 
                   return (
                   /* Demand Certificate */
