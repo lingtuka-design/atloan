@@ -561,6 +561,8 @@ function DcComponent() {
     let ndcLoanStrings: string[] = []
     let ndcCodeStrings: string[] = []
 
+    const typeGroups: Record<string, { totalOutstanding: number; outstandingPrincipal: number; trueOutstandingInterest: number }> = {}
+
     calculatedData.forEach((loan) => {
       takenTypes.add(loan.loanType)
       let totalIBB = 0
@@ -583,27 +585,42 @@ function DcComponent() {
       ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- Rupees (${rawWords}) only. Vide No ${sanction}`)
       ndcCodeStrings.push(loan.code)
 
-      if (totalOutstanding > 100) {
-        grandTotalOutstandingPositive += totalOutstanding
-        loansWithLiability.add(loan.loanType)
-      } else if (totalOutstanding < 0) {
-        const absExcess = Math.abs(totalOutstanding)
-        totalExcessAmount += absExcess
-        if (outstandingPrincipal < 0 && trueOutstandingInterest < 0) {
-          excessDetails.push(`excess recovery of ${loan.loanType} principal & interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
-        } else if (outstandingPrincipal < 0) {
-          excessDetails.push(`excess recovery of ${loan.loanType} principal amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
-        } else if (trueOutstandingInterest < 0) {
-          excessDetails.push(`excess recovery of ${loan.loanType} interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
-        }
-      }
-
       const headCategory = loan.loanType
       if (outstandingPrincipal > 0) prinHeadsToShow.add(headCategory)
       if (trueOutstandingInterest > 0) intHeadsToShow.add(headCategory)
 
       grandTotalOutstandingPrincipal += outstandingPrincipal
       grandTotalOutstandingInterest += trueOutstandingInterest
+
+      if (!typeGroups[loan.loanType]) {
+        typeGroups[loan.loanType] = { totalOutstanding: 0, outstandingPrincipal: 0, trueOutstandingInterest: 0 }
+      }
+      typeGroups[loan.loanType].totalOutstanding += totalOutstanding
+      typeGroups[loan.loanType].outstandingPrincipal += outstandingPrincipal
+      typeGroups[loan.loanType].trueOutstandingInterest += trueOutstandingInterest
+    })
+
+    // Evaluate net grouped totals per loanType (Head of Account adjustment for same loan types)
+    Object.keys(typeGroups).forEach((lType) => {
+      const grp = typeGroups[lType]
+      const netTotalOutstanding = grp.totalOutstanding
+      const netPrincipal = grp.outstandingPrincipal
+      const netInterest = grp.trueOutstandingInterest
+
+      if (netTotalOutstanding > 100) {
+        grandTotalOutstandingPositive += netTotalOutstanding
+        loansWithLiability.add(lType)
+      } else if (netTotalOutstanding < 0) {
+        const absExcess = Math.abs(netTotalOutstanding)
+        totalExcessAmount += absExcess
+        if (netPrincipal < 0 && netInterest < 0) {
+          excessDetails.push(`excess recovery of ${lType} principal & interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
+        } else if (netPrincipal < 0) {
+          excessDetails.push(`excess recovery of ${lType} principal amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
+        } else if (netInterest < 0) {
+          excessDetails.push(`excess recovery of ${lType} interest amounting <span class="bold">Rs. ${fmtAmt(absExcess)}/-</span>`)
+        }
+      }
     })
 
     const isGlobalNDC = calculatedData.length > 0 && loansWithLiability.size === 0
