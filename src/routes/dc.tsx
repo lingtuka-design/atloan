@@ -303,10 +303,40 @@ function DcComponent() {
 
   const handleLoanFieldChange = (idx: number, field: keyof LoanInput, value: string) => {
     const updated = [...loans]
-    updated[idx] = {
+    const loan = {
       ...updated[idx],
       [field]: value
     }
+
+    // Auto-sync drawal amounts with Sanctioned Amount
+    if (field === 'inAmount') {
+      const sancAmt = parseFloat(value) || 0
+      const d2 = parseFloat(loan.inDrawnAmount2) || 0
+      const d3 = parseFloat(loan.inDrawnAmount3) || 0
+      loan.inDrawnAmount1 = String(Math.max(0, sancAmt - d2 - d3))
+    } else if (field === 'inDrawalDate2' && value && (!loan.inDrawnAmount2 || loan.inDrawnAmount2 === '0')) {
+      const sancAmt = parseFloat(loan.inAmount) || 0
+      const d1 = parseFloat(loan.inDrawnAmount1) || 0
+      if (sancAmt > 0 && d1 > 0 && d1 < sancAmt) {
+        loan.inDrawnAmount2 = String(sancAmt - d1)
+      }
+    } else if (field === 'inDrawnAmount2') {
+      const sancAmt = parseFloat(loan.inAmount) || 0
+      const d2 = parseFloat(value) || 0
+      const d3 = parseFloat(loan.inDrawnAmount3) || 0
+      if (sancAmt > 0) {
+        loan.inDrawnAmount1 = String(Math.max(0, sancAmt - d2 - d3))
+      }
+    } else if (field === 'inDrawnAmount3') {
+      const sancAmt = parseFloat(loan.inAmount) || 0
+      const d2 = parseFloat(loan.inDrawnAmount2) || 0
+      const d3 = parseFloat(value) || 0
+      if (sancAmt > 0) {
+        loan.inDrawnAmount1 = String(Math.max(0, sancAmt - d2 - d3))
+      }
+    }
+
+    updated[idx] = loan
     setLoans(updated)
   }
 
@@ -339,15 +369,27 @@ function DcComponent() {
       const intRate = parseFloat(loan.inInterestRate) || 0
       const recoveredInt = parseFloat(loan.inRecoveredInterest) || 0
 
+      const sancAmt = parseFloat(loan.inAmount) || 0
+      let d1Amt = parseFloat(loan.inDrawnAmount1) || 0
+      let d2Amt = parseFloat(loan.inDrawnAmount2) || 0
+      let d3Amt = parseFloat(loan.inDrawnAmount3) || 0
+
+      if (d1Amt === 0 && sancAmt > 0) {
+        d1Amt = Math.max(0, sancAmt - d2Amt - d3Amt)
+      }
+      if (loan.inDrawalDate2 && d2Amt === 0 && d1Amt < sancAmt) {
+        d2Amt = sancAmt - d1Amt
+      }
+
       const drawalsArray = []
-      if (loan.inDrawalDate1 && parseFloat(loan.inDrawnAmount1) > 0) {
-        drawalsArray.push({ date: new Date(loan.inDrawalDate1), amount: parseFloat(loan.inDrawnAmount1) })
+      if (loan.inDrawalDate1 && (d1Amt > 0 || sancAmt > 0)) {
+        drawalsArray.push({ date: new Date(loan.inDrawalDate1), amount: d1Amt > 0 ? d1Amt : sancAmt })
       }
-      if (loan.inDrawalDate2 && parseFloat(loan.inDrawnAmount2) > 0) {
-        drawalsArray.push({ date: new Date(loan.inDrawalDate2), amount: parseFloat(loan.inDrawnAmount2) })
+      if (loan.inDrawalDate2 && d2Amt > 0) {
+        drawalsArray.push({ date: new Date(loan.inDrawalDate2), amount: d2Amt })
       }
-      if (loan.inDrawalDate3 && parseFloat(loan.inDrawnAmount3) > 0) {
-        drawalsArray.push({ date: new Date(loan.inDrawalDate3), amount: parseFloat(loan.inDrawnAmount3) })
+      if (loan.inDrawalDate3 && d3Amt > 0) {
+        drawalsArray.push({ date: new Date(loan.inDrawalDate3), amount: d3Amt })
       }
 
       if (drawalsArray.length === 0 || !startMonth) {
@@ -1256,9 +1298,14 @@ function DcComponent() {
                       }
                     }
 
-                    const d1HTML = (input.inDrawnAmount1 && input.inDrawalDate1) ? `Rs. ${fmtAmt(input.inDrawnAmount1)}</td><td style="font-style: italic;">${formatDrawalMonthStr(input.inDrawalDate1)}` : `....</td><td>....`
-                    const d2Row = (parseFloat(input.inDrawnAmount2) > 0 && input.inDrawalDate2) ? `<tr><td style="text-align: left;">(B) 2nd Instalment</td><td style="font-style: italic;">Rs. ${fmtAmt(input.inDrawnAmount2)}</td><td style="font-style: italic;">${formatDrawalMonthStr(input.inDrawalDate2)}</td></tr>` : ''
-                    const d3Row = (parseFloat(input.inDrawnAmount3) > 0 && input.inDrawalDate3) ? `<tr><td style="text-align: left;">(C) 3rd Instalment</td><td style="font-style: italic;">Rs. ${fmtAmt(input.inDrawnAmount3)}</td><td style="font-style: italic;">${formatDrawalMonthStr(input.inDrawalDate3)}</td></tr>` : ''
+                    const sancAmtDisp = parseFloat(input.inAmount) || 0
+                    const d1Val = parseFloat(input.inDrawnAmount1) || (sancAmtDisp > 0 ? Math.max(0, sancAmtDisp - (parseFloat(input.inDrawnAmount2)||0) - (parseFloat(input.inDrawnAmount3)||0)) : 0)
+                    const d2Val = parseFloat(input.inDrawnAmount2) || (input.inDrawalDate2 && sancAmtDisp > d1Val ? sancAmtDisp - d1Val : 0)
+                    const d3Val = parseFloat(input.inDrawnAmount3) || 0
+
+                    const d1HTML = (input.inDrawalDate1) ? `Rs. ${fmtAmt(d1Val)}</td><td style="font-style: italic;">${formatDrawalMonthStr(input.inDrawalDate1)}` : `....</td><td>....`
+                    const d2Row = (input.inDrawalDate2 && d2Val > 0) ? `<tr><td style="text-align: left;">(B) 2nd Instalment</td><td style="font-style: italic;">Rs. ${fmtAmt(d2Val)}</td><td style="font-style: italic;">${formatDrawalMonthStr(input.inDrawalDate2)}</td></tr>` : ''
+                    const d3Row = (input.inDrawalDate3 && d3Val > 0) ? `<tr><td style="text-align: left;">(C) 3rd Instalment</td><td style="font-style: italic;">Rs. ${fmtAmt(d3Val)}</td><td style="font-style: italic;">${formatDrawalMonthStr(input.inDrawalDate3)}</td></tr>` : ''
 
                     const prinLabel = outstandingPrincipal < 0 ? 'Principal Excess Recovery' : 'Principal Outstanding Balance'
                     const prinVal = fmtAmt(Math.abs(outstandingPrincipal))
