@@ -1618,9 +1618,20 @@ function DcComponent() {
                         outline: 'none'
                       }}
                     >
-                    <div className="note-p" id="note-intro-paragraph">
-                      Received an application from the <span className="bold">{shared.inDDOAddress || '...'}</span>, for the issue of an NDC/DC for <span className="bold">{w.fullName}</span>, <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">{Array.from(w.takenTypes).join(' and ')}</span>). Therefore, a <span id="out-note-cert-type">{w.isGlobalNDC ? 'No Demand Certificate' : 'Demand Certificate'}</span> may be issued.
-                    </div>
+                    {!shared.inIsMortgaged ? (
+                      <div className="note-p" id="note-intro-paragraph">
+                        Received an application from the <span className="bold">{shared.inDDOAddress || '...'}</span>, for the issue of an NDC/DC for <span className="bold">{w.fullName}</span>, <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span>. The government servant had availed of long-term loans (<span id="out-note-loan-list">{Array.from(w.takenTypes).join(' and ')}</span>). Therefore, a <span id="out-note-cert-type">{w.isGlobalNDC ? 'No Demand Certificate' : 'Demand Certificate'}</span> may be issued.
+                      </div>
+                    ) : (
+                      <div className="note-p" id="note-intro-paragraph-mortgaged" style={{ marginBottom: '15px' }}>
+                        <div style={{ marginBottom: '10px' }}>
+                          We have received an application from the <span className="bold">{shared.inDDOAddress || '...'}</span>, requesting us to prepare the HBA loan principal and interest calculation for <span className="bold">{w.fullName}</span> so that {w.posPronoun.toLowerCase()} LSC can be released.
+                        </div>
+                        <div>
+                          For the release of the LSC, the Interest Calculation of HBA and the corresponding certificate may please be issued.
+                        </div>
+                      </div>
+                    )}
                     <div className="note-calc-header" style={{ fontWeight: 'bold', marginTop: '15px' }}>Calculation :</div>
 
                     {calculatedData.length === 0 ? (
