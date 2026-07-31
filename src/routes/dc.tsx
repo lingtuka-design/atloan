@@ -1964,7 +1964,7 @@ function DcComponent() {
                   {/* Recipient To, */}
                   <div style={{ marginTop: '25px', marginBottom: '25px', fontSize: '15px', lineHeight: 1.4 }}>
                     To,<br />
-                    <div style={{ marginLeft: '40px' }}>
+                    <div style={{ marginLeft: '70px' }}>
                       {getFormattedAddressLines(shared.inDDOAddress, shared.inOffice).map((line, idx) => (
                         <React.Fragment key={idx}>
                           {line}<br />
@@ -1975,7 +1975,7 @@ function DcComponent() {
 
                   {/* Subj */}
                   <div style={{ marginTop: '25px', marginBottom: '20px', fontSize: '15px', display: 'flex' }}>
-                    <span style={{ fontWeight: 'bold', width: '60px' }}>Subj:</span>
+                    <span style={{ fontWeight: 'bold', minWidth: '70px' }}>Subj:</span>
                     <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>
                       Interest Calculation of HBA in respect of {shared.inName || '...'}.
                     </span>
@@ -1983,7 +1983,7 @@ function DcComponent() {
 
                   {/* Ref */}
                   <div style={{ marginBottom: '25px', fontSize: '15px', display: 'flex' }}>
-                    <span style={{ fontWeight: 'bold', width: '60px' }}>Ref:</span>
+                    <span style={{ fontWeight: 'bold', minWidth: '70px' }}>Ref:</span>
                     <span>{shared.inMortgagedRefNo || 'No. G.26029/1/2019-DTE(HORT) dated 28.7.2026.'}</span>
                   </div>
 
