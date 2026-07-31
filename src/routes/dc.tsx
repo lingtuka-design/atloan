@@ -1612,29 +1612,62 @@ function DcComponent() {
                           const outstandingPrincipal = loan.calcData.length > 0 ? loan.calcData[loan.calcData.length - 1].principalAtEnd : 0
                           const totalOutstanding = outstandingPrincipal + trueOutstandingInterest
 
-                          const cPVal = outstandingPrincipal > 0 ? '₹ ' + fmtAmt(outstandingPrincipal) : (outstandingPrincipal < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(outstandingPrincipal)) : '₹ NIL')
-                          const cIVal = trueOutstandingInterest > 0 ? '₹ ' + fmtAmt(trueOutstandingInterest) + '/-' : (trueOutstandingInterest < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(trueOutstandingInterest)) : '₹ NIL')
-                          const cTVal = totalOutstanding > 0 ? '₹ ' + fmtAmt(totalOutstanding) + '/-' : (totalOutstanding < 0 ? 'Excess ₹ ' + fmtAmt(Math.abs(totalOutstanding)) : '₹ NIL')
-                          const individualWords = totalOutstanding === 0 ? 'Rupees NIL' : amountToWords(totalOutstanding)
+                          const hasExcess = totalOutstanding < 0 || outstandingPrincipal < 0 || trueOutstandingInterest < 0
+
+                          // (a) Normal / Outstanding portion
+                          const posP = outstandingPrincipal > 0 ? '₹ ' + fmtAmt(outstandingPrincipal) : '₹ NIL'
+                          const posI = trueOutstandingInterest > 0 ? '₹ ' + fmtAmt(trueOutstandingInterest) + '/-' : 'NIL/-'
+                          const posT = totalOutstanding > 0 ? '₹ ' + fmtAmt(totalOutstanding) + '/-' : '₹ NIL/-'
+                          const posWords = totalOutstanding > 0 ? amountToWords(totalOutstanding) : null
+
+                          // (b) Excess Recovery portion
+                          const exP = outstandingPrincipal < 0 ? '₹ ' + fmtAmt(Math.abs(outstandingPrincipal)) : '₹ NIL'
+                          const exI = trueOutstandingInterest < 0 ? '₹ ' + fmtAmt(Math.abs(trueOutstandingInterest)) + '/-' : 'NIL/-'
+                          const exT = '₹ ' + fmtAmt(Math.abs(totalOutstanding)) + '/-'
+                          const exWords = amountToWords(Math.abs(totalOutstanding))
 
                           return (
-                            <div key={lIdx} className="liab-item">
-                              <div className="bold" style={{ display: 'flex', gap: '30px' }}>
+                            <div key={lIdx} className="liab-item" style={{ marginBottom: '15px' }}>
+                              <div className="bold" style={{ display: 'flex', gap: '30px', marginBottom: '4px' }}>
                                 <span>{lIdx + 1}. &nbsp;&nbsp;&nbsp;&nbsp;{loan.loanNameFull} ({loan.loanType})</span>
                                 <span>CODE No. : - {loan.code}</span>
                               </div>
+                              
+                              {/* (a) Row */}
                               <table className="liab-table" style={{ width: '100%', marginLeft: '35px', border: 'none', borderCollapse: 'collapse' }}>
                                 <tbody>
                                   <tr>
-                                    <td width="35%" style={{ padding: 0, border: 'none' }}>(a) Principal <span className="bold">{cPVal}</span></td>
-                                    <td width="35%" style={{ padding: 0, border: 'none' }}>(b) Interest <span className="bold">{cIVal}</span></td>
-                                    <td width="30%" className="bold" style={{ padding: 0, border: 'none' }}>TOTAL : {cTVal}</td>
+                                    <td width="35%" style={{ padding: 0, border: 'none' }}>(a) Principal <span className="bold">{posP}</span></td>
+                                    <td width="35%" style={{ padding: 0, border: 'none' }}>Interest <span className="bold">{posI}</span></td>
+                                    <td width="30%" className="bold" style={{ padding: 0, border: 'none' }}>TOTAL : {posT}</td>
                                   </tr>
                                 </tbody>
                               </table>
-                              <div className="liab-words" style={{ fontStyle: 'italic', fontWeight: 'bold', marginLeft: '35px' }}>
-                                ({individualWords}).
-                              </div>
+
+                              {!hasExcess && posWords && (
+                                <div className="liab-words" style={{ fontStyle: 'italic', fontWeight: 'bold', marginLeft: '65px', marginTop: '2px' }}>
+                                  ({posWords}).
+                                </div>
+                              )}
+
+                              {/* (b) Excess Recovery block */}
+                              {hasExcess && (
+                                <div style={{ marginTop: '8px' }}>
+                                  <div style={{ marginLeft: '35px', fontWeight: 'bold', marginBottom: '2px' }}>(b) Excess Recovery</div>
+                                  <table className="liab-table" style={{ width: '100%', marginLeft: '65px', border: 'none', borderCollapse: 'collapse' }}>
+                                    <tbody>
+                                      <tr>
+                                        <td width="35%" style={{ padding: 0, border: 'none' }}>Principal <span className="bold">{exP}</span></td>
+                                        <td width="35%" style={{ padding: 0, border: 'none' }}>Interest <span className="bold">{exI}</span></td>
+                                        <td width="30%" className="bold" style={{ padding: 0, border: 'none' }}>Total {exT}</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <div className="liab-words" style={{ fontStyle: 'italic', fontWeight: 'bold', marginLeft: '65px', marginTop: '2px' }}>
+                                    ({exWords}).
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           )
                         })}
