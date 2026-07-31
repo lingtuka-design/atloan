@@ -44,6 +44,8 @@ interface SharedInputs {
   inSigName: string
   inSigDesig: string
   inShowSd: boolean
+  inIsMortgaged?: boolean
+  inMortgagedRefNo?: string
 }
 
 const formatDateStrict = (d: Date | string) => {
@@ -134,7 +136,7 @@ const DEPT_CODES: Record<string, string> = {
 function DcComponent() {
   const auth = useContext(AuthContext)
   const [activeMainTab, setActiveMainTab] = useState<'generator' | 'list'>('generator')
-  const [previewTab, setPreviewTab] = useState<'calc' | 'note' | 'cert'>('calc')
+  const [previewTab, setPreviewTab] = useState<'calc' | 'note' | 'cert' | 'mortgaged'>('calc')
   const [notesheetSide, setNotesheetSide] = useState<'front' | 'back'>('front')
   const [activeLoanFormTab, setActiveLoanFormTab] = useState(0)
 
@@ -155,7 +157,9 @@ function DcComponent() {
     inIssueDate: new Date().toISOString().split('T')[0],
     inSigName: 'THARA LUNGṬAU',
     inSigDesig: 'Joint Director (L&M)',
-    inShowSd: false
+    inShowSd: false,
+    inIsMortgaged: false,
+    inMortgagedRefNo: ''
   })
 
   // Loan Forms Input List
@@ -811,7 +815,9 @@ function DcComponent() {
     setCurrentEditId(r.id)
     setShared({
       ...r.sharedInputs,
-      inShowSd: Boolean(r.sharedInputs.inShowSd)
+      inShowSd: Boolean(r.sharedInputs.inShowSd),
+      inIsMortgaged: Boolean(r.sharedInputs.inIsMortgaged),
+      inMortgagedRefNo: r.sharedInputs.inMortgagedRefNo || ''
     })
     setLoans(r.loanInputsArray)
     setCalculatedData(r.allCalculatedData)
@@ -854,7 +860,9 @@ function DcComponent() {
       inIssueDate: new Date().toISOString().split('T')[0],
       inSigName: 'THARA LUNGṬAU',
       inSigDesig: 'Joint Director (L&M)',
-      inShowSd: false
+      inShowSd: false,
+      inIsMortgaged: false,
+      inMortgagedRefNo: ''
     })
     setLoans([createEmptyLoan('HBA')])
     setCalculatedData([])
@@ -866,11 +874,20 @@ function DcComponent() {
     }
   }
 
-  const printDocument = (type: 'calc' | 'note' | 'cert') => {
+  const printDocument = (type: 'calc' | 'note' | 'cert' | 'mortgaged') => {
     setPreviewTab(type)
     setTimeout(() => {
       const style = document.createElement('style')
-      if (type === 'cert' && w.isGlobalNDC) {
+      if (type === 'mortgaged') {
+        style.innerHTML = `@media print { 
+          @page { size: legal portrait; margin: 0; } 
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
+          #legal-pages-container, #note-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
+          #mortgaged-cert-page { display: block !important; } 
+          .cert-page { display: block !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
+        }`
+      } else if (type === 'cert' && w.isGlobalNDC) {
         style.innerHTML = `@media print { 
           @page { size: A4 portrait; margin: 0; } 
           body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -1196,11 +1213,32 @@ function DcComponent() {
               </div>
             </div>
 
-            <div className="input-box" style={{ flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '15px', background: '#e8f5e9', padding: '10px', borderRadius: '4px', border: '1px solid #c8e6c9' }}>
+            <div className="input-box" style={{ flexDirection: 'row', alignItems: 'center', gap: '8px', marginBottom: '12px', background: '#e8f5e9', padding: '10px', borderRadius: '4px', border: '1px solid #c8e6c9' }}>
               <input type="checkbox" id="inShowSd" checked={shared.inShowSd} onChange={e => handleSharedChange('inShowSd', e.target.checked)} />
               <label htmlFor="inShowSd" style={{ margin: 0, cursor: 'pointer', color: '#2e7d32' }}>
                 Certificate-ah <strong>"Sd/-"</strong> tarlangin, hminga bracket () paih rawh
               </label>
+            </div>
+
+            <div className="input-box" style={{ flexDirection: 'column', gap: '8px', marginBottom: '15px', background: '#fff3e0', padding: '10px', borderRadius: '4px', border: '1px solid #ffe0b2' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox" id="inIsMortgaged" checked={shared.inIsMortgaged || false} onChange={e => handleSharedChange('inIsMortgaged', e.target.checked)} />
+                <label htmlFor="inIsMortgaged" style={{ margin: 0, cursor: 'pointer', color: '#e65100', fontWeight: 'bold' }}>
+                  Mortgaged LSC Certificate siam rawh
+                </label>
+              </div>
+              {shared.inIsMortgaged && (
+                <div style={{ marginTop: '5px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#e65100', marginBottom: '4px', display: 'block' }}>Ref. No. (Mortgaged)</label>
+                  <input
+                    type="text"
+                    value={shared.inMortgagedRefNo || ''}
+                    onChange={e => handleSharedChange('inMortgagedRefNo', e.target.value)}
+                    placeholder="e.g. No. G.26029/1/2019-DTE(HORT) dated 28.7.2026."
+                    style={{ padding: '6px', fontSize: '13px' }}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="btn-container">
@@ -1241,6 +1279,11 @@ function DcComponent() {
               <button className="btn btn-print-cert" onClick={() => {
                 printDocument('cert')
               }}>🖨️ Print Certificate</button>
+              {shared.inIsMortgaged && (
+                <button className="btn btn-print-cert" style={{ background: '#e65100' }} onClick={() => {
+                  printDocument('mortgaged')
+                }}>🖨️ Print Mortgaged LSC</button>
+              )}
               <button className="btn btn-print-note" onClick={() => {
                 printDocument('note')
               }}>🖨️ Print Notesheet</button>
@@ -1258,6 +1301,11 @@ function DcComponent() {
               <button className={`prev-tab-btn ${previewTab === 'cert' ? 'active' : ''}`} onClick={() => setPreviewTab('cert')}>
                 {w.isGlobalNDC ? 'No Demand Certificate (A4)' : 'Demand Certificate (Legal)'}
               </button>
+              {shared.inIsMortgaged && (
+                <button className={`prev-tab-btn ${previewTab === 'mortgaged' ? 'active' : ''}`} onClick={() => setPreviewTab('mortgaged')}>
+                  Mortgaged (Legal)
+                </button>
+              )}
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <button className={`prev-tab-btn ${previewTab === 'note' ? 'active' : ''}`} onClick={() => setPreviewTab('note')}>
@@ -1826,6 +1874,191 @@ function DcComponent() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {previewTab === 'mortgaged' && (
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div
+                  id="mortgaged-cert-page"
+                  className="cert-page document-font cert-layout-default"
+                  style={{
+                    display: 'block',
+                    padding: '60px 70px',
+                    minHeight: '1344px',
+                    width: '816px',
+                    background: 'white',
+                    position: 'relative'
+                  }}
+                >
+                  {/* Bana Kaih Logo */}
+                  <img
+                    src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg"
+                    alt="Bana Kaih Logo"
+                    style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }}
+                  />
+
+                  {/* Header */}
+                  <div className="text-center cert-header" style={{ fontSize: '15px', marginBottom: '15px', fontFamily: "'Times New Roman', serif", fontWeight: 'bold', textAlign: 'center' }}>
+                    GOVERNMENT OF MIZORAM<br />
+                    OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br />
+                    ACCOUNTS &amp; TREASURIES; MIZORAM : AIZAWL
+                  </div>
+
+                  {/* Memo & Date Header */}
+                  <div className="cert-memo-date-header" style={{ textAlign: 'right', marginBottom: '25px', fontSize: '15px', lineHeight: 1.4 }}>
+                    <span>No.{w.fullMemo}</span><br />
+                    Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.
+                  </div>
+
+                  {/* Recipient To, */}
+                  <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '15px', lineHeight: 1.4 }}>
+                    To,<br />
+                    <div style={{ marginLeft: '40px' }}>
+                      {shared.inDDOAddress ? (
+                        shared.inDDOAddress.split('\n').map((line, idx) => (
+                          <React.Fragment key={idx}>{line}<br /></React.Fragment>
+                        ))
+                      ) : (
+                        <>
+                          Director,<br />
+                          {shared.inOffice || 'Horticulture Department'},<br />
+                          Mizoram, Aizawl.
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Subj */}
+                  <div style={{ marginBottom: '15px', fontSize: '15px', display: 'flex' }}>
+                    <span style={{ fontWeight: 'bold', width: '60px' }}>Subj:</span>
+                    <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>
+                      Interest Calculation of HBA in respect of {shared.inName || '...'}.
+                    </span>
+                  </div>
+
+                  {/* Ref */}
+                  <div style={{ marginBottom: '20px', fontSize: '15px', display: 'flex' }}>
+                    <span style={{ fontWeight: 'bold', width: '60px' }}>Ref:</span>
+                    <span>{shared.inMortgagedRefNo || 'No. G.26029/1/2019-DTE(HORT) dated 28.7.2026.'}</span>
+                  </div>
+
+                  {/* Salutation */}
+                  <div style={{ marginBottom: '15px', fontSize: '15px' }}>Sir,</div>
+
+                  {/* Body Paragraphs */}
+                  {w.grandTotalOutstandingPositive > 0 ? (
+                    /* Case 1: Outstanding Balance Exists */
+                    <div style={{ fontSize: '15px', lineHeight: 1.5, textAlign: 'justify' }}>
+                      <div style={{ textIndent: '40px', marginBottom: '15px' }}>
+                        With reference to your letter on the subject cited above, I am to send herewith <span className="bold">Calculation Sheet of HBA</span> in respect of <span className="bold">Pu {shared.inName}, {shared.inDesig}</span> showing liabilities amounting to <span className="bold">₹ {fmtAmt(w.grandTotalOutstandingPositive)} ({amountToWords(w.grandTotalOutstandingPositive)})</span> for necessary action from your end.
+                      </div>
+
+                      <div style={{ textIndent: '40px', marginBottom: '20px', fontStyle: 'italic', fontWeight: 'bold' }}>
+                        Mortgaged LSC may be released as and when liabilities are fully recovered and final recovery challan may be submitted to the undersigned for closing the individual account.
+                      </div>
+
+                      <div style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '15px' }}>
+                        The outstanding amount is to be credited under the Head of Account :
+                      </div>
+
+                      <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '20px' }}>
+                        <table style={{ width: '85%', marginLeft: 'auto', marginRight: 'auto', textAlign: 'left', fontWeight: 'bold', borderCollapse: 'collapse' }}>
+                          <tbody>
+                            <tr>
+                              <td style={{ textAlign: 'center', textDecoration: 'underline', width: '50%' }}>PRINCIPAL</td>
+                              <td style={{ textAlign: 'center', textDecoration: 'underline', width: '50%' }}>INTEREST</td>
+                            </tr>
+                            <tr>
+                              <td style={{ verticalAlign: 'top', paddingRight: '25px', paddingTop: '8px' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                  <tbody>
+                                    {Array.from(w.prinHeadsToShow).map((cat) => (
+                                      <tr key={cat}>
+                                        <td style={{ textAlign: 'right', width: '45%', whiteSpace: 'nowrap' }}>{cat}</td>
+                                        <td style={{ textAlign: 'center', width: '10%' }}>&ndash;</td>
+                                        <td style={{ textAlign: 'left', width: '45%', whiteSpace: 'nowrap' }}>{HEADS_OF_ACCOUNT.PRINCIPAL[cat]}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </td>
+                              <td style={{ verticalAlign: 'top', paddingLeft: '25px', paddingTop: '8px' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                  <tbody>
+                                    {Array.from(w.intHeadsToShow).map((cat) => (
+                                      <tr key={cat}>
+                                        <td style={{ textAlign: 'right', width: '45%', whiteSpace: 'nowrap' }}>{cat}</td>
+                                        <td style={{ textAlign: 'center', width: '10%' }}>&ndash;</td>
+                                        <td style={{ textAlign: 'left', width: '45%', whiteSpace: 'nowrap' }}>{HEADS_OF_ACCOUNT.INTEREST[cat]}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Case 2: Excess Recovery / Fully Recovered */
+                    <div style={{ fontSize: '15px', lineHeight: 1.5, textAlign: 'justify' }}>
+                      <div style={{ textIndent: '40px', marginBottom: '15px' }}>
+                        With reference to your letter on the subject cited above, I am to send herewith <span className="bold">Calculation Sheet of HBA</span> in respect of <span className="bold">Pu {shared.inName}, {shared.inDesig}</span> in which principal and interest had been recovered in full. Hence, his/her mortgaged LSC may be released.
+                      </div>
+
+                      {w.totalExcessAmount > 0 && (
+                        <div style={{ textIndent: '40px', marginBottom: '20px' }}>
+                          Further, there is excess recovery of interest/principal amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)} ({amountToWords(w.totalExcessAmount)})</span>. Necessary action be taken to refund excess recovery.
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Mandatory Footnote */}
+                  <div style={{ fontSize: '14px', lineHeight: 1.4, textAlign: 'justify', marginBottom: '30px', marginTop: '20px' }}>
+                    Calculation is done as per Finance Department’s O.M No.G.26017/1/88-F.APF Dt.5.7.2001 circulated to all Head of Departments vide No.G.26010/1/2008-CCA/L&M/37 Dt.19.7.2010 of this office.
+                  </div>
+
+                  {/* Signatory (Right) */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '35px' }}>
+                    <div style={{ fontStyle: 'italic', fontSize: '15px' }}>
+                      Eclo: &nbsp;&nbsp;&nbsp;&nbsp; Calculation Sheet
+                    </div>
+                    <div style={{ textAlign: 'center', minWidth: '240px', fontSize: '15px', lineHeight: 1.3 }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Yours faithfully,</div>
+                      <div style={{ height: '35px', position: 'relative' }}>
+                        {shared.inShowSd && <span style={{ position: 'absolute', bottom: '2px', left: 0, right: 0, fontWeight: 'bold' }}>Sd/-</span>}
+                      </div>
+                      <div className="bold">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</div>
+                      <div>{shared.inSigDesig},</div>
+                      <div>Accounts &amp; Treasuries,</div>
+                      <div>Aizawl; Mizoram</div>
+                    </div>
+                  </div>
+
+                  {/* Memo No & Date */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', marginBottom: '15px' }}>
+                    <div>Memo No. {w.fullMemo}</div>
+                    <div>Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.</div>
+                  </div>
+
+                  {/* Copy to */}
+                  <div style={{ fontSize: '15px', marginBottom: '30px' }}>
+                    <div style={{ fontStyle: 'italic', marginBottom: '5px' }}>Copy to:-</div>
+                    <div style={{ marginLeft: '30px' }}>
+                      1. Person concerned for information.
+                    </div>
+                  </div>
+
+                  {/* Footer Designation (Right) */}
+                  <div style={{ textAlign: 'right', marginTop: '20px' }}>
+                    <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '15px', textDecoration: 'underline' }}>
+                      {shared.inSigDesig.toUpperCase()}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
