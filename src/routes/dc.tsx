@@ -350,6 +350,13 @@ function DcComponent() {
       ...prev,
       [field]: value
     }))
+    if (field === 'inIsMortgaged') {
+      if (value) {
+        setPreviewTab('mortgaged')
+      } else if (previewTab === 'mortgaged') {
+        setPreviewTab('cert')
+      }
+    }
   }
 
   // Calculate Auto EMI (like the legacy page logic: SanctionAmount / 120 or recovery installments)
@@ -1276,10 +1283,11 @@ function DcComponent() {
               <button className="btn btn-print-calc" onClick={() => {
                 printDocument('calc')
               }}>🖨️ Print Calc Sheets</button>
-              <button className="btn btn-print-cert" onClick={() => {
-                printDocument('cert')
-              }}>🖨️ Print Certificate</button>
-              {shared.inIsMortgaged && (
+              {!shared.inIsMortgaged ? (
+                <button className="btn btn-print-cert" onClick={() => {
+                  printDocument('cert')
+                }}>🖨️ Print Certificate</button>
+              ) : (
                 <button className="btn btn-print-cert" style={{ background: '#e65100' }} onClick={() => {
                   printDocument('mortgaged')
                 }}>🖨️ Print Mortgaged LSC</button>
@@ -1298,10 +1306,11 @@ function DcComponent() {
               <button className={`prev-tab-btn ${previewTab === 'calc' ? 'active' : ''}`} onClick={() => setPreviewTab('calc')}>
                 Calculation Sheets (Legal)
               </button>
-              <button className={`prev-tab-btn ${previewTab === 'cert' ? 'active' : ''}`} onClick={() => setPreviewTab('cert')}>
-                {w.isGlobalNDC ? 'No Demand Certificate (A4)' : 'Demand Certificate (Legal)'}
-              </button>
-              {shared.inIsMortgaged && (
+              {!shared.inIsMortgaged ? (
+                <button className={`prev-tab-btn ${previewTab === 'cert' ? 'active' : ''}`} onClick={() => setPreviewTab('cert')}>
+                  {w.isGlobalNDC ? 'No Demand Certificate (A4)' : 'Demand Certificate (Legal)'}
+                </button>
+              ) : (
                 <button className={`prev-tab-btn ${previewTab === 'mortgaged' ? 'active' : ''}`} onClick={() => setPreviewTab('mortgaged')}>
                   Mortgaged (Legal)
                 </button>
