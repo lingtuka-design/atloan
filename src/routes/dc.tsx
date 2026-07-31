@@ -1172,7 +1172,7 @@ function DcComponent() {
             </div>
             <div className="input-box">
               <label>DDO Address (Copy to No. 2)</label>
-              <input type="text" value={shared.inDDOAddress} onChange={e => handleSharedChange('inDDOAddress', e.target.value)} placeholder="e.g. Senior Medical Superintendent, Civil Hospital, Aizawl" />
+              <textarea value={shared.inDDOAddress} onChange={e => handleSharedChange('inDDOAddress', e.target.value)} placeholder="e.g. Director,&#10;Horticulture Department,&#10;Mizoram : Aizawl." style={{ minHeight: '80px', fontFamily: 'inherit', padding: '6px', resize: 'vertical' }} />
             </div>
 
             <div style={{ background: '#e3f2fd', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #90caf9' }}>
@@ -1925,18 +1925,9 @@ function DcComponent() {
                     To,<br />
                     <div style={{ marginLeft: '40px' }}>
                       {shared.inDDOAddress ? (
-                        shared.inDDOAddress.split(',').map((part, idx, arr) => {
-                          const text = part.trim()
-                          if (!text) return null
-                          const isLast = idx === arr.length - 1
-                          // If last part doesn't have punctuation, we could add a period, 
-                          // but the user might have provided it. Let's just add the comma back for non-last items.
-                          return (
-                            <React.Fragment key={idx}>
-                              {text}{isLast ? '' : ','}<br />
-                            </React.Fragment>
-                          )
-                        })
+                        shared.inDDOAddress.split('\n').map((line, idx) => (
+                          <React.Fragment key={idx}>{line}<br /></React.Fragment>
+                        ))
                       ) : (
                         <>
                           Director,<br />
