@@ -1921,7 +1921,7 @@ function DcComponent() {
                   </div>
 
                   {/* Recipient To, */}
-                  <div style={{ marginTop: '20px', marginBottom: '20px', fontSize: '15px', lineHeight: 1.4 }}>
+                  <div style={{ marginTop: '25px', marginBottom: '25px', fontSize: '15px', lineHeight: 1.4 }}>
                     To,<br />
                     <div style={{ marginLeft: '40px' }}>
                       {shared.inDDOAddress ? (
@@ -1939,7 +1939,7 @@ function DcComponent() {
                   </div>
 
                   {/* Subj */}
-                  <div style={{ marginBottom: '15px', fontSize: '15px', display: 'flex' }}>
+                  <div style={{ marginTop: '25px', marginBottom: '20px', fontSize: '15px', display: 'flex' }}>
                     <span style={{ fontWeight: 'bold', width: '60px' }}>Subj:</span>
                     <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>
                       Interest Calculation of HBA in respect of {shared.inName || '...'}.
@@ -1947,23 +1947,23 @@ function DcComponent() {
                   </div>
 
                   {/* Ref */}
-                  <div style={{ marginBottom: '20px', fontSize: '15px', display: 'flex' }}>
+                  <div style={{ marginBottom: '25px', fontSize: '15px', display: 'flex' }}>
                     <span style={{ fontWeight: 'bold', width: '60px' }}>Ref:</span>
                     <span>{shared.inMortgagedRefNo || 'No. G.26029/1/2019-DTE(HORT) dated 28.7.2026.'}</span>
                   </div>
 
                   {/* Salutation */}
-                  <div style={{ marginBottom: '15px', fontSize: '15px' }}>Sir,</div>
+                  <div style={{ marginBottom: '20px', fontSize: '15px' }}>Sir,</div>
 
                   {/* Body Paragraphs */}
                   {w.grandTotalOutstandingPositive > 0 ? (
                     /* Case 1: Outstanding Balance Exists */
                     <div style={{ fontSize: '15px', lineHeight: 1.5, textAlign: 'justify' }}>
-                      <div style={{ textIndent: '40px', marginBottom: '15px' }}>
+                      <div style={{ textIndent: '70px', marginBottom: '20px' }}>
                         With reference to your letter on the subject cited above, I am to send herewith <span className="bold">Calculation Sheet of HBA</span> in respect of <span className="bold">Pu {shared.inName}, {shared.inDesig}</span> showing liabilities amounting to <span className="bold">₹ {fmtAmt(w.grandTotalOutstandingPositive)} ({amountToWords(w.grandTotalOutstandingPositive)})</span> for necessary action from your end.
                       </div>
 
-                      <div style={{ textIndent: '40px', marginBottom: '20px', fontStyle: 'italic', fontWeight: 'bold' }}>
+                      <div style={{ textIndent: '70px', marginBottom: '25px', fontStyle: 'italic', fontWeight: 'bold' }}>
                         Mortgaged LSC may be released as and when liabilities are fully recovered and final recovery challan may be submitted to the undersigned for closing the individual account.
                       </div>
 
@@ -1971,7 +1971,7 @@ function DcComponent() {
                         The outstanding amount is to be credited under the Head of Account :
                       </div>
 
-                      <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '20px' }}>
+                      <div style={{ textAlign: 'center', marginTop: '10px', marginBottom: '25px' }}>
                         <table style={{ width: '85%', marginLeft: 'auto', marginRight: 'auto', textAlign: 'left', fontWeight: 'bold', borderCollapse: 'collapse' }}>
                           <tbody>
                             <tr>
@@ -2013,12 +2013,12 @@ function DcComponent() {
                   ) : (
                     /* Case 2: Excess Recovery / Fully Recovered */
                     <div style={{ fontSize: '15px', lineHeight: 1.5, textAlign: 'justify' }}>
-                      <div style={{ textIndent: '40px', marginBottom: '15px' }}>
+                      <div style={{ textIndent: '70px', marginBottom: '20px' }}>
                         With reference to your letter on the subject cited above, I am to send herewith <span className="bold">Calculation Sheet of HBA</span> in respect of <span className="bold">Pu {shared.inName}, {shared.inDesig}</span> in which principal and interest had been recovered in full. Hence, his/her mortgaged LSC may be released.
                       </div>
 
                       {w.totalExcessAmount > 0 && (
-                        <div style={{ textIndent: '40px', marginBottom: '20px' }}>
+                        <div style={{ textIndent: '70px', marginBottom: '25px' }}>
                           Further, there is excess recovery of interest/principal amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)} ({amountToWords(w.totalExcessAmount)})</span>. Necessary action be taken to refund excess recovery.
                         </div>
                       )}
@@ -2026,18 +2026,18 @@ function DcComponent() {
                   )}
 
                   {/* Mandatory Footnote */}
-                  <div style={{ fontSize: '14px', lineHeight: 1.4, textAlign: 'justify', marginBottom: '30px', marginTop: '20px' }}>
+                  <div style={{ fontSize: '14px', lineHeight: 1.4, textAlign: 'justify', marginBottom: '35px', marginTop: '25px' }}>
                     Calculation is done as per Finance Department’s O.M No.G.26017/1/88-F.APF Dt.5.7.2001 circulated to all Head of Departments vide No.G.26010/1/2008-CCA/L&M/37 Dt.19.7.2010 of this office.
                   </div>
 
                   {/* Signatory (Right) */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '35px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
                     <div style={{ fontStyle: 'italic', fontSize: '15px' }}>
                       Eclo: &nbsp;&nbsp;&nbsp;&nbsp; Calculation Sheet
                     </div>
                     <div style={{ textAlign: 'center', minWidth: '240px', fontSize: '15px', lineHeight: 1.3 }}>
                       <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Yours faithfully,</div>
-                      <div style={{ height: '35px', position: 'relative' }}>
+                      <div style={{ height: '55px', position: 'relative' }}>
                         {shared.inShowSd && <span style={{ position: 'absolute', bottom: '2px', left: 0, right: 0, fontWeight: 'bold' }}>Sd/-</span>}
                       </div>
                       <div className="bold">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</div>
