@@ -1925,14 +1925,23 @@ function DcComponent() {
                     To,<br />
                     <div style={{ marginLeft: '40px' }}>
                       {shared.inDDOAddress ? (
-                        shared.inDDOAddress.split('\n').map((line, idx) => (
-                          <React.Fragment key={idx}>{line}<br /></React.Fragment>
-                        ))
+                        shared.inDDOAddress.split(',').map((part, idx, arr) => {
+                          const text = part.trim()
+                          if (!text) return null
+                          const isLast = idx === arr.length - 1
+                          // If last part doesn't have punctuation, we could add a period, 
+                          // but the user might have provided it. Let's just add the comma back for non-last items.
+                          return (
+                            <React.Fragment key={idx}>
+                              {text}{isLast ? '' : ','}<br />
+                            </React.Fragment>
+                          )
+                        })
                       ) : (
                         <>
                           Director,<br />
                           {shared.inOffice || 'Horticulture Department'},<br />
-                          Mizoram, Aizawl.
+                          Mizoram : Aizawl.
                         </>
                       )}
                     </div>
