@@ -1925,9 +1925,20 @@ function DcComponent() {
                     To,<br />
                     <div style={{ marginLeft: '40px' }}>
                       {shared.inDDOAddress ? (
-                        shared.inDDOAddress.split('\n').map((line, idx) => (
-                          <React.Fragment key={idx}>{line}<br /></React.Fragment>
-                        ))
+                        (shared.inDDOAddress.includes('\n') 
+                          ? shared.inDDOAddress.split('\n') 
+                          : shared.inDDOAddress.split(',')
+                        ).map((part, idx, arr) => {
+                          const text = part.trim()
+                          if (!text) return null
+                          const isLast = idx === arr.length - 1
+                          const suffix = shared.inDDOAddress.includes('\n') ? '' : (isLast ? '' : ',')
+                          return (
+                            <React.Fragment key={idx}>
+                              {text}{suffix}<br />
+                            </React.Fragment>
+                          )
+                        })
                       ) : (
                         <>
                           Director,<br />
