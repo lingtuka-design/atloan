@@ -693,11 +693,7 @@ function DcComponent() {
       }
     })
 
-    if (Object.keys(typeGroups).length > 1 && grandTotalOutstandingPositive > 0) {
-      adjustmentSummaries.push(
-        `Total Net Outstanding Balance to be recovered/adjusted from DCRG = ₹ ${fmtAmt(grandTotalOutstandingPositive)}/-.`
-      )
-    }
+    // Adjustment summaries are ONLY populated when there are same-head loan adjustments (e.g. excess on 1 HBA adjusted against outstanding on another HBA)
 
     const isGlobalNDC = calculatedData.length > 0 && loansWithLiability.size === 0
 
@@ -749,10 +745,8 @@ function DcComponent() {
       return
     }
 
-    const currentNoteDOM = document.getElementById('editable-note-wrapper')?.innerHTML
-    const finalNoteHTML = (currentNoteDOM !== undefined && currentNoteDOM.trim() !== '')
-      ? currentNoteDOM
-      : (savedNoteHTML || '')
+    const noteElem = document.getElementById('editable-note-wrapper')
+    const finalNoteHTML = noteElem ? noteElem.innerHTML : (savedNoteHTML || '')
 
     const typesSumm = Array.from(new Set(calculatedData.map(l => l.loanType))).join(', ')
     const recordPayload: Partial<DcRecord> = {
@@ -784,16 +778,26 @@ function DcComponent() {
         const result = await res.json()
         const isUpdate = Boolean(currentEditId)
         setCurrentEditId(result.id)
-        if (finalNoteHTML) {
+        if (finalNoteHTML !== undefined) {
           setSavedNoteHTML(finalNoteHTML)
         }
         alert(isUpdate ? 'Record siamṭhat (Updated) a ni ta!' : 'I calculation data leh Notesheet hi save a ni ta e.')
         fetchRecords()
       } else {
-        alert('Error saving record to database.')
+        let errMsg = 'Error saving record to database.'
+        try {
+          const errObj = await res.json()
+          if (errObj.error) errMsg = errObj.error
+          else if (errObj.message) errMsg = errObj.message
+        } catch (e) {
+          const txt = await res.text().catch(() => '')
+          if (txt) errMsg = txt
+        }
+        alert(`Save failed: ${errMsg}`)
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving:', err)
+      alert(`Save error: ${err?.message || err}`)
     }
   }
 
