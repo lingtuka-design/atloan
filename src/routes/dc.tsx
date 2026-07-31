@@ -1213,7 +1213,7 @@ function DcComponent() {
             </div>
             <div className="input-box">
               <label>DDO Address (Copy to No. 2)</label>
-              <textarea value={shared.inDDOAddress} onChange={e => handleSharedChange('inDDOAddress', e.target.value)} placeholder="e.g. Director,&#10;Horticulture Department,&#10;Mizoram : Aizawl." style={{ minHeight: '80px', fontFamily: 'inherit', padding: '6px', resize: 'vertical' }} />
+              <input type="text" value={shared.inDDOAddress} onChange={e => handleSharedChange('inDDOAddress', e.target.value)} placeholder="e.g. Director, Horticulture Department, Mizoram, Aizawl" />
             </div>
 
             <div style={{ background: '#e3f2fd', padding: '12px', borderRadius: '6px', marginBottom: '12px', border: '1px solid #90caf9' }}>
