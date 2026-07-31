@@ -133,6 +133,47 @@ const DEPT_CODES: Record<string, string> = {
   "VETY": "123", "ZSB": "125"
 }
 
+function getFormattedAddressLines(ddoAddress: string, defaultOffice: string): string[] {
+  let rawLines: string[] = []
+  if (ddoAddress && ddoAddress.trim()) {
+    if (ddoAddress.includes('\n')) {
+      rawLines = ddoAddress.split('\n').map(s => s.trim()).filter(Boolean)
+    } else {
+      rawLines = ddoAddress.split(',').map(s => s.trim()).filter(Boolean)
+    }
+  } else {
+    return ['Director,', `${defaultOffice || 'Horticulture Department'},`, 'Mizoram : Aizawl.']
+  }
+
+  // Combine Mizoram and Aizawl if they are separate lines
+  if (rawLines.length >= 2) {
+    const lastClean = rawLines[rawLines.length - 1].replace(/[^a-zA-Z]/g, '').toLowerCase()
+    const prevClean = rawLines[rawLines.length - 2].replace(/[^a-zA-Z]/g, '').toLowerCase()
+
+    if (prevClean === 'mizoram' && lastClean === 'aizawl') {
+      rawLines[rawLines.length - 2] = 'Mizoram : Aizawl.'
+      rawLines.pop()
+    }
+  }
+
+  return rawLines.map((line, idx) => {
+    const isLast = idx === rawLines.length - 1
+    let text = line.trim()
+    text = text.replace(/Mizoram\s*,\s*Aizawl/gi, 'Mizoram : Aizawl')
+    
+    if (isLast) {
+      if (!text.endsWith('.')) {
+        text = text.replace(/,$/, '') + '.'
+      }
+    } else {
+      if (!text.endsWith(',')) {
+        text = text.replace(/\.$/, '') + ','
+      }
+    }
+    return text
+  })
+}
+
 function DcComponent() {
   const auth = useContext(AuthContext)
   const [activeMainTab, setActiveMainTab] = useState<'generator' | 'list'>('generator')
@@ -1924,28 +1965,11 @@ function DcComponent() {
                   <div style={{ marginTop: '25px', marginBottom: '25px', fontSize: '15px', lineHeight: 1.4 }}>
                     To,<br />
                     <div style={{ marginLeft: '40px' }}>
-                      {shared.inDDOAddress ? (
-                        (shared.inDDOAddress.includes('\n') 
-                          ? shared.inDDOAddress.split('\n') 
-                          : shared.inDDOAddress.split(',')
-                        ).map((part, idx, arr) => {
-                          const text = part.trim()
-                          if (!text) return null
-                          const isLast = idx === arr.length - 1
-                          const suffix = shared.inDDOAddress.includes('\n') ? '' : (isLast ? '' : ',')
-                          return (
-                            <React.Fragment key={idx}>
-                              {text}{suffix}<br />
-                            </React.Fragment>
-                          )
-                        })
-                      ) : (
-                        <>
-                          Director,<br />
-                          {shared.inOffice || 'Horticulture Department'},<br />
-                          Mizoram : Aizawl.
-                        </>
-                      )}
+                      {getFormattedAddressLines(shared.inDDOAddress, shared.inOffice).map((line, idx) => (
+                        <React.Fragment key={idx}>
+                          {line}<br />
+                        </React.Fragment>
+                      ))}
                     </div>
                   </div>
 
