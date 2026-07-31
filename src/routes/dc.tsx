@@ -165,6 +165,7 @@ function DcComponent() {
   const [calculatedData, setCalculatedData] = useState<CalculatedLoan[]>([])
   const [currentEditId, setCurrentEditId] = useState<string | null>(null)
   const [savedNoteHTML, setSavedNoteHTML] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
   // Database Records
   const [records, setRecords] = useState<DcRecord[]>([])
@@ -767,6 +768,9 @@ function DcComponent() {
       recordPayload.id = currentEditId
     }
 
+    if (isSaving) return
+    setIsSaving(true)
+
     try {
       const res = await fetch('/api/dc', {
         method: 'POST',
@@ -798,6 +802,8 @@ function DcComponent() {
     } catch (err: any) {
       console.error('Error saving:', err)
       alert(`Save error: ${err?.message || err}`)
+    } finally {
+      setIsSaving(false)
     }
   }
 

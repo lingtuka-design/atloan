@@ -91,7 +91,18 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     try {
       const record = await request.json() as any
       if (!record.id) {
-        record.id = 'dc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)
+        if (record.name && record.dept) {
+          const dup = await env.DB.prepare(
+            'SELECT id FROM dc_records WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND dept = ? AND (created_by = ? OR ? = "admin") ORDER BY created_at DESC LIMIT 1'
+          ).bind(record.name, record.dept, user.username, user.role).first<{ id: string }>()
+
+          if (dup && dup.id) {
+            record.id = dup.id
+          }
+        }
+        if (!record.id) {
+          record.id = 'dc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)
+        }
       }
 
       // Check if it already exists
