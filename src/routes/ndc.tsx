@@ -30,6 +30,7 @@ interface NdcRecord {
 }
 
 const DEPT_CODES: Record<string, string> = {
+  "AGRI": "02", "A&C": "04", "AH&VETY": "06", "ATI": "08", "AT&P": "10", "C&I": "12",
   "COOP": "14", "DC": "16", "DAT": "18", "DMR": "20", "DIET": "22",
   "ECS": "24", "EXE": "26", "EDN": "28", "ELCN": "30", "FOR": "32",
   "FCA": "34", "FISH": "36", "GHC": "38", "GAD": "40", "G&M": "42",
