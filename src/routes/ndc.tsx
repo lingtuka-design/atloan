@@ -130,7 +130,15 @@ function NdcComponent() {
   // Auto-generate reference number
   useEffect(() => {
     const deptStr = dept.trim().toUpperCase()
-    let deptCode = DEPT_CODES[deptStr]
+    const cleanKey = deptStr.replace(/\s+/g, '')
+    let deptCode = DEPT_CODES[deptStr] || DEPT_CODES[cleanKey]
+    if (!deptCode) {
+      const uppercaseMap: Record<string, string> = {}
+      Object.keys(DEPT_CODES).forEach(k => {
+        uppercaseMap[k.toUpperCase().replace(/\s+/g, '')] = DEPT_CODES[k]
+      })
+      deptCode = uppercaseMap[cleanKey]
+    }
     if (!deptCode) {
       const match = refNo.match(/G\.26041\/([A-Za-z0-9_]+)\//)
       deptCode = match ? match[1] : 'XX'
@@ -615,8 +623,14 @@ function NdcComponent() {
                     type="text"
                     value={dept}
                     onChange={(e) => setDept(e.target.value)}
-                    placeholder="Entirnan: HSD, COOP, DC..."
+                    list="ndc-dept-list"
+                    placeholder="Entirnan: AGRI, A&C, AH&VETY, HSD, COOP..."
                   />
+                  <datalist id="ndc-dept-list">
+                    {Object.keys(DEPT_CODES).map(k => (
+                      <option key={k} value={k}>{k} ({DEPT_CODES[k]})</option>
+                    ))}
+                  </datalist>
                 </div>
 
                 <div className="input-box">
