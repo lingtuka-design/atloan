@@ -72,3 +72,19 @@ CREATE TABLE IF NOT EXISTS dak_records (
     is_new INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS dak_issue_records (
+    id TEXT PRIMARY KEY,
+    sl_no INTEGER,
+    receive_no TEXT,
+    name TEXT,
+    address TEXT,
+    case_type TEXT,
+    issue_date TEXT,
+    issue_no TEXT,
+    sent TEXT,
+    phone_number TEXT,
+    created_by TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
