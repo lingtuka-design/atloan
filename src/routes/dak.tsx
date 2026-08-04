@@ -45,6 +45,17 @@ const getCurrentMonthStr = () => {
   return `${year}-${month}`
 }
 
+const formatDMY = (dateStr: string) => {
+  if (!dateStr) return ''
+  if (dateStr.includes('-')) {
+    const parts = dateStr.split('-')
+    if (parts.length === 3) {
+      return `${parts[2]}.${parts[1]}.${parts[0]}`
+    }
+  }
+  return dateStr
+}
+
 function DakComponent() {
   const auth = useContext(AuthContext)
   const [dakTab, setDakTab] = useState<'receive' | 'issue'>('receive')
@@ -862,7 +873,7 @@ function DakComponent() {
                     <td style={{ border: '1px solid #000', padding: '8px', fontWeight: 'bold' }}>{r.name}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{r.address}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.case_type}</td>
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.issue_date}</td>
+                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{formatDMY(r.issue_date)}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.issue_no}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{r.sent}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.phone_number}</td>
