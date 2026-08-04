@@ -122,7 +122,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         record.case_type || '',
         record.issue_date || '',
         record.issue_no || '',
-        record.sent || '',
+        record.sent || 'Dak',
         record.phone_number || '',
         user.username
       ).run()

@@ -202,7 +202,7 @@ function DakComponent() {
           case_type: issueCaseType,
           issue_date: issueDate,
           issue_no: issueNo,
-          sent: '',
+          sent: 'Dak',
           phone_number: ''
         })
       })
@@ -886,7 +886,7 @@ function DakComponent() {
                     <td style={{ border: '1px solid #000', padding: '4px' }}>
                       <input
                         type="text"
-                        value={r.sent || ''}
+                        value={r.sent !== undefined && r.sent !== null && r.sent !== '' ? r.sent : 'Dak'}
                         onChange={(e) => {
                           const val = e.target.value
                           setIssueRecords(prev => prev.map(rec => rec.id === r.id ? { ...rec, sent: val } : rec))
