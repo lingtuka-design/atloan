@@ -723,11 +723,12 @@ function DakComponent() {
 
                         <td className="col-issue" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
                           {auth?.user?.username?.toLowerCase() === 'mala' ? (
-                            r.issue_date
+                            formatDMY(r.issue_date)
                           ) : (
                             <input 
                               type="text" 
-                              defaultValue={r.issue_date} 
+                              key={r.id + '_' + r.issue_date}
+                              defaultValue={formatDMY(r.issue_date)} 
                               onBlur={e => handleIssueDateBlur(r.id, e.target.value)}
                               style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', textAlign: 'center', fontSize: '13px', boxSizing: 'border-box' }}
                             />
