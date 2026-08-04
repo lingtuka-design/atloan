@@ -174,6 +174,21 @@ function DakComponent() {
     setIssueSearchName(record.name)
   }
 
+  const updateIssueRecord = async (id: string, updates: any) => {
+    try {
+      const res = await fetch('/api/dak_issue', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...updates })
+      })
+      if (res.ok) {
+        setIssueRecords(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r))
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   const handleCreateIssue = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
@@ -187,8 +202,8 @@ function DakComponent() {
           case_type: issueCaseType,
           issue_date: issueDate,
           issue_no: issueNo,
-          sent: issueSent,
-          phone_number: issuePhoneNumber
+          sent: '',
+          phone_number: ''
         })
       })
       if (res.ok) {
@@ -801,14 +816,6 @@ function DakComponent() {
                 <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Issue No.</label>
                 <input type="text" value={issueNo} onChange={e => setIssueNo(e.target.value)} placeholder="Issue No." style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', flex: 1.2, minWidth: '140px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Sent</label>
-                <input type="text" value={issueSent} onChange={e => setIssueSent(e.target.value)} placeholder="Speed Post / Hand..." style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', flex: 1.2, minWidth: '140px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Phone Number</label>
-                <input type="text" value={issuePhoneNumber} onChange={e => setIssuePhoneNumber(e.target.value)} placeholder="Phone No." style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
-              </div>
               <button type="submit" style={{ padding: '10px 20px', background: '#2e7d32', color: 'white', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', height: '35px' }}>
                 ISSUE
               </button>
@@ -856,8 +863,8 @@ function DakComponent() {
                   <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '90px' }}>Case</th>
                   <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '95px' }}>Issue Date</th>
                   <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '90px' }}>Issue No.</th>
-                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '110px' }}>Sent</th>
-                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '110px' }}>Phone Number</th>
+                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', width: '120px' }}>Sent</th>
+                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '120px' }}>Phone Number</th>
                   <th className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center', width: '60px' }}></th>
                 </tr>
               </thead>
@@ -875,8 +882,32 @@ function DakComponent() {
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.case_type}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{formatDMY(r.issue_date)}</td>
                     <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.issue_no}</td>
-                    <td style={{ border: '1px solid #000', padding: '8px', whiteSpace: 'normal', wordBreak: 'break-word' }}>{r.sent}</td>
-                    <td style={{ border: '1px solid #000', padding: '8px', textAlign: 'center' }}>{r.phone_number}</td>
+                    <td style={{ border: '1px solid #000', padding: '4px' }}>
+                      <input
+                        type="text"
+                        value={r.sent || ''}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          setIssueRecords(prev => prev.map(rec => rec.id === r.id ? { ...rec, sent: val } : rec))
+                        }}
+                        onBlur={(e) => updateIssueRecord(r.id, { sent: e.target.value })}
+                        placeholder="Speed Post / Hand..."
+                        style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box' }}
+                      />
+                    </td>
+                    <td style={{ border: '1px solid #000', padding: '4px' }}>
+                      <input
+                        type="text"
+                        value={r.phone_number || ''}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          setIssueRecords(prev => prev.map(rec => rec.id === r.id ? { ...rec, phone_number: val } : rec))
+                        }}
+                        onBlur={(e) => updateIssueRecord(r.id, { phone_number: e.target.value })}
+                        placeholder="Phone No."
+                        style={{ width: '100%', padding: '4px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box', textAlign: 'center' }}
+                      />
+                    </td>
                     <td className="no-print" style={{ border: '1px solid #000', padding: '4px', textAlign: 'center' }}>
                       <button onClick={() => handleDeleteIssue(r.id)} style={{ background: '#d32f2f', color: 'white', border: 'none', padding: '4px 6px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' }}>
                         Delete
