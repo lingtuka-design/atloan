@@ -216,6 +216,7 @@ function DakComponent() {
         setIssuePhoneNumber('')
         setIssueSearchName('')
         fetchIssueRecords()
+        fetchRecords()
       }
     } catch (e) {
       alert("Error creating Issue record")

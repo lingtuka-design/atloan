@@ -127,6 +127,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         user.username
       ).run()
 
+      // Automatically sync issue_date and update action to 'Settled' in Receive Dak (dak_records) table
+      if (record.receive_no && record.issue_date) {
+        try {
+          await env.DB.prepare(`
+            UPDATE dak_records 
+            SET issue_date = ?, action = 'Settled'
+            WHERE receive_no = ?
+          `).bind(record.issue_date, record.receive_no).run()
+        } catch (e) {
+          console.error('Error syncing issue_date to dak_records:', e)
+        }
+      }
+
       return Response.json({ success: true, id }, {
         headers: { 'Access-Control-Allow-Origin': '*' }
       })
