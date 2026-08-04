@@ -794,10 +794,6 @@ function DakComponent() {
                 <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Name</label>
                 <input type="text" value={issueName} onChange={e => setIssueName(e.target.value)} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', flex: 2, minWidth: '220px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Address</label>
-                <input type="text" value={issueAddress} onChange={e => setIssueAddress(e.target.value)} required placeholder="Manual Address" style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
-              </div>
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '110px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Case</label>
                 <select value={issueCaseType} onChange={e => setIssueCaseType(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
@@ -811,6 +807,10 @@ function DakComponent() {
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '130px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Issue Date</label>
                 <input type="date" value={issueDate} onChange={e => setIssueDate(e.target.value)} required style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 2, minWidth: '220px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Address</label>
+                <input type="text" value={issueAddress} onChange={e => setIssueAddress(e.target.value)} required placeholder="Manual Address" style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: '120px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Issue No.</label>
