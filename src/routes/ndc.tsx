@@ -35,7 +35,7 @@ const DEPT_CODES: Record<string, string> = {
   "ECS": "24", "EXE": "26", "EDN": "28", "ELCN": "30", "FOR": "32",
   "FCA": "34", "FISH": "36", "GHC": "38", "GAD": "40", "G&M": "42",
   "GOV": "44", "HTE": "46", "HSD": "48", "HME": "50", "IND": "52",
-  "HOR": "54", "I&PR": "56", "ICT": "58", "IFSL": "60", "IRI": "62",
+  "HOR": "54", "I&PR": "56", "ICT": "58", "IFSL": "60", "IRRI": "62",
   "LRS": "64", "LAD": "66", "LAE": "68", "LGM": "70", "L&J": "72",
   "MLAS": "74", "MPSC": "76", "MRHG": "78", "MIC": "80", "POL": "82",
   "P&E": "84", "P&S": "86", "PWD": "88", "PHE": "90", "PRI": "92",
