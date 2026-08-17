@@ -684,7 +684,7 @@ function DcComponent() {
       const sanction = loans[loan.idx]?.inSanction || '...'
       const sancAmtStr = fmtAmt(sancAmt)
       const rawWords = numToWordsStrict(parseAmt(sancAmt))
-      ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- Rupees (${rawWords}) only. Vide No ${sanction}`)
+      ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- (Rupees ${rawWords} only). Vide No ${sanction}`)
       ndcCodeStrings.push(loan.code)
 
       const headCategory = loan.loanType

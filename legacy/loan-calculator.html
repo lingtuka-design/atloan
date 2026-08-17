@@ -1275,7 +1275,7 @@
             // NDC String Prep
             let sancAmtStr = fmtAmt(sancAmt);
             let rawWords = numToWordsStrict(parseAmt(sancAmt));
-            ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- Rupees (${rawWords}) only. Vide No ${sanction}`);
+            ndcLoanStrings.push(`${loan.loanType} amounting to ₹ ${sancAmtStr}/- (Rupees ${rawWords} only). Vide No ${sanction}`);
             ndcCodeStrings.push(loan.code);
 
             // Compute Table totals
