@@ -1885,7 +1885,7 @@ function DcComponent() {
                     <div className="cert-body" style={{ textAlign: 'justify', fontSize: '15px', lineHeight: 1.5 }}>
                       <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>This is to certify that <span className="bold">{w.fullName}</span> under the Department/Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span> was granted <span id="ndcLoanListStr" className="bold">{w.ndcLoanStrings.join(' and ')}</span></p>
 
-                      <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no any outstanding balances in respect of <span className="bold">{Array.from(w.takenTypes).join(' and ') || 'HBA'}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loans.</p>
+                      <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no outstanding balances in respect of <span className="bold">{Array.from(w.takenTypes).join(' and ') || 'HBA'}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loans.</p>
 
                       {w.totalExcessAmount > 0 && (
                         <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)})</span>.</p>
