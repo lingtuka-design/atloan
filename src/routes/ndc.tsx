@@ -1001,15 +1001,15 @@ function NdcComponent() {
               <div className="note-content-area" id="notesheet-content" style={{
                 position: 'absolute', top: '96px', left: notesheetSide === 'front' ? '144px' : '40px',
                 right: notesheetSide === 'front' ? '40px' : '96px', bottom: '40px',
-                fontSize: notesheetEntries.length >= 6 ? '14px' : '18px',
-                lineHeight: notesheetEntries.length >= 6 ? 1.3 : 1.5,
+                fontSize: notesheetEntries.length >= 6 ? '16px' : '18px',
+                lineHeight: notesheetEntries.length >= 6 ? 1.4 : 1.5,
                 textAlign: 'justify', overflow: 'hidden'
               }}>
                 {/* Handwriting lines area */}
                 {notesheetEntries.length > 0 && (
-                  <div id="letter-no-area" style={{ width: '100%', marginBottom: notesheetEntries.length >= 6 ? '8px' : '20px' }}>
+                  <div id="letter-no-area" style={{ width: '100%', marginBottom: notesheetEntries.length >= 6 ? '12px' : '20px' }}>
                     {notesheetEntries.map((_, i) => (
-                      <div key={i} className="handwriting-line" style={{ height: notesheetEntries.length >= 6 ? '0.6cm' : '1cm', borderBottom: '1px solid #999', boxSizing: 'border-box' }}></div>
+                      <div key={i} className="handwriting-line" style={{ height: notesheetEntries.length >= 6 ? '0.9cm' : '1cm', borderBottom: '1px solid #999', boxSizing: 'border-box' }}></div>
                     ))}
                   </div>
                 )}
@@ -1022,9 +1022,9 @@ function NdcComponent() {
                       className="note-entry-wrapper"
                       style={{
                         position: 'relative',
-                        padding: notesheetEntries.length >= 6 ? '2px 5px' : '5px',
+                        padding: notesheetEntries.length >= 6 ? '3px 5px' : '5px',
                         marginLeft: '-5px',
-                        marginBottom: notesheetEntries.length >= 6 ? '6px' : '20px',
+                        marginBottom: notesheetEntries.length >= 6 ? '14px' : '20px',
                         border: '1px solid transparent',
                         borderRadius: '4px',
                         transition: 'all 0.2s'
@@ -1070,7 +1070,7 @@ function NdcComponent() {
                 </div>
                 
                 {notesheetEntries.length > 0 && (
-                  <div id="approval-text" style={{ marginTop: notesheetEntries.length >= 6 ? '6px' : '10px', marginBottom: notesheetEntries.length >= 6 ? '10px' : '20px', fontWeight: 'normal' }}>
+                  <div id="approval-text" style={{ marginTop: notesheetEntries.length >= 6 ? '8px' : '10px', marginBottom: notesheetEntries.length >= 6 ? '8px' : '20px', fontWeight: 'normal' }}>
                     Put up for your approval, please.
                   </div>
                 )}
