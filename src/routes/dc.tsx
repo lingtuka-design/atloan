@@ -269,19 +269,19 @@ function DcComponent() {
   }
 
   const numToWordsStrict = (num: number) => {
-    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen']
-    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety']
+    const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen']
+    const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
 
     function inWords(n: number): string {
       if (n < 20) return ones[n]
       if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '')
-      if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' and ' + inWords(n % 100) : '')
-      if (n < 100000) return inWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 !== 0 ? ' ' + inWords(n % 1000) : '')
-      if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 !== 0 ? ' ' + inWords(n % 100000) : '')
-      return inWords(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 !== 0 ? ' ' + inWords(n % 10000000) : '')
+      if (n < 1000) return ones[Math.floor(n / 100)] + ' hundred' + (n % 100 !== 0 ? ' and ' + inWords(n % 100) : '')
+      if (n < 100000) return inWords(Math.floor(n / 1000)) + ' thousand' + (n % 1000 !== 0 ? ' ' + inWords(n % 1000) : '')
+      if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' lakh' + (n % 100000 !== 0 ? ' ' + inWords(n % 100000) : '')
+      return inWords(Math.floor(n / 10000000)) + ' crore' + (n % 10000000 !== 0 ? ' ' + inWords(n % 10000000) : '')
     }
 
-    if (num === 0) return 'Zero'
+    if (num === 0) return 'zero'
     return inWords(Math.floor(num))
   }
 
@@ -1885,7 +1885,7 @@ function DcComponent() {
                     <div className="cert-body" style={{ textAlign: 'justify', fontSize: '15px', lineHeight: 1.5 }}>
                       <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>This is to certify that <span className="bold">{w.fullName}</span> under the Department/Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span> was granted <span id="ndcLoanListStr" className="bold">{w.ndcLoanStrings.join(' and ')}</span></p>
 
-                      <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no any outstanding balances in respect of <span className="bold">{w.cleanName}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loan.</p>
+                      <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no any outstanding balances in respect of <span className="bold">{Array.from(w.takenTypes).join(' and ') || 'HBA'}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loans.</p>
 
                       {w.totalExcessAmount > 0 && (
                         <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)})</span>.</p>
