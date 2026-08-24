@@ -209,6 +209,8 @@ function DcComponent() {
   const [calculatedData, setCalculatedData] = useState<CalculatedLoan[]>([])
   const [currentEditId, setCurrentEditId] = useState<string | null>(null)
   const [savedNoteHTML, setSavedNoteHTML] = useState<string | null>(null)
+  const [savedLegalCertHTML, setSavedLegalCertHTML] = useState<string | null>(null)
+  const [savedNdcCertHTML, setSavedNdcCertHTML] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
   // Database Records
@@ -544,6 +546,8 @@ function DcComponent() {
     if (!hasError) {
       setCalculatedData(results)
       setSavedNoteHTML(null)
+      setSavedLegalCertHTML(null)
+      setSavedNdcCertHTML(null)
       setPreviewTab('calc')
     }
   }
@@ -800,6 +804,13 @@ function DcComponent() {
     const noteElem = document.getElementById('editable-note-wrapper')
     const finalNoteHTML = noteElem ? noteElem.innerHTML : (savedNoteHTML || '')
 
+    const legalCertElem = document.getElementById('legal-cert-page')
+    const ndcCertElem = document.getElementById('ndc-cert-page')
+    const mortgagedCertElem = document.getElementById('mortgaged-cert-page')
+
+    const finalLegalCertHTML = (mortgagedCertElem ? mortgagedCertElem.innerHTML : (legalCertElem ? legalCertElem.innerHTML : (savedLegalCertHTML || '')))
+    const finalNdcCertHTML = ndcCertElem ? ndcCertElem.innerHTML : (savedNdcCertHTML || '')
+
     const typesSumm = Array.from(new Set(calculatedData.map(l => l.loanType))).join(', ')
     const recordPayload: Partial<DcRecord> = {
       name: shared.inName.trim(),
@@ -811,8 +822,8 @@ function DcComponent() {
       loanInputsArray: loans,
       allCalculatedData: calculatedData,
       noteHTMLSaved: finalNoteHTML,
-      legalCertHTMLSaved: '',
-      ndcCertHTMLSaved: ''
+      legalCertHTMLSaved: finalLegalCertHTML,
+      ndcCertHTMLSaved: finalNdcCertHTML
     }
 
     if (currentEditId) {
@@ -836,7 +847,13 @@ function DcComponent() {
         if (finalNoteHTML !== undefined) {
           setSavedNoteHTML(finalNoteHTML)
         }
-        alert(isUpdate ? 'Record siamṭhat (Updated) a ni ta!' : 'I calculation data leh Notesheet hi save a ni ta e.')
+        if (finalLegalCertHTML) {
+          setSavedLegalCertHTML(finalLegalCertHTML)
+        }
+        if (finalNdcCertHTML) {
+          setSavedNdcCertHTML(finalNdcCertHTML)
+        }
+        alert(isUpdate ? 'Record siamṭhat (Updated) a ni ta!' : 'I calculation data, Notesheet leh Certificate hi save a ni ta e.')
         fetchRecords()
       } else {
         let errMsg = 'Error saving record to database.'
@@ -869,6 +886,8 @@ function DcComponent() {
     setLoans(r.loanInputsArray)
     setCalculatedData(r.allCalculatedData)
     setSavedNoteHTML(r.noteHTMLSaved || null)
+    setSavedLegalCertHTML(r.legalCertHTMLSaved || null)
+    setSavedNdcCertHTML(r.ndcCertHTMLSaved || null)
     setActiveMainTab('generator')
   }
 
@@ -915,6 +934,8 @@ function DcComponent() {
     setCalculatedData([])
     setCurrentEditId(null)
     setSavedNoteHTML(null)
+    setSavedLegalCertHTML(null)
+    setSavedNdcCertHTML(null)
     setActiveLoanFormTab(0)
     if (withAlert) {
       alert('Form tihruak a ni e.')
@@ -1692,9 +1713,30 @@ function DcComponent() {
                   const numLoans = calculatedData.length
                   const layoutClass = numLoans <= 2 ? 'cert-layout-default' : (numLoans <= 4 ? 'cert-layout-compact' : 'cert-layout-ultra')
 
+                  if (savedLegalCertHTML) {
+                    return (
+                      <div
+                        id="legal-cert-page"
+                        className={`cert-page document-font ${layoutClass}`}
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => setSavedLegalCertHTML(e.currentTarget.innerHTML)}
+                        style={{ display: 'block', padding: '60px 70px', minHeight: '1344px', width: '816px', background: 'white', position: 'relative', outline: 'none' }}
+                        dangerouslySetInnerHTML={{ __html: savedLegalCertHTML }}
+                      />
+                    )
+                  }
+
                   return (
                   /* Demand Certificate */
-                  <div id="legal-cert-page" className={`cert-page document-font ${layoutClass}`} style={{ display: 'block', padding: '60px 70px', minHeight: '1344px', width: '816px', background: 'white', position: 'relative' }}>
+                  <div
+                    id="legal-cert-page"
+                    className={`cert-page document-font ${layoutClass}`}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => setSavedLegalCertHTML(e.currentTarget.innerHTML)}
+                    style={{ display: 'block', padding: '60px 70px', minHeight: '1344px', width: '816px', background: 'white', position: 'relative', outline: 'none' }}
+                  >
                     <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }} />
                     <div className="text-center cert-header" style={{ fontSize: '15px', marginBottom: '15px', fontFamily: "'Times New Roman', serif", fontWeight: 'bold', textAlign: 'center' }}>
                       GOVERNMENT OF MIZORAM<br />
@@ -1868,71 +1910,90 @@ function DcComponent() {
                   )
                 })() : (
                   /* No Demand Certificate (A4) */
-                  <div id="ndc-cert-page" className="cert-page cert-layout-default" style={{ display: 'block', width: '816px', background: 'white', position: 'relative', minHeight: '1123px', padding: '60px 70px' }}>
-                    <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }} />
-                    <div className="text-center cert-header" style={{ fontSize: '15px', marginBottom: '10px', fontWeight: 'bold', textAlign: 'center' }}>
-                      GOVERNMENT OF MIZORAM<br />
-                      OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br />
-                      ACCOUNTS &amp; TREASURIES; MIZORAM : AIZAWL
-                    </div>
-                    <div style={{ textAlign: 'right', marginBottom: '15px', fontSize: '15px', lineHeight: 1.4 }}>
-                      <span>{w.fullMemo}</span><br />
-                      Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.
-                    </div>
-                    <div className="text-center cert-title" style={{ fontSize: '17px', fontWeight: 'bold', textDecoration: 'underline', marginBottom: '15px', textAlign: 'center' }}>
-                      NO DEMAND CERTIFICATE
-                    </div>
-                    <div className="cert-body" style={{ textAlign: 'justify', fontSize: '15px', lineHeight: 1.5 }}>
-                      <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>This is to certify that <span className="bold">{w.fullName}</span> under the Department/Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span> was granted <span id="ndcLoanListStr" className="bold">{w.ndcLoanStrings.join(' and ')}</span></p>
+                  savedNdcCertHTML ? (
+                    <div
+                      id="ndc-cert-page"
+                      className="cert-page cert-layout-default"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => setSavedNdcCertHTML(e.currentTarget.innerHTML)}
+                      style={{ display: 'block', width: '816px', background: 'white', position: 'relative', minHeight: '1123px', padding: '60px 70px', outline: 'none' }}
+                      dangerouslySetInnerHTML={{ __html: savedNdcCertHTML }}
+                    />
+                  ) : (
+                    <div
+                      id="ndc-cert-page"
+                      className="cert-page cert-layout-default"
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => setSavedNdcCertHTML(e.currentTarget.innerHTML)}
+                      style={{ display: 'block', width: '816px', background: 'white', position: 'relative', minHeight: '1123px', padding: '60px 70px', outline: 'none' }}
+                    >
+                      <img src="https://industries.mizoram.gov.in/uploads/attachments/2024/10/b17faea85184a6955b7bb5c481426c65/bana-kaih-logo.jpg" alt="Bana Kaih Logo" style={{ position: 'absolute', top: '50px', left: '50px', height: '60px', zIndex: 10 }} />
+                      <div className="text-center cert-header" style={{ fontSize: '15px', marginBottom: '10px', fontWeight: 'bold', textAlign: 'center' }}>
+                        GOVERNMENT OF MIZORAM<br />
+                        OFFICE OF THE CHIEF CONTROLLER OF ACCOUNTS<br />
+                        ACCOUNTS &amp; TREASURIES; MIZORAM : AIZAWL
+                      </div>
+                      <div style={{ textAlign: 'right', marginBottom: '15px', fontSize: '15px', lineHeight: 1.4 }}>
+                        <span>{w.fullMemo}</span><br />
+                        Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.
+                      </div>
+                      <div className="text-center cert-title" style={{ fontSize: '17px', fontWeight: 'bold', textDecoration: 'underline', marginBottom: '15px', textAlign: 'center' }}>
+                        NO DEMAND CERTIFICATE
+                      </div>
+                      <div className="cert-body" style={{ textAlign: 'justify', fontSize: '15px', lineHeight: 1.5 }}>
+                        <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>This is to certify that <span className="bold">{w.fullName}</span> under the Department/Office of the <span className="bold">{w.ddoOffice}</span> <span className="out-live-action-text">{w.actionText}</span> <span className="bold">{formatDotDate(shared.inRetireDate)}</span> was granted <span id="ndcLoanListStr" className="bold">{w.ndcLoanStrings.join(' and ')}</span></p>
 
-                      <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no outstanding balances in respect of <span className="bold">{Array.from(w.takenTypes).join(' and ') || 'HBA'}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loans.</p>
+                        <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>The Principal with Interest thereon in respect of the above Advance had been recovered in full. There are no outstanding balances in respect of <span className="bold">{Array.from(w.takenTypes).join(' and ') || 'HBA'}</span> and <span id="ndcGenderPronoun">{w.pronoun}</span> had not drawn any other long term loans.</p>
 
-                      {w.totalExcessAmount > 0 && (
-                        <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)})</span>.</p>
-                      )}
+                        {w.totalExcessAmount > 0 && (
+                          <p style={{ textIndent: '40px', marginBottom: '8px', marginTop: 0 }}>Further, there is an excess recovery of interest amounting to <span className="bold">Rs. {fmtAmt(w.totalExcessAmount)}/- ({amountToWords(w.totalExcessAmount)})</span>.</p>
+                        )}
 
-                      <p style={{ textIndent: '40px', marginBottom: '15px', marginTop: 0 }}>Hence, No Demand Certificate of <span className="bold">HBA, Scooter Advance, Computer Advance, Motor Car Advance and Special Car Loan</span> is hereby issued.</p>
+                        <p style={{ textIndent: '40px', marginBottom: '15px', marginTop: 0 }}>Hence, No Demand Certificate of <span className="bold">HBA, Scooter Advance, Computer Advance, Motor Car Advance and Special Car Loan</span> is hereby issued.</p>
 
-                      <div style={{ marginBottom: '20px', fontWeight: 'bold', lineHeight: 1.3 }}>
-                        <span style={{ textDecoration: 'underline' }}>{w.posPronoun} Code No. :</span><br />
-                        <div id="ndcCodeList">{w.ndcCodeStrings.map((c, i) => <div key={i}>{c}</div>)}</div>
+                        <div style={{ marginBottom: '20px', fontWeight: 'bold', lineHeight: 1.3 }}>
+                          <span style={{ textDecoration: 'underline' }}>{w.posPronoun} Code No. :</span><br />
+                          <div id="ndcCodeList">{w.ndcCodeStrings.map((c, i) => <div key={i}>{c}</div>)}</div>
+                        </div>
+                      </div>
+
+                      <div className="text-right" style={{ marginTop: '20px', marginBottom: '20px', textAlign: 'right' }}>
+                        <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontSize: '15px' }}>
+                          <div style={{ height: '35px' }}></div>
+                          {shared.inShowSd ? <span className="cert-sd-mark">Sd/-<br /></span> : null}
+                          <span className="bold cert-sig-name-disp">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</span><br />
+                          <span className="out-live-sig-desig">{shared.inSigDesig}</span><br />
+                          Accounts &amp; Treasuries
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginBottom: '10px' }}>
+                        <div>Memo <span>{w.fullMemo}</span></div>
+                        <div>Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.</div>
+                      </div>
+                      
+                      <div style={{ fontSize: '14px' }}>
+                        <div style={{ fontStyle: 'italic', marginBottom: '5px' }}>Copy to :</div>
+                        <ol style={{ margin: 0, paddingLeft: '65px', textAlign: 'justify', lineHeight: 1.4 }}>
+                          <li className="mb-1">The <span className="bold">Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl</span> for information.</li>
+                          <li className="mb-1">The <span className="bold">{w.copy2Address}</span> <span id="ndcExcessClaimStr">{w.excessDetails.length > 0 ? (
+                            <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span>.</>
+                          ) : 'for information and necessary action.'}</span></li>
+                          <li>Person concerned for information.</li>
+                        </ol>
+                      </div>
+
+                      <div className="text-right" style={{ marginTop: '30px', marginBottom: '10px', textAlign: 'right' }}>
+                        <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontWeight: 'bold', fontSize: '15px' }}>
+                          <div style={{ height: '35px' }}></div>
+                          <span className="out-live-sig-desig-upper">{shared.inSigDesig.toUpperCase()}</span><br />
+                          ACCOUNTS &amp; TREASURIES
+                        </div>
                       </div>
                     </div>
-
-                    <div className="text-right" style={{ marginTop: '20px', marginBottom: '20px', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontSize: '15px' }}>
-                        <div style={{ height: '35px' }}></div>
-                        {shared.inShowSd ? <span className="cert-sd-mark">Sd/-<br /></span> : null}
-                        <span className="bold cert-sig-name-disp">{shared.inShowSd ? shared.inSigName.toUpperCase() : `(${shared.inSigName.toUpperCase()})`}</span><br />
-                        <span className="out-live-sig-desig">{shared.inSigDesig}</span><br />
-                        Accounts &amp; Treasuries
-                      </div>
-                    </div>
-                    
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginBottom: '10px' }}>
-                      <div>Memo <span>{w.fullMemo}</span></div>
-                      <div>Dated Aizawl, the <span dangerouslySetInnerHTML={formatFullDate(shared.inIssueDate)}></span>.</div>
-                    </div>
-                    
-                    <div style={{ fontSize: '14px' }}>
-                      <div style={{ fontStyle: 'italic', marginBottom: '5px' }}>Copy to :</div>
-                      <ol style={{ margin: 0, paddingLeft: '65px', textAlign: 'justify', lineHeight: 1.4 }}>
-                        <li className="mb-1">The <span className="bold">Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl</span> for information.</li>
-                        <li className="mb-1">The <span className="bold">{w.copy2Address}</span> <span id="ndcExcessClaimStr">{w.excessDetails.length > 0 ? (
-                          <>for information and for making reimbursement of <span dangerouslySetInnerHTML={{ __html: w.excessDetails.join(' and ') }}></span>.</>
-                        ) : 'for information and necessary action.'}</span></li>
-                        <li>Person concerned for information.</li>
-                      </ol>
-                    </div>
-
-                    <div className="text-right" style={{ marginTop: '30px', marginBottom: '10px', textAlign: 'right' }}>
-                      <div style={{ display: 'inline-block', textAlign: 'center', minWidth: '250px', fontWeight: 'bold', fontSize: '15px' }}>
-                        <div style={{ height: '35px' }}></div>
-                        <span className="out-live-sig-desig-upper">{shared.inSigDesig.toUpperCase()}</span><br />
-                        ACCOUNTS &amp; TREASURIES
-                      </div>
-                    </div>
-                  </div>
+                  )
                 )}
               </div>
             )}
@@ -1942,13 +2003,17 @@ function DcComponent() {
                 <div
                   id="mortgaged-cert-page"
                   className="cert-page document-font cert-layout-default"
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => setSavedLegalCertHTML(e.currentTarget.innerHTML)}
                   style={{
                     display: 'block',
                     padding: '60px 70px',
                     minHeight: '1344px',
                     width: '816px',
                     background: 'white',
-                    position: 'relative'
+                    position: 'relative',
+                    outline: 'none'
                   }}
                 >
                   {/* Bana Kaih Logo */}
