@@ -78,8 +78,8 @@ function NdcComponent() {
   
   // Signatory State
   const [showSd, setShowSd] = useState(true)
-  const [sigName, setSigName] = useState('THARA LUNGṬAU')
-  const [sigDesig, setSigDesig] = useState('Joint Director (L&M)')
+  const [sigName, setSigName] = useState('ZONGHAKLIANI')
+  const [sigDesig, setSigDesig] = useState('Deputy Director (L&M)')
 
   // Database Records
   const [records, setRecords] = useState<NdcRecord[]>([])
@@ -319,8 +319,8 @@ function NdcComponent() {
     setCopy1Val('Director, Local Fund Audit & Pension, Accounts & Treasuries, Mizoram, Aizawl')
     setDdoName('')
     setShowSd(true)
-    setSigName('THARA LUNGṬAU')
-    setSigDesig('Joint Director (L&M)')
+    setSigName('ZONGHAKLIANI')
+    setSigDesig('Deputy Director (L&M)')
     const today = new Date().toISOString().split('T')[0]
     setIssueDate(today)
     setPensionDate(getLastDayOfCurrentMonthStr())
@@ -762,17 +762,28 @@ function NdcComponent() {
                   
                   <div className="input-box" style={{ marginBottom: '12px' }}>
                     <label>Signatory Name</label>
-                    <input
-                      type="text"
+                    <select
                       value={sigName}
-                      onChange={(e) => setSigName(e.target.value)}
-                    />
+                      onChange={(e) => {
+                        const selectedName = e.target.value
+                        setSigName(selectedName)
+                        if (selectedName === 'ZONGHAKLIANI') {
+                          setSigDesig('Deputy Director (L&M)')
+                        } else if (selectedName === 'THARA LUNGṬAU' || selectedName === 'THARA LUNGTAU') {
+                          setSigDesig('Joint Director (L&M)')
+                        }
+                      }}
+                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                      <option value="ZONGHAKLIANI">ZONGHAKLIANI</option>
+                      <option value="THARA LUNGṬAU">THARA LUNGṬAU</option>
+                    </select>
                   </div>
                   <div className="input-box">
                     <label>Signatory Designation</label>
-                    <select value={sigDesig} onChange={(e) => setSigDesig(e.target.value)}>
-                      <option value="Joint Director (L&M)">Joint Director (L&M)</option>
+                    <select value={sigDesig} onChange={(e) => setSigDesig(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
                       <option value="Deputy Director (L&M)">Deputy Director (L&M)</option>
+                      <option value="Joint Director (L&M)">Joint Director (L&M)</option>
                     </select>
                   </div>
                 </div>

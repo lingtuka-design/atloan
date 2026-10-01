@@ -196,8 +196,8 @@ function DcComponent() {
     inMemoVol: '',
     inMemoPage: '',
     inIssueDate: new Date().toISOString().split('T')[0],
-    inSigName: 'THARA LUNGṬAU',
-    inSigDesig: 'Joint Director (L&M)',
+    inSigName: 'ZONGHAKLIANI',
+    inSigDesig: 'Deputy Director (L&M)',
     inShowSd: false,
     inIsMortgaged: false,
     inMortgagedRefNo: '',
@@ -908,8 +908,8 @@ function DcComponent() {
       inMemoVol: '',
       inMemoPage: '',
       inIssueDate: new Date().toISOString().split('T')[0],
-      inSigName: 'THARA LUNGṬAU',
-      inSigDesig: 'Joint Director (L&M)',
+      inSigName: 'ZONGHAKLIANI',
+      inSigDesig: 'Deputy Director (L&M)',
       inShowSd: false,
       inIsMortgaged: false,
       inMortgagedRefNo: '',
@@ -1256,11 +1256,38 @@ function DcComponent() {
             <div style={{ display: 'flex', gap: '10px' }}>
               <div className="input-box" style={{ flex: 1 }}>
                 <label>Signatory Name</label>
-                <input type="text" value={shared.inSigName} onChange={e => handleSharedChange('inSigName', e.target.value)} />
+                <select
+                  value={shared.inSigName}
+                  onChange={e => {
+                    const selectedName = e.target.value
+                    let defaultDesig = shared.inSigDesig
+                    if (selectedName === 'ZONGHAKLIANI') {
+                      defaultDesig = 'Deputy Director (L&M)'
+                    } else if (selectedName === 'THARA LUNGṬAU' || selectedName === 'THARA LUNGTAU') {
+                      defaultDesig = 'Joint Director (L&M)'
+                    }
+                    setShared(prev => ({
+                      ...prev,
+                      inSigName: selectedName,
+                      inSigDesig: defaultDesig
+                    }))
+                  }}
+                  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                >
+                  <option value="ZONGHAKLIANI">ZONGHAKLIANI</option>
+                  <option value="THARA LUNGṬAU">THARA LUNGṬAU</option>
+                </select>
               </div>
               <div className="input-box" style={{ flex: 1 }}>
                 <label>Signatory Designation</label>
-                <input type="text" value={shared.inSigDesig} onChange={e => handleSharedChange('inSigDesig', e.target.value)} />
+                <select
+                  value={shared.inSigDesig}
+                  onChange={e => handleSharedChange('inSigDesig', e.target.value)}
+                  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                >
+                  <option value="Deputy Director (L&M)">Deputy Director (L&M)</option>
+                  <option value="Joint Director (L&M)">Joint Director (L&M)</option>
+                </select>
               </div>
             </div>
 
