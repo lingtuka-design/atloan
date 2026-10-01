@@ -380,12 +380,20 @@ function NdcComponent() {
       if (type === 'ndc') {
         style.innerHTML = `@media print { 
           @page { size: A4 portrait; margin: 0; } 
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .preview-section, .generator-layout { overflow: visible !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
           #legal-page { display: none !important; } 
           #a4-page { display: block !important; margin: 0 auto !important; } 
         }`
       } else {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .preview-section, .generator-layout { overflow: visible !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
           #a4-page { display: none !important; } 
           #legal-page { display: block !important; margin: 0 auto !important; } 
         }`

@@ -932,36 +932,48 @@ function DcComponent() {
       if (type === 'mortgaged') {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .tab-menu, .edit-panel, .preview-tabs, .record-section, .no-print { display: none !important; }
           #legal-pages-container, #note-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
+          .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
           #mortgaged-cert-page { display: block !important; } 
           .cert-page { display: block !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'cert' && w.isGlobalNDC) {
         style.innerHTML = `@media print { 
           @page { size: A4 portrait; margin: 0; } 
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
-          #legal-pages-container, #note-pages-container { display: none !important; }
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .tab-menu, .edit-panel, .preview-tabs, .record-section, .no-print { display: none !important; }
+          #legal-pages-container, #note-pages-container, #legal-cert-page, #mortgaged-cert-page { display: none !important; }
+          .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
           #ndc-cert-page { display: block !important; } 
           .cert-page { display: block !important; padding: 60px 70px !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'cert') {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
-          #legal-pages-container, #note-pages-container { display: none !important; }
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .tab-menu, .edit-panel, .preview-tabs, .record-section, .no-print { display: none !important; }
+          #legal-pages-container, #note-pages-container, #ndc-cert-page, #mortgaged-cert-page { display: none !important; }
+          .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
           #legal-cert-page { display: block !important; } 
           .cert-page { display: block !important; margin: 0 !important; box-shadow: none !important; border: none !important; min-height: auto !important; }
         }`
       } else if (type === 'note') {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
-          #legal-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .tab-menu, .edit-panel, .preview-tabs, .record-section, .no-print { display: none !important; }
+          #legal-pages-container, #ndc-cert-page, #legal-cert-page, #mortgaged-cert-page { display: none !important; }
+          .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
           #note-pages-container { display: flex !important; flex-direction: column !important; width: 100% !important; }
           .note-sheet { padding: 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; width: 100% !important; position: relative !important; }
           .note-horizontal-line { position: absolute !important; top: 2cm !important; left: 0 !important; right: 0 !important; height: 1.5px !important; background-color: #777 !important; display: block !important; }
@@ -971,12 +983,15 @@ function DcComponent() {
         }`
       } else {
         style.innerHTML = `@media print { 
-          @page { size: legal portrait; margin: 12mm 15mm 15mm 15mm; } 
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .tab-menu, .edit-panel, .preview-tabs, .record-section { display: none !important; }
-          #note-pages-container, #ndc-cert-page, #legal-cert-page { display: none !important; }
-          #legal-pages-container { display: block !important; }
-          .legal-sheet { padding: 0 0 10mm 0 !important; margin: 0 0 15mm 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
+          @page { size: legal portrait; margin: 10mm 15mm; } 
+          * { overflow: visible !important; }
+          ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+          body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .tab-menu, .edit-panel, .preview-tabs, .record-section, .no-print { display: none !important; }
+          #note-pages-container, #ndc-cert-page, #legal-cert-page, #mortgaged-cert-page { display: none !important; }
+          .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
+          #legal-pages-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
+          .legal-sheet { width: 100% !important; padding: 0 0 10mm 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
         }`
       }
       document.head.appendChild(style)
