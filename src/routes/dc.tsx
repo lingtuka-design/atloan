@@ -983,7 +983,7 @@ function DcComponent() {
         }`
       } else {
         style.innerHTML = `@media print { 
-          @page { size: legal portrait; margin: 10mm 15mm; } 
+          @page { size: legal portrait; margin: 12mm 15mm 20mm 15mm; } 
           * { overflow: visible !important; }
           ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
           body { margin: 0 !important; overflow: visible !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -991,7 +991,10 @@ function DcComponent() {
           #note-pages-container, #ndc-cert-page, #legal-cert-page, #mortgaged-cert-page { display: none !important; }
           .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
           #legal-pages-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
-          .legal-sheet { width: 100% !important; padding: 0 0 10mm 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
+          .legal-sheet { width: 100% !important; padding: 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
+          .calc-table { width: 100% !important; border-collapse: collapse !important; }
+          .calc-table tr, .calc-table td, .calc-table th { break-inside: avoid !important; page-break-inside: avoid !important; }
+          thead { display: table-header-group !important; }
         }`
       }
       document.head.appendChild(style)

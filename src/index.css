@@ -538,11 +538,12 @@ h1, h2, h3, .display-font {
   }
   
   thead {
-    display: table-header-group;
+    display: table-header-group !important;
   }
   
-  tr {
-    page-break-inside: avoid;
+  tr, td, th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .a4-page:last-child,
