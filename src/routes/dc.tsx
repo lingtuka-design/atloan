@@ -928,7 +928,10 @@ function DcComponent() {
   const printDocument = (type: 'calc' | 'note' | 'cert' | 'mortgaged') => {
     setPreviewTab(type)
     setTimeout(() => {
+      const existing = document.getElementById('dc-print-override-style')
+      if (existing) existing.remove()
       const style = document.createElement('style')
+      style.id = 'dc-print-override-style'
       if (type === 'mortgaged') {
         style.innerHTML = `@media print { 
           @page { size: legal portrait; margin: 0; } 
@@ -991,7 +994,7 @@ function DcComponent() {
           #note-pages-container, #ndc-cert-page, #legal-cert-page, #mortgaged-cert-page { display: none !important; }
           .generator-layout, .preview-section { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
           #legal-pages-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
-          .legal-sheet { width: 100% !important; padding: 0 !important; margin: 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
+          .legal-sheet { width: 100% !important; padding: 0 !important; margin: 0 0 15mm 0 !important; page-break-after: always; box-shadow: none !important; border: none !important; min-height: auto !important; box-sizing: border-box !important; }
           .calc-table { width: 100% !important; border-collapse: collapse !important; }
           .calc-table tr, .calc-table td, .calc-table th { break-inside: avoid !important; page-break-inside: avoid !important; }
           thead { display: table-header-group !important; }

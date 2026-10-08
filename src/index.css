@@ -471,9 +471,14 @@ h1, h2, h3, .display-font {
     display: block !important;
   }
 
+  @page {
+    size: legal portrait;
+    margin: 12mm 15mm 20mm 15mm;
+  }
+
   .legal-sheet {
     box-shadow: none !important;
-    margin: 0 !important;
+    margin: 0 0 15mm 0 !important;
     border: none !important;
     width: 100% !important;
     min-height: auto !important;
@@ -481,6 +486,16 @@ h1, h2, h3, .display-font {
     padding: 0 0 10mm 0 !important;
     box-sizing: border-box !important;
     display: block !important;
+  }
+
+  .calc-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .calc-table tr, .calc-table td, .calc-table th {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .note-sheet {
