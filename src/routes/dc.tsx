@@ -749,6 +749,24 @@ function DcComponent() {
 
     // Adjustment summaries are ONLY populated when there are same-head loan adjustments (e.g. excess on 1 HBA adjusted against outstanding on another HBA)
 
+    const LOAN_LABEL_MAP: Record<string, string> = {
+      HBA: 'HBA',
+      COM: 'Computer Advance',
+      MCA: 'MCA',
+      SA: 'SA',
+      SCL: 'Special Car Loan'
+    }
+    const ALL_LOAN_KEYS = ['HBA', 'COM', 'MCA', 'SA', 'SCL']
+    const notTaken = ALL_LOAN_KEYS.filter(k => !takenTypes.has(k)).map(k => LOAN_LABEL_MAP[k])
+    let noLiabString = ''
+    if (calculatedData.length > 0) {
+      if (notTaken.length > 1) {
+        noLiabString = notTaken.slice(0, -1).join('/') + ' and ' + notTaken[notTaken.length - 1]
+      } else if (notTaken.length === 1) {
+        noLiabString = notTaken[0]
+      }
+    }
+
     const isGlobalNDC = calculatedData.length > 0 && loansWithLiability.size === 0
 
     const mCode = DEPT_CODES[mDept] || '00'
@@ -783,7 +801,8 @@ function DcComponent() {
       isGlobalNDC,
       ndcLoanStrings,
       ndcCodeStrings,
-      adjustmentSummaries
+      adjustmentSummaries,
+      noLiabString
     }
   }
 
@@ -1902,6 +1921,16 @@ function DcComponent() {
                           }}
                         >
                           {shared.inSupersedeNote}
+                        </div>
+                      )}
+
+                      {w.noLiabString && (
+                        <div
+                          id="outCertNoLiabilitiesStr"
+                          className="cert-no-liab"
+                          style={{ textIndent: '40px', textAlign: 'justify' }}
+                        >
+                          It is further certified that the <span className="out-live-status">{w.statusWord || 'retired'}</span> Government servant had no liabilities against {w.noLiabString}.
                         </div>
                       )}
 
